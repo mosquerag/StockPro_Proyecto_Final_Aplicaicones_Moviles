@@ -1,0 +1,242 @@
+<resources>
+    <!-- App Identity -->
+    <string name="app_name">StockPro</string>
+    <string name="tagline">Your inventory, always under control</string>
+    <string name="login_welcome_desc">Manage your inventory, sales and more, all in one place.</string>
+    <string name="btn_login">Log in</string>
+    <string name="btn_register">Create account</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_back">Back</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_movements">Movements</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_more">More</string>
+
+    <!-- Authentication and Registration -->
+    <string name="title_login">Log in</string>
+    <string name="title_register">Create account</string>
+    <string name="register_subtitle">Register your business to get started</string>
+    <string name="lbl_business_name">Business name</string>
+    <string name="hint_business_name">E.g., Corner Market</string>
+    <string name="lbl_email">Email address</string>
+    <string name="hint_email">you@email.com</string>
+    <string name="lbl_password">Password</string>
+    <string name="hint_password">Minimum 6 characters</string>
+    <string name="lbl_business_type">Business type</string>
+    <string name="lbl_country">Country</string>
+    <string name="lbl_currency">Base currency</string>
+    <string name="lbl_state_us">State (USA)</string>
+    <string name="already_have_account">Already have an account? Log in</string>
+    <string name="dont_have_account">Don\'t have an account? Sign up</string>
+    <string name="forgot_password">Forgot your password?</string>
+
+    <!-- Dashboard -->
+    <string name="greeting_prefix">Hello, %s 👋</string>
+    <string name="dashboard_subtitle">All set, here is your summary</string>
+    <string name="estimated_earnings">Estimated earnings</string>
+    <string name="earnings_badge">↑ 12% vs. last week</string>
+    <string name="card_products">Products</string>
+    <string name="card_sales_today">Today\'s sales</string>
+    <string name="card_expiring_soon">Expiring soon</string>
+    <string name="card_low_stock">Low stock</string>
+    <string name="recent_sales">Recent sales</string>
+    <string name="view_all">View all</string>
+    <string name="inbound_today">Deliveries today</string>
+    <string name="inbound_tomorrow">Deliveries tomorrow</string>
+    <string name="no_recent_sales">No recent sales recorded</string>
+    <string name="no_inbound_today">No deliveries scheduled for today</string>
+    <string name="no_inbound_tomorrow">No deliveries scheduled for tomorrow</string>
+
+    <!-- Products Catalog -->
+    <string name="title_products">Products</string>
+    <string name="search_product_hint">Search product...</string>
+    <string name="filter_all">All</string>
+    <string name="btn_new_product">New product</string>
+    <string name="title_edit_product">Edit product</string>
+    <string name="lbl_product_name">Product name *</string>
+    <string name="lbl_category">Category *</string>
+    <string name="lbl_cost_price">Cost price *</string>
+    <string name="lbl_sale_price">Selling price *</string>
+    <string name="lbl_current_stock">Stock quantity *</string>
+    <string name="lbl_min_stock">Minimum stock</string>
+    <string name="lbl_fiscal_category">Fiscal category (Tax)</string>
+    <string name="lbl_manages_lots">Tracks batches or perishable</string>
+    <string name="lbl_expiration_date">Expiration date (optional)</string>
+    <string name="stock_units_format">%s units</string>
+    <string name="product_empty_title">No products found</string>
+    <string name="product_empty_desc">Add your first product by tapping the + button</string>
+
+    <!-- Product Detail and Batches -->
+    <string name="title_product_detail">Product details</string>
+    <string name="tab_info">Information</string>
+    <string name="tab_lots">Batches &amp; Expirations</string>
+    <string name="lot_number_label">Batch: %s</string>
+    <string name="lot_available_label">Available: %s units</string>
+    <string name="lot_expires_label">Expires: %s</string>
+    <string name="lot_status_active">Active</string>
+    <string name="lot_status_exhausted">Depleted</string>
+    <string name="lot_status_written_off">Written off</string>
+    <string name="btn_write_off">Write off</string>
+    <string name="write_off_confirm_title">Write off batch?</string>
+    <string name="write_off_confirm_desc">This action will remove remaining units and record an inventory loss.</string>
+
+    <!-- Categories -->
+    <string name="title_categories">Categories</string>
+    <string name="btn_add_category">New category</string>
+    <string name="lbl_category_name">Category name</string>
+    <string name="lbl_category_desc">Description</string>
+
+    <!-- Inventory Movements -->
+    <string name="title_movements">Movements</string>
+    <string name="move_sale">Sale</string>
+    <string name="move_sale_desc">Record a sale</string>
+    <string name="move_inbound">Inbound</string>
+    <string name="move_inbound_desc">Add stock</string>
+    <string name="move_loss">Loss</string>
+    <string name="move_loss_desc">Lost inventory</string>
+    <string name="move_damaged">Damaged</string>
+    <string name="move_damaged_desc">Damaged product</string>
+    <string name="title_record_movement">Record movement</string>
+    <string name="lbl_movement_type">Movement type</string>
+    <string name="lbl_quantity">Quantity</string>
+    <string name="lbl_reason">Reason or notes</string>
+    <string name="recent_history">Recent history</string>
+    <string name="type_venta">Sale</string>
+    <string name="type_entrada">Inbound</string>
+    <string name="type_perdida">Loss</string>
+    <string name="type_danado">Damaged</string>
+    <string name="type_ajuste_pos">Positive adjustment</string>
+    <string name="type_ajuste_neg">Negative adjustment</string>
+
+    <!-- Sales -->
+    <string name="title_register_sale">Register sale</string>
+    <string name="title_sale_detail">Sale details</string>
+    <string name="lbl_select_products">Select products</string>
+    <string name="lbl_selected_items">Selected items</string>
+    <string name="lbl_payment_method">Payment method</string>
+    <string name="pay_cash">Cash</string>
+    <string name="pay_card">Card</string>
+    <string name="pay_transfer">Transfer</string>
+    <string name="pay_mixed">Mixed</string>
+    <string name="lbl_subtotal">Subtotal</string>
+    <string name="lbl_tax">Tax (VAT/Sales Tax)</string>
+    <string name="lbl_discount">Discount</string>
+    <string name="lbl_total">Total: %s</string>
+    <string name="btn_complete_sale">Complete sale</string>
+    <string name="sale_voucher">Receipt: %s</string>
+    <string name="sale_date">Date: %s</string>
+    <string name="sale_empty_cart">Select at least one product to complete sale</string>
+
+    <!-- Inbound Deliveries -->
+    <string name="title_inbound_deliveries">Expected deliveries</string>
+    <string name="tab_today">Today</string>
+    <string name="tab_tomorrow">Tomorrow</string>
+    <string name="btn_new_inbound">New expected delivery</string>
+    <string name="lbl_origin_reference">Origin / Reference</string>
+    <string name="hint_origin_reference">E.g., Central warehouse, Distributor</string>
+    <string name="lbl_expected_date">Expected date</string>
+    <string name="btn_receive_delivery">Receive goods</string>
+    <string name="receive_confirm_title">Confirm delivery reception?</string>
+    <string name="receive_confirm_desc">Marking as received will create the batch and add stock to active inventory.</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_received">Received</string>
+
+    <!-- Alerts -->
+    <string name="title_alerts">Alerts</string>
+    <string name="filter_all_alerts">All</string>
+    <string name="filter_low_stock">Low stock</string>
+    <string name="filter_expiring">Expiring soon</string>
+    <string name="filter_expired">Expired</string>
+    <string name="alert_low_stock_msg">Low stock: %1$s units left (minimum %2$s)</string>
+    <string name="alert_expiring_msg">Expires in %1$d days (Batch: %2$s)</string>
+    <string name="alert_expired_msg">Expired on %1$s (Batch: %2$s)</string>
+    <string name="alerts_empty_title">No pending alerts</string>
+    <string name="alerts_empty_desc">All inventory items are at healthy levels with no upcoming expirations.</string>
+
+    <!-- Reports -->
+    <string name="title_reports">Reports</string>
+    <string name="period_7d">7 days</string>
+    <string name="period_30d">30 days</string>
+    <string name="period_3m">3 months</string>
+    <string name="lbl_general_summary">General summary</string>
+    <string name="report_sales">Sales</string>
+    <string name="report_profits">Profits</string>
+    <string name="report_losses">Losses &amp; write-offs</string>
+    <string name="report_gross_margin">Gross margin: %s%%</string>
+    <string name="report_best_sellers">Best sellers</string>
+    <string name="report_worst_sellers">Worst sellers</string>
+    <string name="report_monthly_productivity">Productivity by product</string>
+    <string name="report_taxes_collected">Taxes collected (VAT / Sales Tax)</string>
+    <string name="report_currency_selector">Report currency</string>
+
+    <!-- Settings and Profile -->
+    <string name="title_settings">My business</string>
+    <string name="section_business">Business</string>
+    <string name="section_preferences">Preferences</string>
+    <string name="lbl_business_profile">Business profile</string>
+    <string name="opt_edit_business">Business details</string>
+    <string name="opt_change_password">Change password</string>
+    <string name="opt_notifications">Notifications</string>
+    <string name="opt_language">Language / Idioma</string>
+    <string name="opt_currency">Main currency</string>
+    <string name="opt_exchange_rates">Exchange rates</string>
+    <string name="opt_support">Support &amp; Help</string>
+    <string name="btn_logout">Log out</string>
+    <string name="logout_confirm_title">Log out?</string>
+    <string name="logout_confirm_desc">You will need to sign in again with your email and password.</string>
+    <string name="lang_spanish">Español</string>
+    <string name="lang_english">English</string>
+
+    <!-- Translated Categories -->
+    <string name="cat_alimentos">Food &amp; Groceries</string>
+    <string name="cat_ropa">Clothing &amp; Footwear</string>
+    <string name="cat_higiene">Hygiene &amp; Beauty</string>
+    <string name="cat_tecnologia">Technology</string>
+    <string name="cat_otros">Others</string>
+
+    <!-- Backend Error Messages and Stable Codes -->
+    <string name="error_generic">An unexpected error has occurred</string>
+    <string name="error_stock_insuficiente">Insufficient stock to perform this operation</string>
+    <string name="error_producto_no_encontrado">Product not found</string>
+    <string name="error_lote_no_encontrado">Batch not found</string>
+    <string name="error_credenciales_invalidas">Incorrect email or password</string>
+    <string name="error_negocio_no_encontrado">Business not found</string>
+    <string name="error_token_expirado">Your session has expired. Please sign in again</string>
+    <string name="error_token_invalido">Invalid authentication token</string>
+    <string name="error_acceso_denegado">You do not have permission to perform this action</string>
+    <string name="error_entrada_no_encontrada">Expected inbound delivery not found</string>
+    <string name="error_venta_no_encontrada">Sale not found</string>
+    <string name="error_entrada_ya_recibida">This inbound delivery was already received and cannot be modified</string>
+    <string name="error_email_duplicado">An account with this email already exists</string>
+    <string name="error_producto_inactivo">The product is inactive and cannot be sold</string>
+    <string name="error_validacion_fallida">Please check the values entered in the form</string>
+    <string name="error_operacion_invalida">Invalid operation for the current state</string>
+    <string name="error_recurso_no_encontrado">The requested resource was not found</string>
+    <string name="error_interno">Internal server error. Please try again later</string>
+    <string name="error_conexion_servidor">Could not connect to the server (10.0.2.2:8080)</string>
+
+    <!-- Additional strings for connected screens -->
+    <string name="lbl_owner_name">Owner name</string>
+    <string name="hint_owner_name">E.g. John Doe</string>
+    <string name="lbl_phone">Phone</string>
+    <string name="hint_phone">+1 555 123 4567</string>
+    <string name="tab_all">All</string>
+    <string name="empty_products_title">No products found</string>
+    <string name="empty_products_subtitle">Add your first product by tapping the + button</string>
+    <string name="empty_lots_title">No lots registered</string>
+    <string name="empty_lots_subtitle">This product has no active lots or recorded expirations.</string>
+    <string name="empty_inbound_title">No scheduled inbound deliveries</string>
+    <string name="empty_sales_title">No sales recorded yet</string>
+    <string name="empty_movements_title">No inventory movements recorded</string>
+
+    <!-- Business Configuration and 2026 Tax Rates -->
+    <string name="lbl_tax_rates_title">2026 Tax rates</string>
+    <string name="lbl_tax_rates_subtitle">View tax rates applied to your sales</string>
+    <string name="lbl_no_tax_rates">No tax rates found configured for this country</string>
+</resources>

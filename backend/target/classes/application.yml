@@ -1,0 +1,37 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: stockpro-backend
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:stockpro_db}
+    username: ${DB_USER:stockpro_user}
+    password: ${DB_PASSWORD:stockpro_password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+# Configuración de Seguridad y JWT
+stockpro:
+  security:
+    jwt:
+      # Llave secreta en Base64 (mínimo 256 bits para HMAC-SHA256)
+      secret: c3RvY2twcm8tc2VjcmV0LWtleS0yMDI2LWZ1bGwtc2VjdXJlLWtleS0yNTZiaXRzIQ==
+      access-token-expiration-ms: 900000        # 15 minutos (vida corta)
+      refresh-token-expiration-ms: 604800000    # 7 días (rotativo)

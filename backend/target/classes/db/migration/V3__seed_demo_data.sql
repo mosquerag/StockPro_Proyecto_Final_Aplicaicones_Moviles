@@ -1,0 +1,341 @@
+-- ==============================================================================
+-- STOCKPRO - SISTEMA MÓVIL DE GESTIÓN Y CONTROL DE INVENTARIOS
+-- MIGRACIÓN FLYWAY: V3__seed_demo_data.sql
+-- DESCRIPCIÓN: Datos de prueba y demostración académica para los 3 negocios:
+--              1. "Mi Tienda" (Medellín, Colombia · COP)
+--              2. "Corner Market" (California, EE. UU. · USD)
+--              3. "Bottega Roma" (Roma, Italia · EUR)
+-- NOTA: Todas las fechas son dinámicas y relativas a CURRENT_DATE para garantizar
+--       que las alertas (vencidos, por vencer en 7 días) y los reportes siempre
+--       presenten información viva al ejecutar la aplicación.
+-- ==============================================================================
+
+-- Hash BCrypt estándar para la contraseña de prueba "Password123*"
+-- $2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6
+
+-- ==============================================================================
+-- SECCIÓN 1: USUARIOS DE ACCESO (PROPIETARIOS Y EMPLEADOS)
+-- ==============================================================================
+INSERT INTO usuarios (id, nombre, correo, password_hash, telefono, activo) VALUES
+-- Mi Tienda (Colombia)
+('10000000-0000-0000-0000-000000000001', 'Carlos Gómez', 'carlos@mitienda.com', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+57 300 1234567', TRUE),
+('10000000-0000-0000-0000-000000000002', 'Luisa Martínez', 'luisa@mitienda.com', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+57 311 9876543', TRUE),
+
+-- Corner Market (EE. UU.)
+('10000000-0000-0000-0000-000000000003', 'Robert Smith', 'robert@cornermarket.com', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+1 415 555 0199', TRUE),
+('10000000-0000-0000-0000-000000000004', 'Emma Johnson', 'emma@cornermarket.com', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+1 415 555 0144', TRUE),
+
+-- Bottega Roma (Italia)
+('10000000-0000-0000-0000-000000000005', 'Matteo Rossi', 'matteo@bottegaroma.it', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+39 06 698 12345', TRUE),
+('10000000-0000-0000-0000-000000000006', 'Sofia Moretti', 'sofia@bottegaroma.it', '$2a$10$w8TfG9r0K.wK30Yx7xZ8guxpZ3U61x2p5M9eGZzV8aY.pT0hU5Pq6', '+39 06 698 54321', TRUE);
+
+
+-- ==============================================================================
+-- SECCIÓN 2: REGISTRO DE NEGOCIOS Y MEMBRESÍAS
+-- ==============================================================================
+INSERT INTO negocios (id, nombre, tipo_negocio, identificacion_fiscal, pais, estado_region, moneda_base, zona_horaria, permite_stock_negativo, activo) VALUES
+('20000000-0000-0000-0000-000000000001', 'Mi Tienda', 'TIENDA', 'NIT 900.543.210-1', 'CO', 'Antioquia', 'COP', 'America/Bogota', FALSE, TRUE),
+('20000000-0000-0000-0000-000000000002', 'Corner Market', 'SUPERMERCADO', 'EIN 94-3184920', 'US', 'CA', 'USD', 'America/Los_Angeles', FALSE, TRUE),
+('20000000-0000-0000-0000-000000000003', 'Bottega Roma', 'TIENDA', 'IT 01234567890', 'IT', 'Lazio', 'EUR', 'Europe/Rome', FALSE, TRUE);
+
+-- Asignación de Roles por Negocio
+INSERT INTO miembros_negocio (negocio_id, usuario_id, rol, permisos) VALUES
+('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'PROPIETARIO', '["ALL"]'::jsonb),
+('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 'EMPLEADO', '["VENTAS", "MOVIMIENTOS_ENTRADA"]'::jsonb),
+
+('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000003', 'PROPIETARIO', '["ALL"]'::jsonb),
+('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000004', 'EMPLEADO', '["VENTAS", "MOVIMIENTOS_ENTRADA"]'::jsonb),
+
+('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000005', 'PROPIETARIO', '["ALL"]'::jsonb),
+('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000006', 'EMPLEADO', '["VENTAS", "MOVIMIENTOS_ENTRADA"]'::jsonb);
+
+
+-- ==============================================================================
+-- SECCIÓN 3: CATEGORÍAS POR NEGOCIO
+-- ==============================================================================
+-- Categorías Mi Tienda (CO)
+INSERT INTO categorias (id, negocio_id, nombre, descripcion, color_hex) VALUES
+('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Alimentos Básicos', 'Granos, lácteos y productos de canasta básica familiar', '#087F5B'),
+('30000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'Higiene y Hogar', 'Artículos de aseo personal y limpieza del hogar', '#2F9E44'),
+('30000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', 'Comidas y Bebidas', 'Snacks, bebidas y comidas rápidas preparadas', '#F59F00'),
+('30000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000001', 'Ropa y Textiles', 'Prendas básicas y accesorios de vestir', '#1971C2');
+
+-- Categorías Corner Market (US)
+INSERT INTO categorias (id, negocio_id, nombre, descripcion, color_hex) VALUES
+('30000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000002', 'Fresh Groceries', 'Dairy, produce, bakery and pantry staples', '#087F5B'),
+('30000000-0000-0000-0000-000000000012', '20000000-0000-0000-0000-000000000002', 'Beverages & Snacks', 'Ready to drink beverages and packed snacks', '#E67700'),
+('30000000-0000-0000-0000-000000000013', '20000000-0000-0000-0000-000000000002', 'Personal & Home Care', 'Toiletries, paper products and cleaning goods', '#1971C2');
+
+-- Categorías Bottega Roma (IT)
+INSERT INTO categorias (id, negocio_id, nombre, descripcion, color_hex) VALUES
+('30000000-0000-0000-0000-000000000021', '20000000-0000-0000-0000-000000000003', 'Alimentari & Pane', 'Pane, farine, pasta e prodotti base', '#087F5B'),
+('30000000-0000-0000-0000-000000000022', '20000000-0000-0000-0000-000000000003', 'Formaggi e Salumi', 'Specialità gastronomiche tipiche', '#D9480F'),
+('30000000-0000-0000-0000-000000000023', '20000000-0000-0000-0000-000000000003', 'Vini e Cura Casa', 'Vini DOCG e prodotti per la cura quotidiana', '#7048E8');
+
+
+-- ==============================================================================
+-- SECCIÓN 4: PROVEEDORES DE DEMOSTRACIÓN
+-- ==============================================================================
+INSERT INTO proveedores (id, negocio_id, nombre, contacto, telefono, email, direccion) VALUES
+('40000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Distribuidora Mayorista Paisa', 'Andrés Restrepo', '300 4567890', 'pedidos@paisa.com', 'Calle 50 # 45-20, Medellín'),
+('40000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'Lácteos de Antioquia S.A.', 'Marta Calle', '310 1122334', 'ventas@lacteosant.com', 'Carrera 70 # 32-15, Medellín'),
+
+('40000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000002', 'Golden State Produce Co.', 'Brian Taylor', '415 555 0188', 'orders@goldenstate.com', '101 Market St, San Francisco, CA'),
+('40000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000002', 'Pacific Coast Distributors', 'Karen White', '415 555 0192', 'karen@pacificcoast.com', '450 Mission St, San Francisco, CA'),
+
+('40000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000003', 'Distribuzione Alimentare Laziale', 'Giuseppe De Luca', '06 698 88990', 'ordini@alimentarelazio.it', 'Via Appia Nuova 120, Roma'),
+('40000000-0000-0000-0000-000000000006', '20000000-0000-0000-0000-000000000003', 'Caseificio e Vini d Italia', 'Laura Conti', '06 698 77665', 'info@caseificiovini.it', 'Via del Corso 45, Roma');
+
+
+-- ==============================================================================
+-- SECCIÓN 5: PRODUCTOS (18 para CO, 15 para US, 15 para IT)
+-- ==============================================================================
+
+-- 5.1 PRODUCTOS DE "MI TIENDA" (Colombia · Moneda COP · Reglas Tributarias 2026)
+INSERT INTO productos (id, negocio_id, categoria_id, nombre, codigo_barras, unidad_medida, costo, precio_venta, categoria_fiscal, tarifa_impuesto_id, porcentaje_impuesto_aplicado, stock_actual, stock_minimo, maneja_lotes) VALUES
+-- Canasta básica (Excluidos de IVA - 0%)
+('50000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Arroz Diana 1kg', '7702001001011', 'UNIDAD', 3500, 4800, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 45.00, 10.00, TRUE),
+('50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Leche Alquería Entera 1L', '7702001001028', 'UNIDAD', 3800, 5200, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 24.00, 8.00, TRUE),
+('50000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Pan Tajado Bimbo 450g', '7702001001035', 'UNIDAD', 4600, 6500, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 12.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Huevos Santa Anita AA x30', '7702001001042', 'PAQUETE', 13000, 17500, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 18.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Papa Criolla Limpia 1kg', '7702001001059', 'KG', 2800, 4200, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 30.00, 10.00, FALSE),
+('50000000-0000-0000-0000-000000000006', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Café Sello Rojo 500g', '7702001001066', 'UNIDAD', 12000, 16500, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 20.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000007', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Aceite Premier Girasol 1L', '7702001001073', 'UNIDAD', 9500, 13800, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 16.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000008', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'Lentejas La Abuela 500g', '7702001001080', 'UNIDAD', 3200, 4600, 'EXCLUIDO', 'a0000001-0000-0000-0000-000000000004', 0.00, 25.00, 8.00, TRUE),
+
+-- Higiene y Aseo (IVA General 19%)
+('50000000-0000-0000-0000-000000000009', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000002', 'Jabón Rey Barra x3', '7702001002018', 'PAQUETE', 5500, 8200, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 32.00, 10.00, FALSE),
+('50000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000002', 'Detergente Ariel Polvo 1kg', '7702001002025', 'UNIDAD', 9000, 13500, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 4.00, 8.00, FALSE), -- Alerta Stock Bajo!
+('50000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000002', 'Crema Dental Colgate Total 12', '7702001002032', 'UNIDAD', 6200, 9500, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 22.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000012', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000002', 'Papel Higiénico Familia 4 rollos', '7702001002049', 'PAQUETE', 6800, 10200, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 15.00, 5.00, FALSE),
+
+-- Bebidas y Alimentos preparados (Impuesto al Consumo 8% o IVA 19%)
+('50000000-0000-0000-0000-000000000013', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000003', 'Empanada Antioqueña de Carne', '7702001003015', 'UNIDAD', 1800, 3200, 'CONSUMO_RESTAURANTE', 'a0000001-0000-0000-0000-000000000005', 8.00, 25.00, 10.00, TRUE),
+('50000000-0000-0000-0000-000000000014', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000003', 'Almuerzo Ejecutivo Casero', '7702001003022', 'PORCION', 10500, 16000, 'CONSUMO_RESTAURANTE', 'a0000001-0000-0000-0000-000000000005', 8.00, 20.00, 5.00, FALSE),
+('50000000-0000-0000-0000-000000000015', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000003', 'Gaseosa Postobón Manzana 1.5L', '7702001003039', 'UNIDAD', 3400, 5000, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 18.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000016', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000003', 'Cerveza Club Colombia 330ml', '7702001003046', 'UNIDAD', 2900, 4500, 'BEBIDAS_ALCOHOLICAS', 'a0000001-0000-0000-0000-000000000006', 19.00, 36.00, 12.00, TRUE),
+
+-- Ropa básica (IVA General 19%)
+('50000000-0000-0000-0000-000000000017', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000004', 'Camiseta Básica Algodón Talla M', '7702001004012', 'UNIDAD', 14000, 26000, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 14.00, 4.00, FALSE),
+('50000000-0000-0000-0000-000000000018', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000004', 'Medias Tobilleras Algodón x3', '7702001004029', 'PAQUETE', 7000, 13000, 'GENERAL', 'a0000001-0000-0000-0000-000000000001', 19.00, 20.00, 5.00, FALSE);
+
+
+-- 5.2 PRODUCTOS DE "CORNER MARKET" (California, US · Moneda USD · Sales Tax 2026)
+INSERT INTO productos (id, negocio_id, categoria_id, nombre, codigo_barras, unidad_medida, costo, precio_venta, categoria_fiscal, tarifa_impuesto_id, porcentaje_impuesto_aplicado, stock_actual, stock_minimo, maneja_lotes) VALUES
+-- Groceries exentos de Sales Tax en CA (0%)
+('50000000-0000-0000-0000-000000000031', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000011', 'Organic Whole Milk 1 Gallon', '011110416001', 'UNIDAD', 3.20, 5.49, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 18.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000032', '20000000-0000-0000-0000-000000000011', 'San Francisco Sourdough Bread', '011110416002', 'UNIDAD', 2.10, 4.29, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 10.00, 4.00, TRUE),
+('50000000-0000-0000-0000-000000000033', '20000000-0000-0000-0000-000000000011', 'Organic Hass Avocados 4pk', '011110416003', 'PAQUETE', 2.80, 4.99, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 14.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000034', '20000000-0000-0000-0000-000000000011', 'California Orange Juice 52oz', '011110416004', 'UNIDAD', 2.60, 4.49, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 12.00, 4.00, TRUE),
+('50000000-0000-0000-0000-000000000035', '20000000-0000-0000-0000-000000000011', 'Sharp Cheddar Cheese 8oz', '011110416005', 'UNIDAD', 2.30, 3.99, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 15.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000036', '20000000-0000-0000-0000-000000000011', 'Organic Brown Eggs 12ct', '011110416006', 'PAQUETE', 2.90, 4.89, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 16.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000037', '20000000-0000-0000-0000-000000000011', 'Roasted Almonds Salted 16oz', '011110416007', 'UNIDAD', 4.50, 7.99, 'ALIMENTOS_BASICOS', 'b0000001-0000-0000-0000-000000000002', 0.00, 20.00, 5.00, TRUE),
+
+-- Bebidas y snacks (California Sales Tax 7.25%)
+('50000000-0000-0000-0000-000000000038', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000012', 'Cold Brew Nitro Coffee Can', '011110416008', 'UNIDAD', 1.80, 3.79, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 25.00, 8.00, TRUE),
+('50000000-0000-0000-0000-000000000039', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000012', 'Sparkling Mineral Water 1L', '011110416009', 'UNIDAD', 1.10, 2.49, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 30.00, 10.00, FALSE),
+('50000000-0000-0000-0000-000000000040', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000012', 'Artisan Potato Chips Sea Salt', '011110416010', 'UNIDAD', 1.50, 3.29, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 22.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000041', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000012', 'Energy Drink Citrus 16oz', '011110416011', 'UNIDAD', 1.70, 3.49, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 18.00, 5.00, TRUE),
+
+-- Personal & Home Care (California Sales Tax 7.25%)
+('50000000-0000-0000-0000-000000000042', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000013', 'Paper Towels Ultra 6 Rolls', '011110416012', 'PAQUETE', 5.50, 9.99, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 12.00, 4.00, FALSE),
+('50000000-0000-0000-0000-000000000043', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000013', 'Dishwashing Liquid 24oz', '011110416013', 'UNIDAD', 2.00, 3.99, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 15.00, 5.00, FALSE),
+('50000000-0000-0000-0000-000000000044', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000013', 'Antibacterial Hand Soap 12oz', '011110416014', 'UNIDAD', 1.40, 2.99, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 3.00, 6.00, FALSE), -- Stock bajo
+('50000000-0000-0000-0000-000000000045', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000013', 'Stainless Steel Water Bottle 20oz', '011110416015', 'UNIDAD', 8.50, 16.99, 'GENERAL', 'b0000001-0000-0000-0000-000000000001', 7.25, 8.00, 3.00, FALSE);
+
+
+-- 5.3 PRODUCTOS DE "BOTTEGA ROMA" (Italia · Moneda EUR · IVA 2026: 4%, 10%, 22%)
+INSERT INTO productos (id, negocio_id, categoria_id, nombre, codigo_barras, unidad_medida, costo, precio_venta, categoria_fiscal, tarifa_impuesto_id, porcentaje_impuesto_aplicado, stock_actual, stock_minimo, maneja_lotes) VALUES
+-- IVA Superreducida 4% (Beni di prima necessità)
+('50000000-0000-0000-0000-000000000061', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000021', 'Pane Casereccio di Genzano 500g', '800123400001', 'UNIDAD', 1.10, 2.20, 'MINIMA_4', 'c0000001-0000-0000-0000-000000000004', 4.00, 12.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000062', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000021', 'Latte Fresco Intero Alta Qualità 1L', '800123400002', 'UNIDAD', 0.95, 1.85, 'MINIMA_4', 'c0000001-0000-0000-0000-000000000004', 4.00, 18.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000063', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000021', 'Pasta di Gragnano IGP 500g', '800123400003', 'UNIDAD', 0.85, 1.65, 'MINIMA_4', 'c0000001-0000-0000-0000-000000000004', 4.00, 40.00, 10.00, TRUE),
+('50000000-0000-0000-0000-000000000064', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000021', 'Farina di Grano Tenero Tipo 00 1kg', '800123400004', 'UNIDAD', 0.65, 1.30, 'MINIMA_4', 'c0000001-0000-0000-0000-000000000004', 4.00, 30.00, 8.00, TRUE),
+('50000000-0000-0000-0000-000000000065', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000021', 'Pomodori Pelati San Marzano DOP 800g', '800123400005', 'UNIDAD', 1.40, 2.70, 'MINIMA_4', 'c0000001-0000-0000-0000-000000000004', 4.00, 25.00, 6.00, TRUE),
+
+-- IVA Ridotta 10% (Carni, formaggi, salumi, gastronomia)
+('50000000-0000-0000-0000-000000000066', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000022', 'Parmigiano Reggiano DOP 24 Mesi 300g', '800123400006', 'UNIDAD', 4.80, 8.50, 'RIDOTTA_10', 'c0000001-0000-0000-0000-000000000002', 10.00, 16.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000067', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000022', 'Prosciutto di Parma DOP 150g', '800123400007', 'UNIDAD', 2.90, 5.40, 'RIDOTTA_10', 'c0000001-0000-0000-0000-000000000002', 10.00, 14.00, 4.00, TRUE),
+('50000000-0000-0000-0000-000000000068', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000022', 'Mozzarella di Bufala Campana DOP 250g', '800123400008', 'UNIDAD', 2.10, 3.90, 'RIDOTTA_10', 'c0000001-0000-0000-0000-000000000002', 10.00, 15.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000069', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000022', 'Pecorino Romano DOP 200g', '800123400009', 'UNIDAD', 3.10, 5.80, 'RIDOTTA_10', 'c0000001-0000-0000-0000-000000000002', 10.00, 12.00, 4.00, TRUE),
+('50000000-0000-0000-0000-000000000070', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000022', 'Panino Farcito Porchetta Romana', '800123400010', 'UNIDAD', 2.80, 5.50, 'RIDOTTA_10', 'c0000001-0000-0000-0000-000000000002', 10.00, 20.00, 5.00, FALSE),
+
+-- IVA Ordinaria 22% (Vini, oli extravergine, cura personale e casa)
+('50000000-0000-0000-0000-000000000071', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000023', 'Olio Extra Vergine di Oliva Sabina DOP 1L', '800123400011', 'UNIDAD', 7.50, 13.90, 'ORDINARIA', 'c0000001-0000-0000-0000-000000000001', 22.00, 18.00, 5.00, TRUE),
+('50000000-0000-0000-0000-000000000072', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000023', 'Vino Chianti Classico DOCG 750ml', '800123400012', 'UNIDAD', 6.20, 11.50, 'ORDINARIA', 'c0000001-0000-0000-0000-000000000001', 22.00, 15.00, 4.00, FALSE),
+('50000000-0000-0000-0000-000000000073', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000023', 'Birra Artigianale Romana 500ml', '800123400013', 'UNIDAD', 2.20, 4.50, 'ORDINARIA', 'c0000001-0000-0000-0000-000000000001', 22.00, 24.00, 6.00, TRUE),
+('50000000-0000-0000-0000-000000000074', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000023', 'Sapone Biologico all Olio d Oliva 200g', '800123400014', 'UNIDAD', 1.60, 3.20, 'ORDINARIA', 'c0000001-0000-0000-0000-000000000001', 22.00, 2.00, 5.00, FALSE), -- Stock bajo
+('50000000-0000-0000-0000-000000000075', '20000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000023', 'Detergente Pavimenti Ecosostenibile 1L', '800123400015', 'UNIDAD', 1.90, 3.60, 'ORDINARIA', 'c0000001-0000-0000-0000-000000000001', 22.00, 10.00, 4.00, FALSE);
+
+
+-- ==============================================================================
+-- SECCIÓN 6: LOTES CON VENCIMIENTO (VENCIDOS, POR VENCER EN 7 DÍAS Y VIGENTES)
+-- ==============================================================================
+
+-- 6.1 Lotes Mi Tienda (CO)
+INSERT INTO lotes (id, producto_id, negocio_id, numero_lote, cantidad_inicial, cantidad_disponible, fecha_ingreso, fecha_vencimiento, estado) VALUES
+-- LOTE VENCIDO: Pan Tajado (Venció hace 3 días)
+('60000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', 'LOTE-PAN-VENC-01', 12.00, 4.00, CURRENT_DATE - INTERVAL '15 days', CURRENT_DATE - INTERVAL '3 days', 'VENCIDO'),
+-- LOTE PRÓXIMO A VENCER: Leche Alquería (Vence en 4 días <= 7 días)
+('60000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'LOTE-LECHE-PROX-02', 20.00, 10.00, CURRENT_DATE - INTERVAL '6 days', CURRENT_DATE + INTERVAL '4 days', 'ACTIVO'),
+-- LOTES VIGENTES
+('60000000-0000-0000-0000-000000000003', '50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'LOTE-LECHE-VIG-03', 20.00, 14.00, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '20 days', 'ACTIVO'),
+('60000000-0000-0000-0000-000000000004', '50000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'LOTE-ARROZ-01', 50.00, 45.00, CURRENT_DATE - INTERVAL '10 days', CURRENT_DATE + INTERVAL '180 days', 'ACTIVO'),
+('60000000-0000-0000-0000-000000000005', '50000000-0000-0000-0000-000000000006', '20000000-0000-0000-0000-000000000001', 'LOTE-CAFE-01', 25.00, 20.00, CURRENT_DATE - INTERVAL '12 days', CURRENT_DATE + INTERVAL '240 days', 'ACTIVO'),
+('60000000-0000-0000-0000-000000000006', '50000000-0000-0000-0000-000000000016', '20000000-0000-0000-0000-000000000001', 'LOTE-CERV-01', 40.00, 36.00, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE + INTERVAL '90 days', 'ACTIVO');
+
+-- 6.2 Lotes Corner Market (US)
+INSERT INTO lotes (id, producto_id, negocio_id, numero_lote, cantidad_inicial, cantidad_disponible, fecha_ingreso, fecha_vencimiento, estado) VALUES
+-- LOTE VENCIDO: Sourdough Bread (Venció hace 2 días)
+('60000000-0000-0000-0000-000000000011', '50000000-0000-0000-0000-000000000032', '20000000-0000-0000-0000-000000000002', 'LOT-SOURDOUGH-EXP', 15.00, 3.00, CURRENT_DATE - INTERVAL '10 days', CURRENT_DATE - INTERVAL '2 days', 'VENCIDO'),
+-- LOTE PRÓXIMO A VENCER: Organic Whole Milk (Vence en 5 días)
+('60000000-0000-0000-0000-000000000012', '50000000-0000-0000-0000-000000000031', '20000000-0000-0000-0000-000000000002', 'LOT-MILK-EXP-05', 20.00, 8.00, CURRENT_DATE - INTERVAL '5 days', CURRENT_DATE + INTERVAL '5 days', 'ACTIVO'),
+-- LOTE VIGENTE
+('60000000-0000-0000-0000-000000000013', '50000000-0000-0000-0000-000000000031', '20000000-0000-0000-0000-000000000002', 'LOT-MILK-FRESH', 15.00, 10.00, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '16 days', 'ACTIVO');
+
+-- 6.3 Lotes Bottega Roma (IT)
+INSERT INTO lotes (id, producto_id, negocio_id, numero_lote, cantidad_inicial, cantidad_disponible, fecha_ingreso, fecha_vencimiento, estado) VALUES
+-- LOTE VENCIDO: Pane Casereccio (Venció hace 1 día)
+('60000000-0000-0000-0000-000000000021', '50000000-0000-0000-0000-000000000061', '20000000-0000-0000-0000-000000000003', 'LOT-PANE-SCADUTO', 15.00, 2.00, CURRENT_DATE - INTERVAL '5 days', CURRENT_DATE - INTERVAL '1 day', 'VENCIDO'),
+-- LOTE PRÓXIMO A VENCER: Latte Fresco (Vence en 3 días)
+('60000000-0000-0000-0000-000000000022', '50000000-0000-0000-0000-000000000062', '20000000-0000-0000-0000-000000000003', 'LOT-LATTE-SCAD-03', 20.00, 6.00, CURRENT_DATE - INTERVAL '4 days', CURRENT_DATE + INTERVAL '3 days', 'ACTIVO'),
+-- LOTE VIGENTE: Mozzarella di Bufala (Vence en 12 días)
+('60000000-0000-0000-0000-000000000023', '50000000-0000-0000-0000-000000000068', '20000000-0000-0000-0000-000000000003', 'LOT-BUFALA-FRESCA', 20.00, 15.00, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '12 days', 'ACTIVO');
+
+
+-- ==============================================================================
+-- SECCIÓN 7: ENTRADAS PREVISTAS (HOY Y MAÑANA)
+-- NOTA: Como especifica el documento, no suman al stock hasta marcarse como recibidas
+-- ==============================================================================
+
+-- 7.1 Mi Tienda (Colombia)
+-- Entrada prevista para HOY
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'OC-2026-CO-001', CURRENT_DATE, 'PENDIENTE', 180000.00, 'Pedido quincenal de granos y abarrotes; entrega 10:00 AM');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000001', 30.00, 0.00, 3500.00),
+('70000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000008', 20.00, 0.00, 3200.00);
+
+-- Entrada prevista para MAÑANA
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000002', 'OC-2026-CO-002', CURRENT_DATE + INTERVAL '1 day', 'PENDIENTE', 95000.00, 'Recepción matutina de lácteos frescos');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000002', 25.00, 0.00, 3800.00);
+
+-- 7.2 Corner Market (EE. UU.)
+-- Entrada prevista para HOY
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 'PO-US-2026-08', CURRENT_DATE, 'PENDIENTE', 145.00, 'Fresh avocados and organic produce batch');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000011', '50000000-0000-0000-0000-000000000033', 25.00, 0.00, 2.80),
+('70000000-0000-0000-0000-000000000011', '50000000-0000-0000-0000-000000000034', 20.00, 0.00, 2.60);
+
+-- Entrada prevista para MAÑANA
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000012', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000004', 'PO-US-2026-09', CURRENT_DATE + INTERVAL '1 day', 'PENDIENTE', 210.00, 'Paper goods and cold beverage restock');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000012', '50000000-0000-0000-0000-000000000042', 20.00, 0.00, 5.50),
+('70000000-0000-0000-0000-000000000012', '50000000-0000-0000-0000-000000000038', 40.00, 0.00, 1.80);
+
+-- 7.3 Bottega Roma (Italia)
+-- Entrada prevista para HOY
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000021', '20000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000005', 'ORD-IT-0041', CURRENT_DATE, 'PENDIENTE', 185.00, 'Consegna giornaliera pane fresco e latticini');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000021', '50000000-0000-0000-0000-000000000061', 25.00, 0.00, 1.10),
+('70000000-0000-0000-0000-000000000021', '50000000-0000-0000-0000-000000000062', 30.00, 0.00, 0.95);
+
+-- Entrada prevista para MAÑANA
+INSERT INTO entradas_previstas (id, negocio_id, proveedor_id, numero_orden, fecha_prevista, estado, total_estimado, notas) VALUES
+('70000000-0000-0000-0000-000000000022', '20000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000006', 'ORD-IT-0042', CURRENT_DATE + INTERVAL '1 day', 'PENDIENTE', 320.00, 'Rifornimento Parmigiano 24 mesi e Chianti');
+
+INSERT INTO detalle_entradas_previstas (entrada_prevista_id, producto_id, cantidad_esperada, cantidad_recibida, costo_unitario) VALUES
+('70000000-0000-0000-0000-000000000022', '50000000-0000-0000-0000-000000000066', 20.00, 0.00, 4.80),
+('70000000-0000-0000-0000-000000000022', '50000000-0000-0000-0000-000000000072', 20.00, 0.00, 6.20);
+
+
+-- ==============================================================================
+-- SECCIÓN 8: HISTÓRICO DE VENTAS (ÚLTIMOS 30 DÍAS) Y MOVIMIENTOS
+-- ==============================================================================
+
+-- 8.1 VENTAS PARA "MI TIENDA" (Colombia · COP)
+-- Venta de HOY
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'F-001240', CURRENT_TIMESTAMP - INTERVAL '2 hours', 'COP', 1.000000, 31300.00, 1700.00, 0.00, 33000.00, 'EFECTIVO', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000001', '60000000-0000-0000-0000-000000000004', 2.00, 4800.00, 3500.00, 9600.00, 0.00, 'EXCLUIDO', 0.00, 0.00, 9600.00),
+('80000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000002', '60000000-0000-0000-0000-000000000003', 2.00, 5200.00, 3800.00, 10400.00, 0.00, 'EXCLUIDO', 0.00, 0.00, 10400.00),
+('80000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000010', NULL, 1.00, 13500.00, 9000.00, 11344.54, 0.00, 'GENERAL', 19.00, 2155.46, 13500.00);
+
+-- Venta de AYER
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 'F-001239', CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours', 'COP', 1.000000, 42000.00, 2200.00, 0.00, 44200.00, 'TRANSFERENCIA', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000014', NULL, 2.00, 16000.00, 10500.00, 29629.63, 0.00, 'CONSUMO_RESTAURANTE', 8.00, 2370.37, 32000.00),
+('80000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000012', NULL, 1.00, 10200.00, 6800.00, 8571.43, 0.00, 'GENERAL', 19.00, 1628.57, 10200.00);
+
+-- Venta hace 7 DÍAS
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'F-001230', CURRENT_TIMESTAMP - INTERVAL '7 days', 'COP', 1.000000, 65000.00, 4151.00, 0.00, 69151.00, 'EFECTIVO', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000003', '50000000-0000-0000-0000-000000000017', NULL, 2.00, 26000.00, 14000.00, 43697.48, 0.00, 'GENERAL', 19.00, 8302.52, 52000.00),
+('80000000-0000-0000-0000-000000000003', '50000000-0000-0000-0000-000000000004', NULL, 1.00, 17500.00, 13000.00, 17500.00, 0.00, 'EXCLUIDO', 0.00, 0.00, 17500.00);
+
+-- Venta hace 25 DÍAS
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 'F-001200', CURRENT_TIMESTAMP - INTERVAL '25 days', 'COP', 1.000000, 55000.00, 0.00, 0.00, 55000.00, 'EFECTIVO', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000004', '50000000-0000-0000-0000-000000000001', '60000000-0000-0000-0000-000000000004', 5.00, 4800.00, 3500.00, 24000.00, 0.00, 'EXCLUIDO', 0.00, 0.00, 24000.00),
+('80000000-0000-0000-0000-000000000004', '50000000-0000-0000-0000-000000000006', '60000000-0000-0000-0000-000000000005', 2.00, 16500.00, 12000.00, 33000.00, 0.00, 'EXCLUIDO', 0.00, 0.00, 33000.00);
+
+
+-- 8.2 VENTAS PARA "CORNER MARKET" (EE. UU. · USD)
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000003', 'REC-US-8901', CURRENT_TIMESTAMP - INTERVAL '3 hours', 'USD', 1.000000, 19.46, 0.55, 0.00, 20.01, 'TARJETA', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000011', '50000000-0000-0000-0000-000000000031', '60000000-0000-0000-0000-000000000013', 2.00, 5.49, 3.20, 10.98, 0.00, 'ALIMENTOS_BASICOS', 0.00, 0.00, 10.98),
+('80000000-0000-0000-0000-000000000011', '50000000-0000-0000-0000-000000000038', NULL, 2.00, 3.79, 1.80, 7.58, 0.00, 'GENERAL', 7.25, 0.55, 8.13);
+
+
+-- 8.3 VENTAS PARA "BOTTEGA ROMA" (Italia · EUR)
+INSERT INTO ventas (id, negocio_id, usuario_id, numero_comprobante, fecha_venta, moneda_venta, tasa_cambio_base, subtotal_base, total_impuestos, total_descuentos, total_venta, metodo_pago, estado) VALUES
+('80000000-0000-0000-0000-000000000021', '20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000005', 'SCONTR-IT-551', CURRENT_TIMESTAMP - INTERVAL '5 hours', 'EUR', 1.000000, 22.84, 2.56, 0.00, 25.40, 'TARJETA', 'COMPLETADA');
+
+INSERT INTO detalle_ventas (venta_id, producto_id, lote_id, cantidad, precio_unitario, costo_unitario, subtotal_bruto, descuento, categoria_fiscal, tarifa_impuesto_porcentaje, monto_impuesto, total_linea) VALUES
+('80000000-0000-0000-0000-000000000021', '80000000-0000-0000-0000-000000000000', NULL, 1.00, 8.50, 4.80, 7.73, 0.00, 'RIDOTTA_10', 10.00, 0.77, 8.50),
+('80000000-0000-0000-0000-000000000021', '50000000-0000-0000-0000-000000000072', NULL, 1.00, 11.50, 6.20, 9.43, 0.00, 'ORDINARIA', 22.00, 2.07, 11.50),
+('80000000-0000-0000-0000-000000000021', '50000000-0000-0000-0000-000000000063', NULL, 2.00, 1.65, 0.85, 3.17, 0.00, 'MINIMA_4', 4.00, 0.13, 3.30);
+
+
+-- ==============================================================================
+-- SECCIÓN 9: MOVIMIENTOS DE INVENTARIO TRAZABLES
+-- ==============================================================================
+INSERT INTO movimientos_inventario (negocio_id, producto_id, lote_id, tipo_movimiento, cantidad, stock_anterior, stock_posterior, costo_referencia, motivo, usuario_id, referencia_tipo, referencia_id, fecha_movimiento) VALUES
+-- Movimiento de Entrada inicial Mi Tienda
+('20000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000001', '60000000-0000-0000-0000-000000000004', 'ENTRADA', 50.00, 0.00, 50.00, 3500.00, 'Ingreso inicial por compra a mayorista', '10000000-0000-0000-0000-000000000001', 'ENTRADA_PREVISTA', NULL, CURRENT_TIMESTAMP - INTERVAL '10 days'),
+-- Movimiento de Venta registrada hoy
+('20000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000001', '60000000-0000-0000-0000-000000000004', 'VENTA', 2.00, 47.00, 45.00, 3500.00, 'Venta en mostrador comprobante F-001240', '10000000-0000-0000-0000-000000000001', 'VENTA', '80000000-0000-0000-0000-000000000001', CURRENT_TIMESTAMP - INTERVAL '2 hours'),
+-- Movimiento de Baja por Daño / Vencimiento
+('20000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000003', '60000000-0000-0000-0000-000000000001', 'PERDIDA', 3.00, 15.00, 12.00, 4600.00, 'Baja por fecha de vencimiento expirada en estante', '10000000-0000-0000-0000-000000000001', 'BAJA_MANUAL', NULL, CURRENT_TIMESTAMP - INTERVAL '1 day');
+
+
+-- ==============================================================================
+-- SECCIÓN 10: NOTIFICACIONES DE ALERTA ACTIVAS
+-- ==============================================================================
+INSERT INTO notificaciones (negocio_id, tipo, referencia_id, titulo, mensaje, leida, created_at) VALUES
+-- Alerta Vencido
+('20000000-0000-0000-0000-000000000001', 'VENCIDO', '50000000-0000-0000-0000-000000000003', '¡Producto Vencido!', 'El producto "Pan Tajado Bimbo 450g" (Lote LOTE-PAN-VENC-01) venció hace 3 días. Realiza la baja de existencias.', FALSE, CURRENT_TIMESTAMP - INTERVAL '2 days'),
+-- Alerta Próximo a vencer (< 7 días)
+('20000000-0000-0000-0000-000000000001', 'PROXIMO_VENCER', '50000000-0000-0000-0000-000000000002', 'Vencimiento Próximo', 'El producto "Leche Alquería Entera 1L" (Lote LOTE-LECHE-PROX-02) vencerá en 4 días.', FALSE, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+-- Alerta Stock Bajo
+('20000000-0000-0000-0000-000000000001', 'STOCK_BAJO', '50000000-0000-0000-0000-000000000010', 'Stock Bajo', 'El producto "Detergente Ariel Polvo 1kg" cuenta con 4 unidades disponibles (mínimo configurado: 8).', FALSE, CURRENT_TIMESTAMP - INTERVAL '5 hours');

@@ -1,0 +1,242 @@
+<resources>
+    <!-- Identidad de la App -->
+    <string name="app_name">StockPro</string>
+    <string name="tagline">Tu inventario, siempre en control</string>
+    <string name="login_welcome_desc">Gestiona tu inventario, ventas y más, todo en un solo lugar.</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="btn_save">Guardar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_close">Cerrar</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="btn_back">Volver</string>
+
+    <!-- Navegación Inferior -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_products">Productos</string>
+    <string name="nav_movements">Movimientos</string>
+    <string name="nav_reports">Reportes</string>
+    <string name="nav_more">Más</string>
+
+    <!-- Autenticación y Registro -->
+    <string name="title_login">Iniciar sesión</string>
+    <string name="title_register">Crear cuenta</string>
+    <string name="register_subtitle">Registra tu negocio para comenzar</string>
+    <string name="lbl_business_name">Nombre del negocio</string>
+    <string name="hint_business_name">Ej. Mi Tienda</string>
+    <string name="lbl_email">Correo electrónico</string>
+    <string name="hint_email">tu@correo.com</string>
+    <string name="lbl_password">Contraseña</string>
+    <string name="hint_password">Mínimo 6 caracteres</string>
+    <string name="lbl_business_type">Tipo de negocio</string>
+    <string name="lbl_country">País</string>
+    <string name="lbl_currency">Moneda base</string>
+    <string name="lbl_state_us">Estado (EE. UU.)</string>
+    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="dont_have_account">¿No tienes cuenta? Regístrate</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+
+    <!-- Dashboard -->
+    <string name="greeting_prefix">Hola, %s 👋</string>
+    <string name="dashboard_subtitle">Todo en orden, aquí tienes tu resumen</string>
+    <string name="estimated_earnings">Ganancias estimadas</string>
+    <string name="earnings_badge">↑ 12% vs. semana anterior</string>
+    <string name="card_products">Productos</string>
+    <string name="card_sales_today">Ventas hoy</string>
+    <string name="card_expiring_soon">Por vencer</string>
+    <string name="card_low_stock">Stock bajo</string>
+    <string name="recent_sales">Últimas ventas</string>
+    <string name="view_all">Ver todas</string>
+    <string name="inbound_today">Entradas de hoy</string>
+    <string name="inbound_tomorrow">Entradas de mañana</string>
+    <string name="no_recent_sales">No hay ventas recientes registradas</string>
+    <string name="no_inbound_today">No hay entradas previstas para hoy</string>
+    <string name="no_inbound_tomorrow">No hay entradas previstas para mañana</string>
+
+    <!-- Catálogo de Productos -->
+    <string name="title_products">Productos</string>
+    <string name="search_product_hint">Buscar producto...</string>
+    <string name="filter_all">Todos</string>
+    <string name="btn_new_product">Nuevo producto</string>
+    <string name="title_edit_product">Editar producto</string>
+    <string name="lbl_product_name">Nombre del producto *</string>
+    <string name="lbl_category">Categoría *</string>
+    <string name="lbl_cost_price">Precio de compra (costo) *</string>
+    <string name="lbl_sale_price">Precio de venta *</string>
+    <string name="lbl_current_stock">Cantidad en stock *</string>
+    <string name="lbl_min_stock">Stock mínimo</string>
+    <string name="lbl_fiscal_category">Categoría fiscal (IVA)</string>
+    <string name="lbl_manages_lots">Maneja lotes o perecedero</string>
+    <string name="lbl_expiration_date">Fecha de vencimiento (opcional)</string>
+    <string name="stock_units_format">%s un.</string>
+    <string name="product_empty_title">No se encontraron productos</string>
+    <string name="product_empty_desc">Agrega tu primer producto tocando el botón +</string>
+
+    <!-- Detalle de Producto y Lotes -->
+    <string name="title_product_detail">Detalle de producto</string>
+    <string name="tab_info">Información</string>
+    <string name="tab_lots">Lotes y vencimientos</string>
+    <string name="lot_number_label">Lote: %s</string>
+    <string name="lot_available_label">Disponible: %s un.</string>
+    <string name="lot_expires_label">Vence: %s</string>
+    <string name="lot_status_active">Activo</string>
+    <string name="lot_status_exhausted">Agotado</string>
+    <string name="lot_status_written_off">Dado de baja</string>
+    <string name="btn_write_off">Dar de baja</string>
+    <string name="write_off_confirm_title">¿Dar de baja lote?</string>
+    <string name="write_off_confirm_desc">Esta acción retirará las unidades disponibles y registrará una pérdida.</string>
+
+    <!-- Categorías -->
+    <string name="title_categories">Categorías</string>
+    <string name="btn_add_category">Nueva categoría</string>
+    <string name="lbl_category_name">Nombre de categoría</string>
+    <string name="lbl_category_desc">Descripción</string>
+
+    <!-- Movimientos de Inventario -->
+    <string name="title_movements">Movimientos</string>
+    <string name="move_sale">Venta</string>
+    <string name="move_sale_desc">Registrar una venta</string>
+    <string name="move_inbound">Entrada</string>
+    <string name="move_inbound_desc">Agregar inventario</string>
+    <string name="move_loss">Pérdida</string>
+    <string name="move_loss_desc">Producto perdido</string>
+    <string name="move_damaged">Dañado</string>
+    <string name="move_damaged_desc">Producto dañado</string>
+    <string name="title_record_movement">Registrar movimiento</string>
+    <string name="lbl_movement_type">Tipo de movimiento</string>
+    <string name="lbl_quantity">Cantidad</string>
+    <string name="lbl_reason">Motivo o justificación</string>
+    <string name="recent_history">Historial reciente</string>
+    <string name="type_venta">Venta</string>
+    <string name="type_entrada">Entrada</string>
+    <string name="type_perdida">Pérdida</string>
+    <string name="type_danado">Dañado</string>
+    <string name="type_ajuste_pos">Ajuste (+)</string>
+    <string name="type_ajuste_neg">Ajuste (-)</string>
+
+    <!-- Ventas -->
+    <string name="title_register_sale">Registrar venta</string>
+    <string name="title_sale_detail">Detalle de venta</string>
+    <string name="lbl_select_products">Seleccionar productos</string>
+    <string name="lbl_selected_items">Ítems seleccionados</string>
+    <string name="lbl_payment_method">Método de pago</string>
+    <string name="pay_cash">Efectivo</string>
+    <string name="pay_card">Tarjeta</string>
+    <string name="pay_transfer">Transferencia</string>
+    <string name="pay_mixed">Mixto</string>
+    <string name="lbl_subtotal">Subtotal</string>
+    <string name="lbl_tax">Impuesto (IVA)</string>
+    <string name="lbl_discount">Descuento</string>
+    <string name="lbl_total">Total: %s</string>
+    <string name="btn_complete_sale">Registrar venta</string>
+    <string name="sale_voucher">Comprobante: %s</string>
+    <string name="sale_date">Fecha: %s</string>
+    <string name="sale_empty_cart">Selecciona al menos un producto para vender</string>
+
+    <!-- Entradas Previstas -->
+    <string name="title_inbound_deliveries">Entradas previstas</string>
+    <string name="tab_today">Hoy</string>
+    <string name="tab_tomorrow">Mañana</string>
+    <string name="btn_new_inbound">Nueva entrada prevista</string>
+    <string name="lbl_origin_reference">Origen / Referencia</string>
+    <string name="hint_origin_reference">Ej. Envío central, Distribuidora</string>
+    <string name="lbl_expected_date">Fecha prevista</string>
+    <string name="btn_receive_delivery">Recibir mercancía</string>
+    <string name="receive_confirm_title">¿Confirmar recepción?</string>
+    <string name="receive_confirm_desc">Al marcarla como recibida, se creará el lote y se sumará el stock al inventario.</string>
+    <string name="status_pending">Pendiente</string>
+    <string name="status_received">Recibida</string>
+
+    <!-- Alertas -->
+    <string name="title_alerts">Alertas</string>
+    <string name="filter_all_alerts">Todas</string>
+    <string name="filter_low_stock">Stock bajo</string>
+    <string name="filter_expiring">Por vencer</string>
+    <string name="filter_expired">Vencidos</string>
+    <string name="alert_low_stock_msg">Stock bajo: quedan %1$s unidades (mínimo %2$s)</string>
+    <string name="alert_expiring_msg">Vence en %1$d días (Lote: %2$s)</string>
+    <string name="alert_expired_msg">Ya venció el %1$s (Lote: %2$s)</string>
+    <string name="alerts_empty_title">Sin alertas pendientes</string>
+    <string name="alerts_empty_desc">Todo tu inventario está en niveles óptimos y sin vencimientos cercanos.</string>
+
+    <!-- Reportes -->
+    <string name="title_reports">Reportes</string>
+    <string name="period_7d">7 días</string>
+    <string name="period_30d">30 días</string>
+    <string name="period_3m">3 meses</string>
+    <string name="lbl_general_summary">Resumen general</string>
+    <string name="report_sales">Ventas</string>
+    <string name="report_profits">Ganancias</string>
+    <string name="report_losses">Pérdidas y bajas</string>
+    <string name="report_gross_margin">Margen bruto: %s%%</string>
+    <string name="report_best_sellers">Más vendidos</string>
+    <string name="report_worst_sellers">Menos vendidos</string>
+    <string name="report_monthly_productivity">Productividad por producto</string>
+    <string name="report_taxes_collected">Impuestos cobrados (IVA / Sales Tax)</string>
+    <string name="report_currency_selector">Moneda de reporte</string>
+
+    <!-- Configuración y Perfil -->
+    <string name="title_settings">Mi negocio</string>
+    <string name="section_business">Negocio</string>
+    <string name="section_preferences">Preferencias</string>
+    <string name="lbl_business_profile">Perfil del negocio</string>
+    <string name="opt_edit_business">Datos del negocio</string>
+    <string name="opt_change_password">Cambiar contraseña</string>
+    <string name="opt_notifications">Notificaciones</string>
+    <string name="opt_language">Idioma / Language</string>
+    <string name="opt_currency">Moneda principal</string>
+    <string name="opt_exchange_rates">Tasas de cambio</string>
+    <string name="opt_support">Soporte y ayuda</string>
+    <string name="btn_logout">Cerrar sesión</string>
+    <string name="logout_confirm_title">¿Cerrar sesión?</string>
+    <string name="logout_confirm_desc">Deberás ingresar nuevamente con tu correo y contraseña.</string>
+    <string name="lang_spanish">Español</string>
+    <string name="lang_english">English</string>
+
+    <!-- Categorías Traducidas -->
+    <string name="cat_alimentos">Alimentos</string>
+    <string name="cat_ropa">Ropa y Calzado</string>
+    <string name="cat_higiene">Higiene y Belleza</string>
+    <string name="cat_tecnologia">Tecnología</string>
+    <string name="cat_otros">Otros</string>
+
+    <!-- Errores del Backend y Códigos Estables -->
+    <string name="error_generic">Ha ocurrido un error inesperado</string>
+    <string name="error_stock_insuficiente">Stock insuficiente para realizar la operación</string>
+    <string name="error_producto_no_encontrado">Producto no encontrado</string>
+    <string name="error_lote_no_encontrado">Lote no encontrado</string>
+    <string name="error_credenciales_invalidas">Correo o contraseña incorrectos</string>
+    <string name="error_negocio_no_encontrado">Negocio no encontrado</string>
+    <string name="error_token_expirado">Tu sesión ha expirado. Inicia sesión nuevamente</string>
+    <string name="error_token_invalido">Token de autenticación inválido</string>
+    <string name="error_acceso_denegado">No tienes permisos para realizar esta acción</string>
+    <string name="error_entrada_no_encontrada">Entrada prevista no encontrada</string>
+    <string name="error_venta_no_encontrada">Venta no encontrada</string>
+    <string name="error_entrada_ya_recibida">Esta entrada ya fue recibida y no se puede modificar</string>
+    <string name="error_email_duplicado">Ya existe una cuenta registrada con este correo</string>
+    <string name="error_producto_inactivo">El producto está inactivo y no se puede vender</string>
+    <string name="error_validacion_fallida">Revisa los datos ingresados en el formulario</string>
+    <string name="error_operacion_invalida">Operación inválida para el estado actual</string>
+    <string name="error_recurso_no_encontrado">El recurso solicitado no fue encontrado</string>
+    <string name="error_interno">Error interno en el servidor. Inténtalo más tarde</string>
+    <string name="error_conexion_servidor">No se pudo conectar con el servidor (10.0.2.2:8080)</string>
+
+    <!-- Strings adicionales para pantallas conectadas -->
+    <string name="lbl_owner_name">Nombre del propietario</string>
+    <string name="hint_owner_name">Ej. Juan Pérez</string>
+    <string name="lbl_phone">Teléfono</string>
+    <string name="hint_phone">+57 300 123 4567</string>
+    <string name="tab_all">Todos</string>
+    <string name="empty_products_title">No se encontraron productos</string>
+    <string name="empty_products_subtitle">Agrega tu primer producto tocando el botón +</string>
+    <string name="empty_lots_title">Sin lotes registrados</string>
+    <string name="empty_lots_subtitle">Este producto no tiene lotes activos o vencimientos registrados.</string>
+    <string name="empty_inbound_title">No hay entradas previstas programadas</string>
+    <string name="empty_sales_title">No hay ventas registradas aún</string>
+    <string name="empty_movements_title">No hay movimientos registrados</string>
+
+    <!-- Configuración del Negocio y Tarifas 2026 -->
+    <string name="lbl_tax_rates_title">Tarifas de impuestos 2026</string>
+    <string name="lbl_tax_rates_subtitle">Consulta las tarifas aplicadas a tus ventas</string>
+    <string name="lbl_no_tax_rates">No se encontraron tarifas configuradas para este país</string>
+</resources>

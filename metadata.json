@@ -1,0 +1,6 @@
+{
+  "name": "StockPro",
+  "description": "Sistema móvil de gestión y control de inventarios para comercios y negocios",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

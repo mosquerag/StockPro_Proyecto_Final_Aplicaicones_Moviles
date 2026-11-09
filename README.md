@@ -228,3 +228,5 @@ La app Android (`ErrorTranslator.kt`) detecta dicho código y muestra el mensaje
 - Inglés: *"Insufficient stock to perform this operation"*
 
 ¡Felicitaciones! Ya tienes la solución integral de **StockPro** completamente funcional para operar inventarios, ventas y reportes de negocios comerciales.
+# StockPro_Proyecto_Final_Aplicaicones_Moviles
+ 4ffd91be3a981c731b88b43d7ab6299f596b8b81

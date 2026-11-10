@@ -24,7 +24,7 @@ public class TasaCambioController {
      */
     @GetMapping
     public ResponseEntity<List<TasaCambioDto>> getAllRates() {
-        return ResponseEntity.ok(currencyService.getAllRates());
+        return ResponseEntity.ok(currencyService.listAllRates());
     }
 
     /**
@@ -41,7 +41,7 @@ public class TasaCambioController {
      */
     @PostMapping("/manual")
     public ResponseEntity<TasaCambioDto> setManualRate(@Valid @RequestBody ManualTasaCambioRequest request) {
-        TasaCambioDto configurada = currencyService.saveManualRate(request);
+        TasaCambioDto configurada = currencyService.setManualRate(request);
         return ResponseEntity.ok(configurada);
     }
 }

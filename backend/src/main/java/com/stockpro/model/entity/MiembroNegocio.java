@@ -1,6 +1,8 @@
 package com.stockpro.model.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -25,6 +27,7 @@ public class MiembroNegocio {
     @Column(nullable = false, length = 30)
     private String rol; // PROPIETARIO, ADMINISTRADOR, EMPLEADO, CONSULTA
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String permisos = "[]";
 

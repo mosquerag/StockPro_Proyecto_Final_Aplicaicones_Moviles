@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,6 +26,7 @@ import com.example.R
 import com.example.data.StockProAppContainer
 import com.example.ui.components.StockProButton
 import com.example.ui.components.StockProTextField
+import com.example.ui.theme.StockProGreenContainer
 import com.example.ui.theme.StockProGreenDark
 import com.example.ui.theme.StockProGreenPrimary
 import com.example.ui.theme.StockProRedContainer
@@ -49,6 +52,7 @@ fun RegisterScreen(
     var businessName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
     var phone by remember { mutableStateOf("") }
     var selectedBusinessType by remember { mutableStateOf("TIENDA") }
     var selectedCountry by remember { mutableStateOf("CO") }
@@ -91,6 +95,33 @@ fun RegisterScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            if (registerState is UiState.Success) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = StockProGreenContainer),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = StockProGreenDark
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Cuenta creada con éxito. Iniciando sesión...",
+                            color = StockProGreenDark,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+                }
+            }
 
             if (registerState is UiState.Error) {
                 val errorCode = (registerState as UiState.Error).code
@@ -145,7 +176,17 @@ fun RegisterScreen(
                 onValueChange = { password = it },
                 label = stringResource(R.string.lbl_password),
                 placeholder = stringResource(R.string.hint_password),
-                leadingIcon = Icons.Default.Lock
+                leadingIcon = Icons.Default.Lock,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = null,
+                            tint = StockProGreenPrimary
+                        )
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(14.dp))

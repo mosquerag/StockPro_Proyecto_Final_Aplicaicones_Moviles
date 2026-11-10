@@ -9,6 +9,10 @@ import com.example.data.remote.dto.LoginRequestDto
 import com.example.data.remote.dto.RegisterBusinessRequestDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class AuthRepository(
     private val api: StockProApi,
@@ -28,7 +32,14 @@ class AuthRepository(
                 Result.failure(Exception(errorCode))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val errorMsg = when (e) {
+                is ConnectException,
+                is SocketTimeoutException,
+                is UnknownHostException,
+                is IOException -> "ERROR_CONEXION"
+                else -> e.message ?: "ERROR_INTERNO"
+            }
+            Result.failure(Exception(errorMsg))
         }
     }
 
@@ -44,7 +55,14 @@ class AuthRepository(
                 Result.failure(Exception(errorCode))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val errorMsg = when (e) {
+                is ConnectException,
+                is SocketTimeoutException,
+                is UnknownHostException,
+                is IOException -> "ERROR_CONEXION"
+                else -> e.message ?: "ERROR_INTERNO"
+            }
+            Result.failure(Exception(errorMsg))
         }
     }
 

@@ -6,16 +6,18 @@ import com.example.R
 /**
  * Traduce códigos de error estables provenientes del backend Spring Boot
  * a cadenas de texto localizadas (español e inglés) definidas en strings.xml.
+ * Si el mensaje recibido es un texto explicativo devuelto directamente por el backend,
+ * lo retorna tal cual para garantizar alertas descriptivas.
  */
 object ErrorTranslator {
 
     fun getErrorMessageRes(codigo: String?): Int {
-        return when (codigo?.trim()?.uppercase()) {
+        if (codigo.isNullOrBlank()) return R.string.error_generic
+        return when (codigo.trim().uppercase()) {
             "STOCK_INSUFICIENTE" -> R.string.error_stock_insuficiente
             "CREDENCIALES_INVALIDAS" -> R.string.error_credenciales_invalidas
             "TOKEN_EXPIRADO" -> R.string.error_token_expirado
-            "TOKEN_INVALIDO" -> R.string.error_token_invalido
-            "TOKEN_INVALIDO_O_EXPIRADO" -> R.string.error_token_expirado
+            "TOKEN_INVALIDO", "TOKEN_INVALIDO_O_EXPIRADO" -> R.string.error_token_invalido
             "ACCESO_DENEGADO" -> R.string.error_acceso_denegado
             "PRODUCTO_NO_ENCONTRADO" -> R.string.error_producto_no_encontrado
             "LOTE_NO_ENCONTRADO" -> R.string.error_lote_no_encontrado
@@ -34,12 +36,17 @@ object ErrorTranslator {
         }
     }
 
-    fun translate(context: Context, codigo: String?, fallbackMensaje: String? = null): String {
-        val stringRes = getErrorMessageRes(codigo)
-        return if (stringRes != R.string.error_generic) {
-            context.getString(stringRes)
-        } else {
-            fallbackMensaje?.takeIf { it.isNotBlank() } ?: context.getString(R.string.error_generic)
+    fun translate(context: Context, codigoOrMensaje: String?, fallbackMensaje: String? = null): String {
+        if (codigoOrMensaje.isNullOrBlank()) {
+            return fallbackMensaje?.takeIf { it.isNotBlank() } ?: context.getString(R.string.error_generic)
         }
+
+        val stringRes = getErrorMessageRes(codigoOrMensaje)
+        if (stringRes != R.string.error_generic) {
+            return context.getString(stringRes)
+        }
+
+        // Si es un mensaje detallado devuelto por Spring Boot (ej. "El correo ya está registrado"), se muestra directamente
+        return codigoOrMensaje
     }
 }

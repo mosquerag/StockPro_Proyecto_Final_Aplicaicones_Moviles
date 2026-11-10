@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "lotes", uniqueConstraints = {
-    @UniqueConstraint(name = "uq_producto_numero_lote", columnNames = {"producto_id", "numero_lote"})
+        @UniqueConstraint(name = "uq_producto_numero_lote", columnNames = {"producto_id", "numero_lote"})
 })
 public class Lote {
 
@@ -32,6 +32,9 @@ public class Lote {
 
     @Column(name = "cantidad_disponible", nullable = false, precision = 12, scale = 2)
     private BigDecimal cantidadDisponible;
+
+    @Column(name = "costo_unitario", precision = 12, scale = 4)
+    private BigDecimal costoUnitario;
 
     @Column(name = "fecha_ingreso", nullable = false)
     private LocalDate fechaIngreso = LocalDate.now();
@@ -64,6 +67,9 @@ public class Lote {
 
     public BigDecimal getCantidadDisponible() { return cantidadDisponible; }
     public void setCantidadDisponible(BigDecimal cantidadDisponible) { this.cantidadDisponible = cantidadDisponible; }
+
+    public BigDecimal getCostoUnitario() { return costoUnitario; }
+    public void setCostoUnitario(BigDecimal costoUnitario) { this.costoUnitario = costoUnitario; }
 
     public LocalDate getFechaIngreso() { return fechaIngreso; }
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }

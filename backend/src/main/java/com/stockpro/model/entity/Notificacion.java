@@ -19,6 +19,12 @@ public class Notificacion {
     @Column(nullable = false, length = 30)
     private String tipo; // STOCK_BAJO, PROXIMO_VENCER, VENCIDO, ENTRADA_PREVISTA, SISTEMA
 
+    @Column(length = 20)
+    private String prioridad = "NORMAL"; // ALTA, MEDIA, NORMAL, BAJA
+
+    @Column(name = "referencia_tipo", length = 50)
+    private String referenciaTipo; // PRODUCTO, LOTE, VENTA, ENTRADA_PREVISTA
+
     @Column(name = "referencia_id")
     private UUID referenciaId;
 
@@ -44,6 +50,12 @@ public class Notificacion {
 
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public String getPrioridad() { return prioridad; }
+    public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
+
+    public String getReferenciaTipo() { return referenciaTipo; }
+    public void setReferenciaTipo(String referenciaTipo) { this.referenciaTipo = referenciaTipo; }
 
     public UUID getReferenciaId() { return referenciaId; }
     public void setReferenciaId(UUID referenciaId) { this.referenciaId = referenciaId; }

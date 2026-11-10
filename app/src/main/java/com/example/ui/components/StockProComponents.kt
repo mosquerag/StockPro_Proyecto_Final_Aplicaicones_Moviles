@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -245,6 +246,7 @@ fun StockProTextField(
     placeholder: String? = null,
     leadingIcon: ImageVector? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     isError: Boolean = false,
     errorMessage: String? = null,
     singleLine: Boolean = true,
@@ -261,6 +263,7 @@ fun StockProTextField(
                 { Icon(imageVector = leadingIcon, contentDescription = null, tint = StockProGreenPrimary) }
             } else null,
             trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
             isError = isError,
             singleLine = singleLine,
             shape = RoundedCornerShape(12.dp),

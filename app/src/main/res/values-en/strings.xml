@@ -219,7 +219,7 @@
     <string name="error_operacion_invalida">Invalid operation for the current state</string>
     <string name="error_recurso_no_encontrado">The requested resource was not found</string>
     <string name="error_interno">Internal server error. Please try again later</string>
-    <string name="error_conexion_servidor">Could not connect to the server (10.0.2.2:8080)</string>
+    <string name="error_conexion_servidor">Could not connect to the server. Verify that your PC and Spring Boot are active on port 8080</string>
 
     <!-- Additional strings for connected screens -->
     <string name="lbl_owner_name">Owner name</string>

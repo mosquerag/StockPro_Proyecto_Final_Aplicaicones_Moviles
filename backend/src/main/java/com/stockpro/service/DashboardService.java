@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -109,11 +110,11 @@ public class DashboardService {
         LocalDate hoy = LocalDate.now();
         List<Lote> porVencer = loteRepository.findProximosAVencer(negocioId, hoy, hoy.plusDays(7));
         alertasDto.setPorVencerCount(porVencer.size());
-        alertasDto.setPorVencer(porVencer.stream().map(VencimientoAlertDto::new).collect(Collectors.toList()));
+        alertasDto.setPorVencer(porVencer.stream().map(l -> toVencimientoDto(l, hoy)).collect(Collectors.toList()));
 
         List<Lote> vencidos = loteRepository.findVencidos(negocioId, hoy);
         alertasDto.setVencidosCount(vencidos.size());
-        alertasDto.setVencidos(vencidos.stream().map(VencimientoAlertDto::new).collect(Collectors.toList()));
+        alertasDto.setVencidos(vencidos.stream().map(l -> toVencimientoDto(l, hoy)).collect(Collectors.toList()));
 
         alertasDto.setTotalAlertas(stockBajo.size() + porVencer.size() + vencidos.size());
         dto.setAlertas(alertasDto);
@@ -123,15 +124,45 @@ public class DashboardService {
                 .map(VentaDto::new)
                 .collect(Collectors.toList()));
 
-        // Entradas de hoy y de mañana
-        dto.setEntradasHoy(entradaRepository.findByNegocioIdAndFechaPrevistaOrderByCreatedAtDesc(negocioId, hoy).stream()
-                .map(EntradaPrevistaDto::new)
-                .collect(Collectors.toList()));
+        // Entradas de hoy (mapeo directo y seguro)
+        List<EntradaPrevista> listaHoy = entradaRepository.findByNegocioIdAndFechaPrevistaOrderByCreatedAtDesc(negocioId, hoy);
+        List<EntradaPrevistaDto> dtosHoy = new ArrayList<>();
+        if (listaHoy != null) {
+            for (EntradaPrevista ep : listaHoy) {
+                dtosHoy.add(new EntradaPrevistaDto(ep));
+            }
+        }
+        dto.setEntradasHoy(dtosHoy);
 
-        dto.setEntradasManana(entradaRepository.findByNegocioIdAndFechaPrevistaOrderByCreatedAtDesc(negocioId, hoy.plusDays(1)).stream()
-                .map(EntradaPrevistaDto::new)
-                .collect(Collectors.toList()));
+        // Entradas de mañana (mapeo directo y seguro)
+        List<EntradaPrevista> listaManana = entradaRepository.findByNegocioIdAndFechaPrevistaOrderByCreatedAtDesc(negocioId, hoy.plusDays(1));
+        List<EntradaPrevistaDto> dtosManana = new ArrayList<>();
+        if (listaManana != null) {
+            for (EntradaPrevista ep : listaManana) {
+                dtosManana.add(new EntradaPrevistaDto(ep));
+            }
+        }
+        dto.setEntradasManana(dtosManana);
 
         return dto;
+    }
+
+    private VencimientoAlertDto toVencimientoDto(Lote l, LocalDate hoy) {
+        long dias = l.getFechaVencimiento() != null
+                ? ChronoUnit.DAYS.between(hoy, l.getFechaVencimiento())
+                : 0;
+        String estado = dias < 0 ? "VENCIDO" : "PROXIMO_VENCER";
+        Producto p = l.getProducto();
+        String categoria = (p != null && p.getCategoria() != null) ? p.getCategoria().getNombre() : null;
+        return new VencimientoAlertDto(
+                l.getId(),
+                p != null ? p.getId() : null,
+                p != null ? p.getNombre() : null,
+                categoria,
+                l.getNumeroLote(),
+                l.getCantidadDisponible(),
+                l.getFechaVencimiento(),
+                dias,
+                estado);
     }
 }

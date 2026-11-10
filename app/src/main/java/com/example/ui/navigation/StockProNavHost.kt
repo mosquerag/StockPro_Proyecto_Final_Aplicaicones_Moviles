@@ -19,6 +19,7 @@ import com.example.R
 import com.example.ui.screens.alerts.AlertsScreen
 import com.example.ui.screens.auth.LoginScreen
 import com.example.ui.screens.auth.RegisterScreen
+import com.example.ui.screens.auth.WelcomeScreen
 import com.example.ui.screens.dashboard.DashboardScreen
 import com.example.ui.screens.inbound.CreateInboundScreen
 import com.example.ui.screens.inbound.InboundDeliveriesScreen
@@ -72,7 +73,7 @@ fun StockProApp(
     val context = androidx.compose.ui.platform.LocalContext.current
     val tokenManager = remember { com.example.data.local.security.TokenManager(context) }
     val startDestination = remember {
-        if (tokenManager.isLoggedIn()) NavRoute.Dashboard.route else NavRoute.Login.route
+        if (tokenManager.isLoggedIn()) NavRoute.Dashboard.route else NavRoute.Welcome.route
     }
 
     Scaffold(
@@ -123,11 +124,18 @@ fun StockProApp(
             startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(NavRoute.Welcome.route) {
+                WelcomeScreen(
+                    onNavigateToLogin = { navController.navigate(NavRoute.Login.route) },
+                    onNavigateToRegister = { navController.navigate(NavRoute.Register.route) }
+                )
+            }
+
             composable(NavRoute.Login.route) {
                 LoginScreen(
                     onLoginSuccess = {
                         navController.navigate(NavRoute.Dashboard.route) {
-                            popUpTo(NavRoute.Login.route) { inclusive = true }
+                            popUpTo(NavRoute.Welcome.route) { inclusive = true }
                         }
                     },
                     onNavigateToRegister = { navController.navigate(NavRoute.Register.route) }
@@ -139,7 +147,7 @@ fun StockProApp(
                     onNavigateBack = { navController.popBackStack() },
                     onRegisterSuccess = {
                         navController.navigate(NavRoute.Dashboard.route) {
-                            popUpTo(NavRoute.Login.route) { inclusive = true }
+                            popUpTo(NavRoute.Welcome.route) { inclusive = true }
                         }
                     }
                 )

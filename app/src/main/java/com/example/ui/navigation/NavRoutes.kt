@@ -1,6 +1,7 @@
 package com.example.ui.navigation
 
 sealed class NavRoute(val route: String) {
+    object Welcome : NavRoute("welcome")
     object Login : NavRoute("login")
     object Register : NavRoute("register")
     object Dashboard : NavRoute("dashboard")

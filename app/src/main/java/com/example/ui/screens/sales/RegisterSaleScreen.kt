@@ -1,5 +1,6 @@
 package com.example.ui.screens.sales
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -55,9 +57,16 @@ fun RegisterSaleScreen(
     var quantity by remember { mutableStateOf(1) }
     var selectedPaymentMethod by remember { mutableStateOf("EFECTIVO") }
 
+    BackHandler {
+        onNavigateBack()
+    }
+
     LaunchedEffect(products) {
-        if (selectedProductId == null && products.isNotEmpty()) {
-            selectedProductId = products.first().id
+        if (selectedProductId == null) {
+            val available = products.firstOrNull { it.stockActual > 0 }
+            if (available != null) {
+                selectedProductId = available.id
+            }
         }
     }
 
@@ -76,8 +85,10 @@ fun RegisterSaleScreen(
         products.find { it.id == selectedProductId }
     }
 
+    val maxStockAvailable = (selectedProduct?.stockActual ?: 0.0).toInt()
+
     val totalAmount = remember(selectedProduct, quantity) {
-        if (selectedProduct != null) {
+        if (selectedProduct != null && selectedProduct.stockActual > 0) {
             BigDecimal.valueOf(selectedProduct.precioVenta).multiply(BigDecimal(quantity))
         } else BigDecimal.ZERO
     }
@@ -147,9 +158,11 @@ fun RegisterSaleScreen(
                     } else {
                         StockProButton(
                             text = stringResource(R.string.btn_complete_sale),
+                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && maxStockAvailable > 0,
                             onClick = {
-                                if (selectedProductId != null) {
-                                    viewModel.updateCart(selectedProductId!!, quantity.toDouble())
+                                if (selectedProductId != null && maxStockAvailable > 0) {
+                                    val finalQty = quantity.coerceAtMost(maxStockAvailable)
+                                    viewModel.updateCart(selectedProductId!!, finalQty.toDouble())
                                     viewModel.submitSale(currencyCode, selectedPaymentMethod)
                                 }
                             },
@@ -177,17 +190,23 @@ fun RegisterSaleScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Lista de productos seleccionables del backend
+            // Lista de productos seleccionables
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredProducts) { product ->
-                    val isSelected = product.id == selectedProductId
+                    val isOutOfStock = product.stockActual <= 0
+                    val isSelected = product.id == selectedProductId && !isOutOfStock
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { selectedProductId = product.id }
+                            .alpha(if (isOutOfStock) 0.5f else 1.0f)
+                            .clickable(enabled = !isOutOfStock) {
+                                selectedProductId = product.id
+                                quantity = 1
+                            }
                             .then(
                                 if (isSelected) Modifier.border(2.dp, StockProGreenPrimary, RoundedCornerShape(14.dp))
                                 else Modifier
@@ -217,12 +236,15 @@ fun RegisterSaleScreen(
                                 )
                             }
                             Surface(
-                                color = StockProSurfaceVariant,
+                                color = if (isOutOfStock) StockProRedContainer else StockProSurfaceVariant,
                                 shape = RoundedCornerShape(10.dp)
                             ) {
                                 Text(
-                                    text = "Stock: ${product.stockActual.toInt()}",
-                                    style = MaterialTheme.typography.labelSmall.copy(color = StockProTextSecondary),
+                                    text = if (isOutOfStock) "AGOTADO" else "Stock: ${product.stockActual.toInt()}",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = if (isOutOfStock) StockProRedError else StockProTextSecondary,
+                                        fontWeight = FontWeight.Bold
+                                    ),
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
@@ -255,6 +277,7 @@ fun RegisterSaleScreen(
                     ) {
                         FilledIconButton(
                             onClick = { if (quantity > 1) quantity-- },
+                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && quantity > 1,
                             shape = CircleShape,
                             colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
                             modifier = Modifier.size(44.dp)
@@ -263,13 +286,14 @@ fun RegisterSaleScreen(
                         }
 
                         Text(
-                            text = quantity.toString(),
+                            text = if (selectedProduct != null && selectedProduct.stockActual > 0) quantity.toString() else "0",
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                             modifier = Modifier.padding(horizontal = 32.dp)
                         )
 
                         FilledIconButton(
-                            onClick = { quantity++ },
+                            onClick = { if (quantity < maxStockAvailable) quantity++ },
+                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && quantity < maxStockAvailable,
                             shape = CircleShape,
                             colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
                             modifier = Modifier.size(44.dp)

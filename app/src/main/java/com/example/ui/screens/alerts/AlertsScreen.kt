@@ -32,6 +32,7 @@ import com.example.data.remote.dto.VencimientoAlertDto
 import com.example.ui.components.EmptyStateView
 import com.example.ui.components.FilterChipItem
 import com.example.ui.theme.*
+import com.example.ui.util.Formatters
 import com.example.ui.viewmodel.AlertsViewModel
 import com.example.ui.viewmodel.StockProViewModelFactory
 import com.example.ui.viewmodel.UiState
@@ -66,7 +67,7 @@ fun AlertsScreen(
         AlertItemModel(
             id = prod.id,
             productName = prod.nombre,
-            message = "Solo quedan ${prod.stockActual.toInt()} unidades",
+            message = "Stock bajo: quedan ${prod.stockActual.toInt()} unidades (Mín: ${prod.stockMinimo.toInt()})",
             type = "STOCK_BAJO",
             isCritical = true,
             lote = null
@@ -77,7 +78,7 @@ fun AlertsScreen(
         AlertItemModel(
             id = lot.loteId,
             productName = lot.productoNombre,
-            message = "Vence en ${lot.diasRestantes} días (Lote: ${lot.numeroLote})",
+            message = "Vence en ${lot.diasRestantes} días · Vence el: ${Formatters.formatDate(lot.fechaVencimiento)} (Lote: ${lot.numeroLote})",
             type = "POR_VENCER",
             isCritical = false,
             lote = lot
@@ -88,7 +89,7 @@ fun AlertsScreen(
         AlertItemModel(
             id = lot.loteId,
             productName = lot.productoNombre,
-            message = "Vencido hace ${-lot.diasRestantes} días (Lote: ${lot.numeroLote})",
+            message = "VENCIDO el: ${Formatters.formatDate(lot.fechaVencimiento)} · ${lot.cantidadDisponible.toInt()} un. afectadas (Lote: ${lot.numeroLote})",
             type = "VENCIDO",
             isCritical = true,
             lote = lot
@@ -130,7 +131,6 @@ fun AlertsScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp)
         ) {
-            // Chips de filtro horizontal
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(vertical = 8.dp)

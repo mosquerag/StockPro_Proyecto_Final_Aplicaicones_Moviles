@@ -43,6 +43,22 @@ class NewEditProductViewModel(
         }
     }
 
+    private fun formatToIsoDate(dateStr: String?): String? {
+        if (dateStr.isNullOrBlank()) return null
+        val clean = dateStr.trim()
+        if (clean.matches(Regex("""\d{4}-\d{2}-\d{2}"""))) return clean
+        val parts = clean.split("/", "-")
+        if (parts.size == 3) {
+            if (parts[0].length == 2 && parts[2].length == 4) {
+                val day = parts[0].padStart(2, '0')
+                val month = parts[1].padStart(2, '0')
+                val year = parts[2]
+                return "$year-$month-$day"
+            }
+        }
+        return clean
+    }
+
     fun saveProduct(
         productId: String?,
         categoriaId: String,
@@ -61,6 +77,8 @@ class NewEditProductViewModel(
             return
         }
 
+        val formattedDate = formatToIsoDate(fechaVencimientoInicial)
+
         viewModelScope.launch {
             _saveState.value = UiState.Loading
             if (productId.isNullOrBlank()) {
@@ -70,11 +88,12 @@ class NewEditProductViewModel(
                     codigoBarras = codigoBarras?.takeIf { it.isNotBlank() },
                     costo = costo,
                     precioVenta = precioVenta,
+                    categoriaFiscal = "GENERAL",
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
                     cantidadInicial = cantidadInicial,
                     numeroLoteInicial = numeroLoteInicial?.takeIf { it.isNotBlank() },
-                    fechaVencimientoInicial = fechaVencimientoInicial?.takeIf { it.isNotBlank() }
+                    fechaVencimientoInicial = formattedDate?.takeIf { it.isNotBlank() }
                 )
                 val result = productRepository.createProduct(req)
                 result.fold(
@@ -88,6 +107,7 @@ class NewEditProductViewModel(
                     codigoBarras = codigoBarras?.takeIf { it.isNotBlank() },
                     costo = costo,
                     precioVenta = precioVenta,
+                    categoriaFiscal = "GENERAL",
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
                     activo = true

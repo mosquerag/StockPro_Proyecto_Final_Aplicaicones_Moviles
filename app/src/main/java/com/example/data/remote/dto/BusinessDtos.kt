@@ -1,7 +1,6 @@
 package com.example.data.remote.dto
 
 import com.squareup.moshi.JsonClass
-import java.math.BigDecimal
 
 @JsonClass(generateAdapter = true)
 data class TarifaImpuestoDto(
@@ -10,7 +9,7 @@ data class TarifaImpuestoDto(
     val estadoRegion: String? = null,
     val categoriaFiscal: String,
     val tipoImpuesto: String,
-    val porcentaje: BigDecimal,
+    val porcentaje: Double = 0.0,
     val vigenciaAnio: Int = 2026,
     val fuente: String? = null,
     val descripcion: String? = null

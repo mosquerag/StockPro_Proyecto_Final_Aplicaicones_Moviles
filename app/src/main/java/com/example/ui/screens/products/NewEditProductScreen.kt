@@ -1,7 +1,12 @@
 package com.example.ui.screens.products
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -22,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.R
 import com.example.data.StockProAppContainer
 import com.example.ui.components.StockProButton
@@ -64,8 +71,17 @@ fun NewEditProductScreen(
     var barcode by remember { mutableStateOf("") }
     var managesLots by remember { mutableStateOf(false) }
     var expirationDate by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     var expandedCategory by remember { mutableStateOf(false) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            imageUri = uri
+        }
+    }
 
     LaunchedEffect(productId) {
         if (!productId.isNullOrBlank()) {
@@ -147,28 +163,45 @@ fun NewEditProductScreen(
                 }
             }
 
-            // Imagen del producto (placeholder)
+            // Selector de Imagen con Photo Picker de Android
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
+                    .height(140.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(StockProSurfaceVariant)
-                    .border(1.dp, StockProOutline, RoundedCornerShape(16.dp)),
+                    .border(1.dp, StockProOutline, RoundedCornerShape(16.dp))
+                    .clickable {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.AddPhotoAlternate,
+                if (imageUri != null) {
+                    AsyncImage(
+                        model = imageUri,
                         contentDescription = null,
-                        tint = StockProGreenPrimary,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.bodySmall.copy(color = StockProTextSecondary)
-                    )
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.AddPhotoAlternate,
+                            contentDescription = null,
+                            tint = StockProGreenPrimary,
+                            modifier = Modifier.size(42.dp)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Agregar imagen",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = StockProGreenPrimary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+                    }
                 }
             }
 
@@ -183,7 +216,7 @@ fun NewEditProductScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Selector de Categoría dinámica del backend
+            // Selector de Categoría dinámica
             ExposedDropdownMenuBox(
                 expanded = expandedCategory,
                 onExpandedChange = { expandedCategory = !expandedCategory },
@@ -253,7 +286,7 @@ fun NewEditProductScreen(
                     value = initialStock,
                     onValueChange = { if (!isEditMode) initialStock = it },
                     label = stringResource(R.string.lbl_current_stock),
-                    enabled = !isEditMode, // El stock no se edita a mano en edición
+                    enabled = !isEditMode,
                     modifier = Modifier.weight(1f)
                 )
                 StockProTextField(
@@ -291,7 +324,7 @@ fun NewEditProductScreen(
                     value = expirationDate,
                     onValueChange = { expirationDate = it },
                     label = stringResource(R.string.lbl_expiration_date),
-                    placeholder = "YYYY-MM-DD",
+                    placeholder = "DD/MM/YYYY o YYYY-MM-DD",
                     leadingIcon = Icons.Default.CalendarToday
                 )
             }

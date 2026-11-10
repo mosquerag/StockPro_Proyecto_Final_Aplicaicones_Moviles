@@ -24,6 +24,7 @@ val StockProYellowWarning = Color(0xFFF59F00)
 val StockProYellowContainer = Color(0xFFFFF3BF)
 val StockProRedError = Color(0xFFE03131)
 val StockProRedContainer = Color(0xFFFFE3E3)
+val StockProPurple = Color(0xFF7950F2)
 
 // Textos
 val StockProTextPrimary = Color(0xFF19211E)

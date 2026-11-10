@@ -1,5 +1,6 @@
 package com.example.ui.screens.sales
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +43,10 @@ fun SaleDetailScreen(
     )
 ) {
     val saleState by viewModel.saleState.collectAsStateWithLifecycle()
+
+    BackHandler {
+        onNavigateBack()
+    }
 
     LaunchedEffect(saleId) {
         viewModel.loadSale(saleId)
@@ -106,7 +111,7 @@ fun SaleDetailScreen(
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = sale.fechaVenta,
+                    text = Formatters.formatDateTime(sale.fechaVenta),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
 

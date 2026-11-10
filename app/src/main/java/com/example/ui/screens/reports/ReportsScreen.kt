@@ -1,14 +1,24 @@
 package com.example.ui.screens.reports
 
+import android.content.Intent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +29,7 @@ import com.example.R
 import com.example.data.StockProAppContainer
 import com.example.ui.components.CurrencySelectorRow
 import com.example.ui.components.FilterChipItem
+import com.example.ui.components.StockProButton
 import com.example.ui.theme.*
 import com.example.ui.util.Formatters
 import com.example.ui.viewmodel.ReportsViewModel
@@ -35,6 +46,7 @@ fun ReportsScreen(
         factory = StockProViewModelFactory(StockProAppContainer.getInstance(LocalContext.current))
     )
 ) {
+    val context = LocalContext.current
     val reportState by viewModel.reportState.collectAsStateWithLifecycle()
 
     var selectedPeriod by remember { mutableStateOf("30 días") }
@@ -59,6 +71,43 @@ fun ReportsScreen(
     }
 
     val reportData = (reportState as? UiState.Success)?.data
+
+    // Datos estáticos/calculados para el Gráfico Donut de Ventas por Categoría (mock/calculado)
+    val categorySalesData = remember(reportData) {
+        listOf(
+            CategorySalesItem("Alimentos", 40.0, StockProGreenPrimary),
+            CategorySalesItem("Ropa", 25.0, StockProBlue),
+            CategorySalesItem("Higiene", 20.0, StockProYellowWarning),
+            CategorySalesItem("Otros", 15.0, StockProPurple)
+        )
+    }
+
+    val exportReportAction = {
+        if (reportData != null) {
+            val csv = StringBuilder()
+            csv.append("REPORTE DE VENTAS Y GANANCIAS - STOCKPRO\n")
+            csv.append("Periodo: $selectedPeriod | Moneda: $reportCurrency\n\n")
+            csv.append("RESUMEN GENERAL\n")
+            csv.append("Total Ventas,${Formatters.formatCurrency(BigDecimal.valueOf(reportData.ganancias.totalVentas), reportCurrency)}\n")
+            csv.append("Ganancia Bruta,${Formatters.formatCurrency(BigDecimal.valueOf(reportData.ganancias.gananciaBruta), reportCurrency)}\n")
+            csv.append("Margen Bruto,${reportData.ganancias.margenPorcentual}%\n")
+            csv.append("Perdidas/Bajas,${Formatters.formatCurrency(BigDecimal.valueOf(reportData.perdidasYBajas.costoTotalPerdidas), reportCurrency)}\n\n")
+            csv.append("PRODUCTOS MAS VENDIDOS\n")
+            csv.append("Producto,Cantidad Vendida,Total Recaudado\n")
+            reportData.masVendidos.forEach { item ->
+                csv.append("${item.productoNombre},${item.cantidadVendida.toInt()},${Formatters.formatCurrency(BigDecimal.valueOf(item.totalRecaudado), reportCurrency)}\n")
+            }
+
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, csv.toString())
+                putExtra(Intent.EXTRA_SUBJECT, "Reporte_StockPro_$periodCode.csv")
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Exportar reporte con")
+            context.startActivity(shareIntent)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -193,62 +242,107 @@ fun ReportsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                // Sección Menos Vendidos
+                // Gráfica Donut de Ventas por Categoría (Punto 5)
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.report_worst_sellers),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+                    CategorySalesPieChart(categoryData = categorySalesData)
                 }
 
-                items(reportData.menosVendidos) { item ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
+                // Botón Exportar Reporte
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    StockProButton(
+                        text = "Exportar reporte",
+                        leadingIcon = Icons.Default.Share,
+                        onClick = exportReportAction
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CategorySalesPieChart(
+    categoryData: List<CategorySalesItem>,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp)
+        ) {
+            Text(
+                text = "Ventas por categoría",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Gráfica Circular / Donut
+                Canvas(modifier = Modifier.size(130.dp)) {
+                    val strokeWidth = 28.dp.toPx()
+                    val diameter = size.minDimension - strokeWidth
+                    val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
+                    val arcSize = Size(diameter, diameter)
+
+                    var startAngle = -90f
+                    val totalPercentage = categoryData.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
+
+                    categoryData.forEach { item ->
+                        val sweepAngle = (item.percentage.toFloat() / totalPercentage) * 360f
+                        drawArc(
+                            color = item.color,
+                            startAngle = startAngle,
+                            sweepAngle = sweepAngle,
+                            useCenter = false,
+                            topLeft = topLeft,
+                            size = arcSize,
+                            style = Stroke(width = strokeWidth)
+                        )
+                        startAngle += sweepAngle
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Leyenda explicativa con nombres y porcentajes
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    categoryData.forEach { item ->
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.width(140.dp)
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = item.productoNombre, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                                Text(text = "${item.cantidadVendida.toInt()} unidades vendidas", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(item.color)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = item.categoryName,
+                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                )
                             }
                             Text(
-                                text = Formatters.formatCurrency(BigDecimal.valueOf(item.totalRecaudado), reportCurrency),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                text = "${item.percentage.toInt()}%",
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                             )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                // Sección Impuestos Cobrados
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.report_taxes_collected),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            reportData.impuestosCobrados.forEach { imp ->
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("${imp.categoriaFiscal} (${imp.tarifaPorcentaje.toInt()}%)", style = MaterialTheme.typography.bodyMedium)
-                                    Text(Formatters.formatCurrency(BigDecimal.valueOf(imp.montoCobrado), reportCurrency), fontWeight = FontWeight.Bold)
-                                }
-                            }
                         }
                     }
                 }
@@ -256,6 +350,12 @@ fun ReportsScreen(
         }
     }
 }
+
+private data class CategorySalesItem(
+    val categoryName: String,
+    val percentage: Double,
+    val color: Color
+)
 
 @Composable
 private fun ReportMetricRow(

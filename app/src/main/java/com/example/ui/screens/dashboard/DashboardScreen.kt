@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.R
 import com.example.data.StockProAppContainer
+import com.example.ui.components.FilterChipItem
 import com.example.ui.components.SummaryMetricCard
 import com.example.ui.theme.*
 import com.example.ui.util.Formatters
@@ -47,19 +49,32 @@ fun DashboardScreen(
     val cachedDashboard by viewModel.cachedDashboard.collectAsStateWithLifecycle()
     val dashboardState by viewModel.dashboardState.collectAsStateWithLifecycle()
 
+    var selectedPeriodicity by remember { mutableStateOf("Hoy") }
+    val periods = listOf("Hoy", "Semanal", "Quincenal", "Mensual", "Anual")
+
     LaunchedEffect(currencyCode) {
         viewModel.loadDashboard(currencyCode)
     }
 
-    // Usar datos del estado remoto si está listo, sino recurrir a la caché local de Room
     val remoteData = (dashboardState as? UiState.Success)?.data
     val displayName = remoteData?.negocioNombre?.takeIf { it.isNotBlank() }
         ?: cachedDashboard?.negocioNombre?.takeIf { it.isNotBlank() }
         ?: businessName
 
-    val estimatedEarnings = remoteData?.gananciasEstimadasHoy
+    val baseEarnings = remoteData?.gananciasEstimadasHoy
         ?: cachedDashboard?.gananciasEstimadasHoy
         ?: 0.0
+
+    // Factor multiplicador dinámico por periodicidad elegida
+    val displayedEarnings = remember(selectedPeriodicity, baseEarnings) {
+        when (selectedPeriodicity) {
+            "Semanal" -> baseEarnings * 7.0
+            "Quincenal" -> baseEarnings * 15.0
+            "Mensual" -> baseEarnings * 30.0
+            "Anual" -> baseEarnings * 365.0
+            else -> baseEarnings
+        }
+    }
 
     val productCount = remoteData?.cantidadProductos
         ?: cachedDashboard?.cantidadProductos
@@ -87,7 +102,6 @@ fun DashboardScreen(
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
     ) {
-        // Saludo y subtítulo
         item {
             Text(
                 text = stringResource(R.string.greeting_prefix, displayName),
@@ -98,7 +112,23 @@ fun DashboardScreen(
                 text = stringResource(R.string.dashboard_subtitle),
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+
+        // Selector Interactivo de Periodicidad para Ganancias Estimadas
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+            ) {
+                items(periods) { period ->
+                    FilterChipItem(
+                        label = period,
+                        isSelected = selectedPeriodicity == period,
+                        onClick = { selectedPeriodicity = period }
+                    )
+                }
+            }
         }
 
         // Tarjeta Hero Verde de Ganancias Estimadas
@@ -114,14 +144,14 @@ fun DashboardScreen(
                     modifier = Modifier.padding(20.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.estimated_earnings),
+                        text = "Ganancias estimadas ($selectedPeriodicity)",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = Color.White.copy(alpha = 0.9f)
                         )
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = Formatters.formatCurrency(BigDecimal.valueOf(estimatedEarnings), currencyCode),
+                        text = Formatters.formatCurrency(BigDecimal.valueOf(displayedEarnings), currencyCode),
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -364,7 +394,7 @@ fun DashboardScreen(
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                             )
                             Text(
-                                text = sale.metodoPago,
+                                text = "${sale.metodoPago} · ${Formatters.formatDateTime(sale.fechaVenta)}",
                                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                             )
                         }

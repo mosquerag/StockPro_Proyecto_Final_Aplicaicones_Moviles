@@ -80,8 +80,8 @@ fun DashboardScreen(
         ?: cachedDashboard?.cantidadProductos
         ?: 0L
 
-    val salesTodayCount = remoteData?.ultimasVentas?.size
-        ?: cachedDashboard?.ventasHoy?.toInt()
+    val salesTodayCount = remoteData?.cantidadVentasHoy
+        ?: cachedDashboard?.cantidadVentasHoy
         ?: 0
 
     val expiringCount = remoteData?.alertas?.porVencerCount

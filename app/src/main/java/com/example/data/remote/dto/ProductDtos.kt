@@ -20,6 +20,7 @@ data class ProductoDto(
     val stockActual: Double = 0.0,
     val stockMinimo: Double = 5.0,
     val manejaLotes: Boolean = false,
+    val imagenUrl: String? = null,
     val stockBajo: Boolean = false,
     val activo: Boolean = true,
     val createdAt: String? = null
@@ -38,6 +39,7 @@ data class CreateProductoRequestDto(
     val precioIncluyeImpuesto: Boolean = true,
     val stockMinimo: Double = 5.0,
     val manejaLotes: Boolean = false,
+    val imagenUrl: String? = null,
     val cantidadInicial: Double? = null,
     val numeroLoteInicial: String? = null,
     val fechaVencimientoInicial: String? = null
@@ -56,5 +58,6 @@ data class UpdateProductoRequestDto(
     val precioIncluyeImpuesto: Boolean = true,
     val stockMinimo: Double = 5.0,
     val manejaLotes: Boolean = false,
+    val imagenUrl: String? = null,
     val activo: Boolean = true
 )

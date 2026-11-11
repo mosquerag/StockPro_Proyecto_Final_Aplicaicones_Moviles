@@ -13,6 +13,7 @@ public class DashboardDto {
     private String moneda;
     private BigDecimal ventasHoy;
     private BigDecimal gananciasEstimadasHoy;
+    private int cantidadVentasHoy;
     private long cantidadProductos;
     private AlertasResumenDto alertas;
     private List<VentaDto> ultimasVentas = new ArrayList<>();
@@ -32,6 +33,9 @@ public class DashboardDto {
 
     public BigDecimal getGananciasEstimadasHoy() { return gananciasEstimadasHoy; }
     public void setGananciasEstimadasHoy(BigDecimal gananciasEstimadasHoy) { this.gananciasEstimadasHoy = gananciasEstimadasHoy; }
+
+    public int getCantidadVentasHoy() { return cantidadVentasHoy; }
+    public void setCantidadVentasHoy(int cantidadVentasHoy) { this.cantidadVentasHoy = cantidadVentasHoy; }
 
     public long getCantidadProductos() { return cantidadProductos; }
     public void setCantidadProductos(long cantidadProductos) { this.cantidadProductos = cantidadProductos; }

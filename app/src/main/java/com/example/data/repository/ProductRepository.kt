@@ -51,6 +51,7 @@ class ProductRepository(
                             stockActual = dto.stockActual,
                             stockMinimo = dto.stockMinimo,
                             manejaLotes = dto.manejaLotes,
+                            imagenUrl = dto.imagenUrl,
                             stockBajo = dto.stockBajo,
                             activo = dto.activo
                         )
@@ -102,6 +103,7 @@ class ProductRepository(
                         stockActual = created.stockActual,
                         stockMinimo = created.stockMinimo,
                         manejaLotes = created.manejaLotes,
+                        imagenUrl = created.imagenUrl,
                         stockBajo = created.stockBajo,
                         activo = created.activo
                     )
@@ -135,6 +137,7 @@ class ProductRepository(
                         stockActual = updated.stockActual,
                         stockMinimo = updated.stockMinimo,
                         manejaLotes = updated.manejaLotes,
+                        imagenUrl = updated.imagenUrl,
                         stockBajo = updated.stockBajo,
                         activo = updated.activo
                     )

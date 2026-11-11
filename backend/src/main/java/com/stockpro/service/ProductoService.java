@@ -98,6 +98,7 @@ public class ProductoService {
         producto.setPrecioIncluyeImpuesto(request.getPrecioIncluyeImpuesto() != null ? request.getPrecioIncluyeImpuesto() : true);
         producto.setStockMinimo(request.getStockMinimo() != null ? request.getStockMinimo() : new BigDecimal("5.00"));
         producto.setManejaLotes(request.getManejaLotes() != null ? request.getManejaLotes() : false);
+        producto.setImagenUrl(request.getImagenUrl());
         producto.setActivo(true);
         producto.setStockActual(BigDecimal.ZERO); // Inicialmente cero, se altera solo por movimiento transaccional
 
@@ -174,6 +175,7 @@ public class ProductoService {
         if (request.getPrecioIncluyeImpuesto() != null) producto.setPrecioIncluyeImpuesto(request.getPrecioIncluyeImpuesto());
         if (request.getStockMinimo() != null) producto.setStockMinimo(request.getStockMinimo());
         if (request.getManejaLotes() != null) producto.setManejaLotes(request.getManejaLotes());
+        if (request.getImagenUrl() != null) producto.setImagenUrl(request.getImagenUrl());
         if (request.getActivo() != null) producto.setActivo(request.getActivo());
 
         // Actualizar tarifa de impuesto si cambió

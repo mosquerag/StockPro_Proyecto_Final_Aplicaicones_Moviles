@@ -60,6 +60,9 @@ public class Producto {
     @Column(name = "maneja_lotes", nullable = false)
     private Boolean manejaLotes = false;
 
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
+    private String imagenUrl;
+
     @Column(nullable = false)
     private Boolean activo = true;
 
@@ -120,6 +123,9 @@ public class Producto {
 
     public Boolean getManejaLotes() { return manejaLotes; }
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }

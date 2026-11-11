@@ -1,5 +1,6 @@
 package com.example.ui.screens.sales
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.R
@@ -50,29 +52,27 @@ fun RegisterSaleScreen(
 ) {
     val context = LocalContext.current
     val products by viewModel.products.collectAsStateWithLifecycle()
+    val cart by viewModel.cart.collectAsStateWithLifecycle()
     val saleState by viewModel.saleState.collectAsStateWithLifecycle()
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedProductId by remember { mutableStateOf<String?>(null) }
-    var quantity by remember { mutableStateOf(1) }
     var selectedPaymentMethod by remember { mutableStateOf("EFECTIVO") }
+    var expandedPaymentMenu by remember { mutableStateOf(false) }
+
+    val paymentMethods = listOf("EFECTIVO", "TARJETA", "TRANSFERENCIA", "MIXTO")
 
     BackHandler {
         onNavigateBack()
     }
 
-    LaunchedEffect(products) {
-        if (selectedProductId == null) {
-            val available = products.firstOrNull { it.stockActual > 0 }
-            if (available != null) {
-                selectedProductId = available.id
-            }
-        }
+    LaunchedEffect(Unit) {
+        viewModel.loadProducts()
     }
 
     LaunchedEffect(saleState) {
         if (saleState is UiState.Success) {
             val created = (saleState as UiState.Success).data
+            Log.d("STOCKPRO_DEBUG", "Venta creada exitosamente con ID: ${created.id}")
             onSaleCompleted(created.id)
         }
     }
@@ -81,16 +81,23 @@ fun RegisterSaleScreen(
         products.filter { it.nombre.contains(searchQuery, ignoreCase = true) }
     }
 
-    val selectedProduct = remember(selectedProductId, products) {
-        products.find { it.id == selectedProductId }
+    val productMap = remember(products) {
+        products.associateBy { it.id }
     }
 
-    val maxStockAvailable = (selectedProduct?.stockActual ?: 0.0).toInt()
+    val totalSelectedUnits = remember(cart) {
+        cart.values.sum().toInt()
+    }
 
-    val totalAmount = remember(selectedProduct, quantity) {
-        if (selectedProduct != null && selectedProduct.stockActual > 0) {
-            BigDecimal.valueOf(selectedProduct.precioVenta).multiply(BigDecimal(quantity))
-        } else BigDecimal.ZERO
+    val totalAmount = remember(cart, productMap) {
+        var sum = BigDecimal.ZERO
+        cart.forEach { (prodId, qty) ->
+            val p = productMap[prodId]
+            if (p != null) {
+                sum = sum.add(BigDecimal.valueOf(p.precioVenta).multiply(BigDecimal.valueOf(qty)))
+            }
+        }
+        sum
     }
 
     Scaffold(
@@ -119,6 +126,8 @@ fun RegisterSaleScreen(
                 ) {
                     if (saleState is UiState.Error) {
                         val errorCode = (saleState as UiState.Error).code
+                        val errorText = ErrorTranslator.translate(context, errorCode)
+                        Log.e("STOCKPRO_DEBUG", "Error al procesar venta: $errorCode - $errorText")
                         Card(
                             colors = CardDefaults.cardColors(containerColor = StockProRedContainer),
                             shape = RoundedCornerShape(10.dp),
@@ -127,13 +136,71 @@ fun RegisterSaleScreen(
                                 .padding(bottom = 10.dp)
                         ) {
                             Text(
-                                text = ErrorTranslator.translate(context, errorCode),
+                                text = errorText,
                                 color = StockProRedError,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                                 modifier = Modifier.padding(10.dp)
                             )
                         }
                     }
+
+                    // Resumen de Venta Multiproducto
+                    Text(
+                        text = "Resumen de venta",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "$totalSelectedUnits unidades seleccionadas",
+                            style = MaterialTheme.typography.bodyMedium.copy(color = StockProTextSecondary)
+                        )
+                        Text(
+                            text = Formatters.formatCurrency(totalAmount, currencyCode),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Selector Método de Pago
+                    ExposedDropdownMenuBox(
+                        expanded = expandedPaymentMenu,
+                        onExpandedChange = { expandedPaymentMenu = !expandedPaymentMenu },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = selectedPaymentMethod,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.lbl_payment_method)) },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedPaymentMenu) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = StockProGreenPrimary),
+                            modifier = Modifier.menuAnchor().fillMaxWidth()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expandedPaymentMenu,
+                            onDismissRequest = { expandedPaymentMenu = false }
+                        ) {
+                            paymentMethods.forEach { method ->
+                                DropdownMenuItem(
+                                    text = { Text(method) },
+                                    onClick = {
+                                        selectedPaymentMethod = method
+                                        expandedPaymentMenu = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -158,13 +225,9 @@ fun RegisterSaleScreen(
                     } else {
                         StockProButton(
                             text = stringResource(R.string.btn_complete_sale),
-                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && maxStockAvailable > 0,
+                            enabled = totalSelectedUnits > 0,
                             onClick = {
-                                if (selectedProductId != null && maxStockAvailable > 0) {
-                                    val finalQty = quantity.coerceAtMost(maxStockAvailable)
-                                    viewModel.updateCart(selectedProductId!!, finalQty.toDouble())
-                                    viewModel.submitSale(currencyCode, selectedPaymentMethod)
-                                }
+                                viewModel.submitSale(currencyCode, selectedPaymentMethod)
                             },
                             testTag = "confirm_sale_button"
                         )
@@ -190,37 +253,35 @@ fun RegisterSaleScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Lista de productos seleccionables
+            // Lista Multiproducto de Carrito con Stepper por fila
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(filteredProducts) { product ->
                     val isOutOfStock = product.stockActual <= 0
-                    val isSelected = product.id == selectedProductId && !isOutOfStock
+                    val currentQty = cart[product.id]?.toInt() ?: 0
+                    val maxAvailable = product.stockActual.toInt()
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .alpha(if (isOutOfStock) 0.5f else 1.0f)
-                            .clickable(enabled = !isOutOfStock) {
-                                selectedProductId = product.id
-                                quantity = 1
-                            }
                             .then(
-                                if (isSelected) Modifier.border(2.dp, StockProGreenPrimary, RoundedCornerShape(14.dp))
+                                if (currentQty > 0) Modifier.border(2.dp, StockProGreenPrimary, RoundedCornerShape(14.dp))
                                 else Modifier
                             ),
                         shape = RoundedCornerShape(14.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) StockProGreenContainer.copy(alpha = 0.4f) else MaterialTheme.colorScheme.surface
+                            containerColor = if (currentQty > 0) StockProGreenContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surface
                         )
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
@@ -234,19 +295,53 @@ fun RegisterSaleScreen(
                                         fontWeight = FontWeight.Bold
                                     )
                                 )
-                            }
-                            Surface(
-                                color = if (isOutOfStock) StockProRedContainer else StockProSurfaceVariant,
-                                shape = RoundedCornerShape(10.dp)
-                            ) {
                                 Text(
-                                    text = if (isOutOfStock) "AGOTADO" else "Stock: ${product.stockActual.toInt()}",
+                                    text = if (isOutOfStock) "AGOTADO" else "Stock: $maxAvailable",
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         color = if (isOutOfStock) StockProRedError else StockProTextSecondary,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                        fontWeight = FontWeight.Medium
+                                    )
                                 )
+                            }
+
+                            // Stepper de Cantidad por Producto ( -  qty  + )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                FilledIconButton(
+                                    onClick = {
+                                        if (currentQty > 0) {
+                                            viewModel.updateCart(product.id, (currentQty - 1).toDouble())
+                                        }
+                                    },
+                                    enabled = !isOutOfStock && currentQty > 0,
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(Icons.Default.Remove, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(18.dp))
+                                }
+
+                                Text(
+                                    text = currentQty.toString(),
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                )
+
+                                FilledIconButton(
+                                    onClick = {
+                                        if (currentQty < maxAvailable) {
+                                            viewModel.updateCart(product.id, (currentQty + 1).toDouble())
+                                        }
+                                    },
+                                    enabled = !isOutOfStock && currentQty < maxAvailable,
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(18.dp))
+                                }
                             }
                         }
                     }
@@ -254,57 +349,6 @@ fun RegisterSaleScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            // Selector de Cantidad con Stepper
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.lbl_quantity),
-                        style = MaterialTheme.typography.labelMedium.copy(color = StockProTextSecondary)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        FilledIconButton(
-                            onClick = { if (quantity > 1) quantity-- },
-                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && quantity > 1,
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
-                            modifier = Modifier.size(44.dp)
-                        ) {
-                            Icon(Icons.Default.Remove, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
-                        }
-
-                        Text(
-                            text = if (selectedProduct != null && selectedProduct.stockActual > 0) quantity.toString() else "0",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(horizontal = 32.dp)
-                        )
-
-                        FilledIconButton(
-                            onClick = { if (quantity < maxStockAvailable) quantity++ },
-                            enabled = selectedProduct != null && selectedProduct.stockActual > 0 && quantity < maxStockAvailable,
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.filledIconButtonColors(containerColor = StockProSurfaceVariant),
-                            modifier = Modifier.size(44.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
@@ -21,14 +22,16 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(LocaleManager.getSavedLanguage(this@MainActivity))
             }
 
-            ProvideAppLocale(languageCode = currentLanguage) {
-                StockProTheme {
-                    StockProApp(
-                        currentLanguage = currentLanguage,
-                        onLanguageChanged = { newLang ->
-                            currentLanguage = newLang
-                        }
-                    )
+            CompositionLocalProvider(LocalActivityResultRegistryOwner provides this) {
+                ProvideAppLocale(languageCode = currentLanguage) {
+                    StockProTheme {
+                        StockProApp(
+                            currentLanguage = currentLanguage,
+                            onLanguageChanged = { newLang ->
+                                currentLanguage = newLang
+                            }
+                        )
+                    }
                 }
             }
         }

@@ -19,6 +19,7 @@ data class ProductEntity(
     val stockActual: Double,
     val stockMinimo: Double,
     val manejaLotes: Boolean,
+    val imagenUrl: String?,
     val stockBajo: Boolean,
     val activo: Boolean,
     val lastUpdated: Long = System.currentTimeMillis()

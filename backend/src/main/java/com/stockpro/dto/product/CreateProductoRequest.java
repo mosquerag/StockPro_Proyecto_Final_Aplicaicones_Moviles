@@ -41,6 +41,8 @@ public class CreateProductoRequest {
 
     private Boolean manejaLotes = false;
 
+    private String imagenUrl;
+
     // Campos opcionales para ingreso de inventario inicial transaccional
     private BigDecimal cantidadInicial;
     private String numeroLoteInicial;
@@ -70,6 +72,8 @@ public class CreateProductoRequest {
     public void setStockMinimo(BigDecimal stockMinimo) { this.stockMinimo = stockMinimo; }
     public Boolean getManejaLotes() { return manejaLotes; }
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public BigDecimal getCantidadInicial() { return cantidadInicial; }
     public void setCantidadInicial(BigDecimal cantidadInicial) { this.cantidadInicial = cantidadInicial; }
     public String getNumeroLoteInicial() { return numeroLoteInicial; }

@@ -23,6 +23,7 @@ public class ProductoDto {
     private BigDecimal stockActual;
     private BigDecimal stockMinimo;
     private Boolean manejaLotes;
+    private String imagenUrl;
     private Boolean stockBajo;
     private Boolean activo;
     private OffsetDateTime createdAt;
@@ -50,6 +51,7 @@ public class ProductoDto {
         this.stockActual = p.getStockActual();
         this.stockMinimo = p.getStockMinimo();
         this.manejaLotes = p.getManejaLotes();
+        this.imagenUrl = p.getImagenUrl();
         this.stockBajo = p.getStockActual().compareTo(p.getStockMinimo()) <= 0;
         this.activo = p.getActivo();
         this.createdAt = p.getCreatedAt();
@@ -87,6 +89,8 @@ public class ProductoDto {
     public void setStockMinimo(BigDecimal stockMinimo) { this.stockMinimo = stockMinimo; }
     public Boolean getManejaLotes() { return manejaLotes; }
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public Boolean getStockBajo() { return stockBajo; }
     public void setStockBajo(Boolean stockBajo) { this.stockBajo = stockBajo; }
     public Boolean getActivo() { return activo; }

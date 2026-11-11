@@ -40,6 +40,8 @@ public class UpdateProductoRequest {
 
     private Boolean manejaLotes;
 
+    private String imagenUrl;
+
     private Boolean activo;
 
     // NOTA DE REGLA DE NEGOCIO:
@@ -70,6 +72,8 @@ public class UpdateProductoRequest {
     public void setStockMinimo(BigDecimal stockMinimo) { this.stockMinimo = stockMinimo; }
     public Boolean getManejaLotes() { return manejaLotes; }
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
 }

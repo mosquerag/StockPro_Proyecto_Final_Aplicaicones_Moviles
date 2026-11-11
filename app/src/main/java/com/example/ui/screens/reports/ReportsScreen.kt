@@ -103,8 +103,11 @@ fun ReportsScreen(
                 putExtra(Intent.EXTRA_TEXT, csv.toString())
                 putExtra(Intent.EXTRA_SUBJECT, "Reporte_StockPro_$periodCode.csv")
                 type = "text/plain"
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            val shareIntent = Intent.createChooser(sendIntent, "Exportar reporte con")
+            val shareIntent = Intent.createChooser(sendIntent, "Exportar reporte con").apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
             context.startActivity(shareIntent)
         }
     }

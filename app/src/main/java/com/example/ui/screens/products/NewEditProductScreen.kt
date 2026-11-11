@@ -1,8 +1,12 @@
 package com.example.ui.screens.products
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.net.Uri
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddPhotoAlternate
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,6 +49,15 @@ import com.example.ui.viewmodel.NewEditProductViewModel
 import com.example.ui.viewmodel.StockProViewModelFactory
 import com.example.ui.viewmodel.UiState
 
+private fun Context.findActivity(): ComponentActivity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is ComponentActivity) return context
+        context = context.baseContext
+    }
+    return null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewEditProductScreen(
@@ -53,6 +67,36 @@ fun NewEditProductScreen(
     viewModel: NewEditProductViewModel = viewModel(
         factory = StockProViewModelFactory(StockProAppContainer.getInstance(LocalContext.current))
     )
+) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
+    if (activity != null) {
+        CompositionLocalProvider(LocalActivityResultRegistryOwner provides activity) {
+            NewEditProductScreenContent(
+                productId = productId,
+                onNavigateBack = onNavigateBack,
+                onSaveSuccess = onSaveSuccess,
+                viewModel = viewModel
+            )
+        }
+    } else {
+        NewEditProductScreenContent(
+            productId = productId,
+            onNavigateBack = onNavigateBack,
+            onSaveSuccess = onSaveSuccess,
+            viewModel = viewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NewEditProductScreenContent(
+    productId: String? = null,
+    onNavigateBack: () -> Unit,
+    onSaveSuccess: () -> Unit,
+    viewModel: NewEditProductViewModel
 ) {
     val context = LocalContext.current
     val isEditMode = !productId.isNullOrBlank()
@@ -76,15 +120,17 @@ fun NewEditProductScreen(
     var expandedCategory by remember { mutableStateOf(false) }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
+        contract = ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             imageUri = uri
+            Log.d("STOCKPRO_DEBUG", "Imagen seleccionada: $uri")
         }
     }
 
     LaunchedEffect(productId) {
         if (!productId.isNullOrBlank()) {
+            Log.d("STOCKPRO_DEBUG", "Cargando producto para edición con ID: $productId")
             viewModel.loadProduct(productId)
         }
     }
@@ -100,6 +146,7 @@ fun NewEditProductScreen(
             minStock = p.stockMinimo.toString()
             barcode = p.codigoBarras.orEmpty()
             managesLots = p.manejaLotes
+            imageUri = p.imagenUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
         }
     }
 
@@ -112,6 +159,7 @@ fun NewEditProductScreen(
 
     LaunchedEffect(saveState) {
         if (saveState is UiState.Success) {
+            Log.d("STOCKPRO_DEBUG", "Producto guardado exitosamente")
             onSaveSuccess()
         }
     }
@@ -147,6 +195,8 @@ fun NewEditProductScreen(
 
             if (saveState is UiState.Error) {
                 val errorCode = (saveState as UiState.Error).code
+                val errorMsg = ErrorTranslator.translate(context, errorCode)
+                Log.e("STOCKPRO_DEBUG", "Error al guardar producto: $errorCode - $errorMsg")
                 Card(
                     colors = CardDefaults.cardColors(containerColor = StockProRedContainer),
                     shape = RoundedCornerShape(12.dp),
@@ -155,7 +205,7 @@ fun NewEditProductScreen(
                         .padding(bottom = 12.dp)
                 ) {
                     Text(
-                        text = ErrorTranslator.translate(context, errorCode),
+                        text = errorMsg,
                         color = StockProRedError,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(14.dp)
@@ -163,7 +213,7 @@ fun NewEditProductScreen(
                 }
             }
 
-            // Selector de Imagen con Photo Picker de Android
+            // Selector de Imagen
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -172,9 +222,7 @@ fun NewEditProductScreen(
                     .background(StockProSurfaceVariant)
                     .border(1.dp, StockProOutline, RoundedCornerShape(16.dp))
                     .clickable {
-                        photoPickerLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        photoPickerLauncher.launch("image/*")
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -216,40 +264,49 @@ fun NewEditProductScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Selector de Categoría dinámica
-            ExposedDropdownMenuBox(
-                expanded = expandedCategory,
-                onExpandedChange = { expandedCategory = !expandedCategory },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            // Selector de Categoría Robusto
+            Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = selectedCategoryName,
+                    value = selectedCategoryName.ifBlank { "Seleccionar categoría" },
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.lbl_category)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
+                    trailingIcon = {
+                        IconButton(onClick = { expandedCategory = !expandedCategory }) {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = StockProGreenPrimary)
+                        }
+                    },
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = StockProGreenPrimary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     ),
                     modifier = Modifier
-                        .menuAnchor()
                         .fillMaxWidth()
+                        .clickable { expandedCategory = !expandedCategory }
                 )
-                ExposedDropdownMenu(
+
+                DropdownMenu(
                     expanded = expandedCategory,
-                    onDismissRequest = { expandedCategory = false }
+                    onDismissRequest = { expandedCategory = false },
+                    modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
-                    categoriesList.forEach { cat ->
+                    if (categoriesList.isEmpty()) {
                         DropdownMenuItem(
-                            text = { Text(cat.nombre) },
-                            onClick = {
-                                selectedCategoryId = cat.id
-                                selectedCategoryName = cat.nombre
-                                expandedCategory = false
-                            }
+                            text = { Text("Cargando categorías...") },
+                            onClick = { expandedCategory = false }
                         )
+                    } else {
+                        categoriesList.forEach { cat ->
+                            DropdownMenuItem(
+                                text = { Text(cat.nombre) },
+                                onClick = {
+                                    selectedCategoryId = cat.id
+                                    selectedCategoryName = cat.nombre
+                                    expandedCategory = false
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -353,7 +410,8 @@ fun NewEditProductScreen(
                             manejaLotes = managesLots,
                             cantidadInicial = if (!isEditMode && initStk > 0) initStk else null,
                             numeroLoteInicial = if (!isEditMode && managesLots && initStk > 0) "LOTE-INIT-1" else null,
-                            fechaVencimientoInicial = if (!isEditMode && managesLots && expirationDate.isNotBlank()) expirationDate else null
+                            fechaVencimientoInicial = if (!isEditMode && managesLots && expirationDate.isNotBlank()) expirationDate else null,
+                            imagenUrl = imageUri?.toString()
                         )
                     },
                     testTag = "save_product_button"

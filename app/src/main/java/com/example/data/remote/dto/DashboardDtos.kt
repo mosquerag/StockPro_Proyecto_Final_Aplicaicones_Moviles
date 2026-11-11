@@ -19,6 +19,7 @@ data class DashboardDto(
     val moneda: String = "COP",
     val ventasHoy: Double = 0.0,
     val gananciasEstimadasHoy: Double = 0.0,
+    val cantidadVentasHoy: Int = 0,
     val cantidadProductos: Long = 0,
     val alertas: AlertasResumenDto = AlertasResumenDto(),
     val ultimasVentas: List<VentaDto> = emptyList(),

@@ -11,6 +11,7 @@ data class DashboardCacheEntity(
     val moneda: String,
     val ventasHoy: Double,
     val gananciasEstimadasHoy: Double,
+    val cantidadVentasHoy: Int = 0,
     val cantidadProductos: Long,
     val totalAlertas: Int,
     val stockBajoCount: Int,

@@ -70,7 +70,8 @@ class NewEditProductViewModel(
         manejaLotes: Boolean,
         cantidadInicial: Double?,
         numeroLoteInicial: String?,
-        fechaVencimientoInicial: String?
+        fechaVencimientoInicial: String?,
+        imagenUrl: String? = null
     ) {
         if (nombre.isBlank() || categoriaId.isBlank() || costo < 0 || precioVenta < 0) {
             _saveState.value = UiState.Error("CAMPOS_OBLIGATORIOS")
@@ -91,6 +92,7 @@ class NewEditProductViewModel(
                     categoriaFiscal = "GENERAL",
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
+                    imagenUrl = imagenUrl?.takeIf { it.isNotBlank() },
                     cantidadInicial = cantidadInicial,
                     numeroLoteInicial = numeroLoteInicial?.takeIf { it.isNotBlank() },
                     fechaVencimientoInicial = formattedDate?.takeIf { it.isNotBlank() }
@@ -110,6 +112,7 @@ class NewEditProductViewModel(
                     categoriaFiscal = "GENERAL",
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
+                    imagenUrl = imagenUrl?.takeIf { it.isNotBlank() },
                     activo = true
                 )
                 val result = productRepository.updateProduct(productId, req)

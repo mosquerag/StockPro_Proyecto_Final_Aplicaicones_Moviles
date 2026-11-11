@@ -27,6 +27,7 @@ class DashboardRepository(
                     moneda = dto.moneda,
                     ventasHoy = dto.ventasHoy,
                     gananciasEstimadasHoy = dto.gananciasEstimadasHoy,
+                    cantidadVentasHoy = dto.cantidadVentasHoy,
                     cantidadProductos = dto.cantidadProductos,
                     totalAlertas = dto.alertas.totalAlertas,
                     stockBajoCount = dto.alertas.stockBajoCount,

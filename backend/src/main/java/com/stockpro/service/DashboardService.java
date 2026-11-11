@@ -96,6 +96,7 @@ public class DashboardService {
 
         dto.setVentasHoy(currencyService.roundCurrency(totalVentas, moneda));
         dto.setGananciasEstimadasHoy(currencyService.roundCurrency(gananciasEstimadas, moneda));
+        dto.setCantidadVentasHoy(ventasHoy.size());
 
         // Cantidad de productos activos
         dto.setCantidadProductos(productoRepository.countByNegocioIdAndActivoTrue(negocioId));

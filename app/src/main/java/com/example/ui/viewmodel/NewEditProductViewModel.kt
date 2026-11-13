@@ -99,7 +99,10 @@ class NewEditProductViewModel(
                 )
                 val result = productRepository.createProduct(req)
                 result.fold(
-                    onSuccess = { _saveState.value = UiState.Success(it) },
+                    onSuccess = {
+                        productRepository.refreshProducts()
+                        _saveState.value = UiState.Success(it)
+                    },
                     onFailure = { _saveState.value = UiState.Error(it.message ?: "ERROR_DESCONOCIDO") }
                 )
             } else {
@@ -113,11 +116,16 @@ class NewEditProductViewModel(
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
                     imagenUrl = imagenUrl?.takeIf { it.isNotBlank() },
+                    stockActual = cantidadInicial,
+                    fechaVencimiento = formattedDate?.takeIf { it.isNotBlank() },
                     activo = true
                 )
                 val result = productRepository.updateProduct(productId, req)
                 result.fold(
-                    onSuccess = { _saveState.value = UiState.Success(it) },
+                    onSuccess = {
+                        productRepository.refreshProducts()
+                        _saveState.value = UiState.Success(it)
+                    },
                     onFailure = { _saveState.value = UiState.Error(it.message ?: "ERROR_DESCONOCIDO") }
                 )
             }

@@ -21,6 +21,7 @@ data class ProductoDto(
     val stockMinimo: Double = 5.0,
     val manejaLotes: Boolean = false,
     val imagenUrl: String? = null,
+    val fechaVencimiento: String? = null,
     val stockBajo: Boolean = false,
     val activo: Boolean = true,
     val createdAt: String? = null
@@ -59,5 +60,7 @@ data class UpdateProductoRequestDto(
     val stockMinimo: Double = 5.0,
     val manejaLotes: Boolean = false,
     val imagenUrl: String? = null,
+    val stockActual: Double? = null,
+    val fechaVencimiento: String? = null,
     val activo: Boolean = true
 )

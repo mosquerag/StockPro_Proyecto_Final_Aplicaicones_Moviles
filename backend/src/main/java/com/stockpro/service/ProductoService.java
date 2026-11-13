@@ -177,6 +177,33 @@ public class ProductoService {
         if (request.getManejaLotes() != null) producto.setManejaLotes(request.getManejaLotes());
         if (request.getImagenUrl() != null) producto.setImagenUrl(request.getImagenUrl());
         if (request.getActivo() != null) producto.setActivo(request.getActivo());
+        if (request.getStockActual() != null && request.getStockActual().compareTo(BigDecimal.ZERO) >= 0) {
+            producto.setStockActual(request.getStockActual());
+        }
+
+        if (request.getFechaVencimiento() != null || Boolean.TRUE.equals(producto.getManejaLotes())) {
+            List<Lote> lotes = loteRepository.findByProductoIdAndEstadoOrderByFechaVencimientoAsc(producto.getId(), "ACTIVO");
+            if (!lotes.isEmpty()) {
+                Lote loteActivo = lotes.get(0);
+                if (request.getFechaVencimiento() != null) {
+                    loteActivo.setFechaVencimiento(request.getFechaVencimiento());
+                }
+                if (request.getStockActual() != null) {
+                    loteActivo.setCantidadDisponible(request.getStockActual());
+                }
+                loteRepository.save(loteActivo);
+            } else if (request.getFechaVencimiento() != null) {
+                Lote nuevoLote = new Lote();
+                nuevoLote.setNegocio(producto.getNegocio());
+                nuevoLote.setProducto(producto);
+                nuevoLote.setNumeroLote("LOTE-EDIT-" + System.currentTimeMillis());
+                nuevoLote.setCantidadInicial(producto.getStockActual());
+                nuevoLote.setCantidadDisponible(producto.getStockActual());
+                nuevoLote.setFechaVencimiento(request.getFechaVencimiento());
+                nuevoLote.setEstado("ACTIVO");
+                loteRepository.save(nuevoLote);
+            }
+        }
 
         // Actualizar tarifa de impuesto si cambió
         TarifaImpuesto tarifa = resolverTarifaImpuesto(request.getTarifaImpuestoId(), producto.getNegocio().getPais(), request.getCategoriaFiscal());
@@ -213,7 +240,7 @@ public class ProductoService {
         if (tarifaId != null) {
             return tarifaImpuestoRepository.findById(tarifaId).orElse(null);
         }
-        return tarifaImpuestoRepository.findByPaisAndCategoriaFiscalAndActivoTrue(pais, categoriaFiscal)
+        return tarifaImpuestoRepository.findFirstByPaisAndCategoriaFiscalAndActivoTrue(pais, categoriaFiscal)
                 .orElse(null);
     }
 }

@@ -3,6 +3,7 @@ package com.stockpro.dto.product;
 import com.stockpro.model.entity.Producto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class ProductoDto {
     private BigDecimal stockMinimo;
     private Boolean manejaLotes;
     private String imagenUrl;
+    private LocalDate fechaVencimiento;
     private Boolean stockBajo;
     private Boolean activo;
     private OffsetDateTime createdAt;
@@ -91,6 +93,8 @@ public class ProductoDto {
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
     public String getImagenUrl() { return imagenUrl; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+    public LocalDate getFechaVencimiento() { return fechaVencimiento; }
+    public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
     public Boolean getStockBajo() { return stockBajo; }
     public void setStockBajo(Boolean stockBajo) { this.stockBajo = stockBajo; }
     public Boolean getActivo() { return activo; }

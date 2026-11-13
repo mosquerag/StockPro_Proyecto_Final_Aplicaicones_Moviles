@@ -84,4 +84,8 @@ class RegisterSaleViewModel(
             )
         }
     }
+
+    fun onSaleSuccessConsumed() {
+        _saleState.value = UiState.Idle
+    }
 }

@@ -332,27 +332,27 @@ public class VentaService {
 
         if ("US".equals(pais) && estadoRegion != null && !estadoRegion.isBlank()) {
             Optional<TarifaImpuesto> usRate = tarifaImpuestoRepository
-                    .findByPaisAndEstadoRegionAndCategoriaFiscalAndActivoTrue(pais, estadoRegion.toUpperCase(), categoriaFiscal);
+                    .findFirstByPaisAndEstadoRegionAndCategoriaFiscalAndActivoTrue(pais, estadoRegion.toUpperCase(), categoriaFiscal);
             if (usRate.isPresent()) return usRate.get().getPorcentaje();
 
             // Fallback a GENERAL en ese estado
             Optional<TarifaImpuesto> usGeneral = tarifaImpuestoRepository
-                    .findByPaisAndEstadoRegionAndCategoriaFiscalAndActivoTrue(pais, estadoRegion.toUpperCase(), "GENERAL");
+                    .findFirstByPaisAndEstadoRegionAndCategoriaFiscalAndActivoTrue(pais, estadoRegion.toUpperCase(), "GENERAL");
             if (usGeneral.isPresent()) return usGeneral.get().getPorcentaje();
         }
 
         // Búsqueda directa por país y categoría fiscal (Colombia, Italia, etc.)
         Optional<TarifaImpuesto> rate = tarifaImpuestoRepository
-                .findByPaisAndCategoriaFiscalAndActivoTrue(pais, categoriaFiscal);
+                .findFirstByPaisAndCategoriaFiscalAndActivoTrue(pais, categoriaFiscal);
         if (rate.isPresent()) return rate.get().getPorcentaje();
 
         // Fallback por país a tarifa GENERAL u ORDINARIA
         Optional<TarifaImpuesto> general = tarifaImpuestoRepository
-                .findByPaisAndCategoriaFiscalAndActivoTrue(pais, "GENERAL");
+                .findFirstByPaisAndCategoriaFiscalAndActivoTrue(pais, "GENERAL");
         if (general.isPresent()) return general.get().getPorcentaje();
 
         Optional<TarifaImpuesto> ordinaria = tarifaImpuestoRepository
-                .findByPaisAndCategoriaFiscalAndActivoTrue(pais, "ORDINARIA");
+                .findFirstByPaisAndCategoriaFiscalAndActivoTrue(pais, "ORDINARIA");
         if (ordinaria.isPresent()) return ordinaria.get().getPorcentaje();
 
         // Tarifas base de seguridad 2026

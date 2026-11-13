@@ -59,6 +59,7 @@ fun ProductsScreen(
             price = BigDecimal.valueOf(dto.precioVenta),
             stock = dto.stockActual.toInt(),
             unit = dto.unidadMedida,
+            imageUrl = dto.imagenUrl,
             isLowStock = dto.stockBajo
         )
     } ?: cachedProducts.map { entity ->
@@ -70,6 +71,7 @@ fun ProductsScreen(
             price = BigDecimal.valueOf(entity.precioVenta),
             stock = entity.stockActual.toInt(),
             unit = entity.unidadMedida,
+            imageUrl = entity.imagenUrl,
             isLowStock = entity.stockBajo
         )
     }
@@ -163,6 +165,7 @@ fun ProductsScreen(
                             category = item.category,
                             priceFormatted = Formatters.formatCurrency(item.price, currencyCode),
                             stock = "${item.stock} ${item.unit}",
+                            imageUrl = item.imageUrl,
                             isLowStock = item.isLowStock,
                             onClick = { onNavigateToProductDetail(item.id) }
                         )
@@ -181,5 +184,6 @@ private data class ProductDisplayItem(
     val price: BigDecimal,
     val stock: Int,
     val unit: String,
+    val imageUrl: String? = null,
     val isLowStock: Boolean
 )

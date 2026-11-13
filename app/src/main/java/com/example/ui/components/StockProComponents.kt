@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,8 +24,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.SubcomposeAsyncImage
 import com.example.R
 import com.example.ui.theme.*
+import java.io.File
 
 /**
  * Tarjeta de resumen métrico para el Dashboard y pantallas analíticas.
@@ -125,6 +128,7 @@ fun ProductRowItem(
     category: String,
     priceFormatted: String,
     stock: String,
+    imageUrl: String? = null,
     isLowStock: Boolean = false,
     modifier: Modifier = Modifier,
     leadingIcon: ImageVector = Icons.Default.Inventory2,
@@ -145,19 +149,59 @@ fun ProductRowItem(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(StockProGreenContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = leadingIcon,
-                    contentDescription = null,
-                    tint = StockProGreenPrimary,
-                    modifier = Modifier.size(24.dp)
+            val thumbModifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+
+            if (!imageUrl.isNullOrBlank()) {
+                val imageModel = if (imageUrl.startsWith("/") && !imageUrl.startsWith("http")) {
+                    File(imageUrl)
+                } else {
+                    imageUrl
+                }
+                SubcomposeAsyncImage(
+                    model = imageModel,
+                    contentDescription = name,
+                    modifier = thumbModifier,
+                    contentScale = ContentScale.Crop,
+                    loading = {
+                        Box(
+                            modifier = thumbModifier.background(StockProGreenContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = StockProGreenPrimary,
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    },
+                    error = {
+                        Box(
+                            modifier = thumbModifier.background(StockProGreenContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = leadingIcon,
+                                contentDescription = null,
+                                tint = StockProGreenPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 )
+            } else {
+                Box(
+                    modifier = thumbModifier.background(StockProGreenContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = leadingIcon,
+                        contentDescription = null,
+                        tint = StockProGreenPrimary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))

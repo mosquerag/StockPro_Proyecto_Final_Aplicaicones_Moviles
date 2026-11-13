@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.net.Uri
 import android.util.Log
+import java.io.File
+import java.io.FileOutputStream
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,6 +58,24 @@ private fun Context.findActivity(): ComponentActivity? {
         context = context.baseContext
     }
     return null
+}
+
+fun saveImageLocally(context: Context, uri: Uri): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val fileName = "prod_img_${System.currentTimeMillis()}.jpg"
+        val file = File(context.filesDir, fileName)
+        val outputStream = FileOutputStream(file)
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,6 +136,7 @@ private fun NewEditProductScreenContent(
     var managesLots by remember { mutableStateOf(false) }
     var expirationDate by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var localImagePath by remember { mutableStateOf<String?>(null) }
 
     var expandedCategory by remember { mutableStateOf(false) }
 
@@ -123,8 +144,15 @@ private fun NewEditProductScreenContent(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
-            imageUri = uri
-            Log.d("STOCKPRO_DEBUG", "Imagen seleccionada: $uri")
+            val savedPath = saveImageLocally(context, uri)
+            if (savedPath != null) {
+                localImagePath = savedPath
+                imageUri = Uri.fromFile(File(savedPath))
+                Log.d("STOCKPRO_DEBUG", "Imagen copiada localmente a: $savedPath")
+            } else {
+                imageUri = uri
+                localImagePath = uri.toString()
+            }
         }
     }
 
@@ -146,7 +174,14 @@ private fun NewEditProductScreenContent(
             minStock = p.stockMinimo.toString()
             barcode = p.codigoBarras.orEmpty()
             managesLots = p.manejaLotes
-            imageUri = p.imagenUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
+            if (!p.fechaVencimiento.isNullOrBlank()) {
+                expirationDate = p.fechaVencimiento
+            }
+            if (!p.imagenUrl.isNullOrBlank()) {
+                localImagePath = p.imagenUrl
+                val imgFile = File(p.imagenUrl)
+                imageUri = if (imgFile.exists()) Uri.fromFile(imgFile) else Uri.parse(p.imagenUrl)
+            }
         }
     }
 
@@ -341,9 +376,9 @@ private fun NewEditProductScreenContent(
             ) {
                 StockProTextField(
                     value = initialStock,
-                    onValueChange = { if (!isEditMode) initialStock = it },
+                    onValueChange = { initialStock = it },
                     label = stringResource(R.string.lbl_current_stock),
-                    enabled = !isEditMode,
+                    enabled = true,
                     modifier = Modifier.weight(1f)
                 )
                 StockProTextField(
@@ -375,7 +410,7 @@ private fun NewEditProductScreenContent(
                 )
             }
 
-            if (managesLots && !isEditMode) {
+            if (managesLots) {
                 Spacer(modifier = Modifier.height(8.dp))
                 StockProTextField(
                     value = expirationDate,
@@ -408,10 +443,10 @@ private fun NewEditProductScreenContent(
                             precioVenta = sale,
                             stockMinimo = minStk,
                             manejaLotes = managesLots,
-                            cantidadInicial = if (!isEditMode && initStk > 0) initStk else null,
-                            numeroLoteInicial = if (!isEditMode && managesLots && initStk > 0) "LOTE-INIT-1" else null,
-                            fechaVencimientoInicial = if (!isEditMode && managesLots && expirationDate.isNotBlank()) expirationDate else null,
-                            imagenUrl = imageUri?.toString()
+                            cantidadInicial = initStk,
+                            numeroLoteInicial = if (managesLots && initStk > 0) "LOTE-INIT-1" else null,
+                            fechaVencimientoInicial = if (managesLots && expirationDate.isNotBlank()) expirationDate else null,
+                            imagenUrl = localImagePath ?: imageUri?.toString()
                         )
                     },
                     testTag = "save_product_button"

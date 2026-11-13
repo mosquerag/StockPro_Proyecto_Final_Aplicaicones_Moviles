@@ -89,7 +89,7 @@ fun StockProApp(
                             selected = selected,
                             onClick = {
                                 navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
+                                    popUpTo(NavRoute.Dashboard.route) {
                                         saveState = true
                                     }
                                     launchSingleTop = true
@@ -233,7 +233,12 @@ fun StockProApp(
             composable(NavRoute.RegisterSale.route) {
                 RegisterSaleScreen(
                     onNavigateBack = { navController.popBackStack() },
-                    onSaleCompleted = { saleId -> navController.navigate(NavRoute.SaleDetail.createRoute(saleId)) },
+                    onSaleCompleted = { saleId ->
+                        navController.navigate(NavRoute.SaleDetail.createRoute(saleId)) {
+                            popUpTo(NavRoute.RegisterSale.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
                     currencyCode = currentCurrency
                 )
             }
@@ -245,7 +250,12 @@ fun StockProApp(
                 val id = backStack.arguments?.getString("saleId") ?: ""
                 SaleDetailScreen(
                     saleId = id,
-                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateBack = {
+                        navController.navigate(NavRoute.Movements.route) {
+                            popUpTo(NavRoute.Movements.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
                     currencyCode = currentCurrency
                 )
             }

@@ -73,6 +73,7 @@ fun RegisterSaleScreen(
         if (saleState is UiState.Success) {
             val created = (saleState as UiState.Success).data
             Log.d("STOCKPRO_DEBUG", "Venta creada exitosamente con ID: ${created.id}")
+            viewModel.onSaleSuccessConsumed()
             onSaleCompleted(created.id)
         }
     }

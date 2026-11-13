@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class UpdateProductoRequest {
@@ -42,6 +43,10 @@ public class UpdateProductoRequest {
 
     private String imagenUrl;
 
+    private BigDecimal stockActual;
+
+    private LocalDate fechaVencimiento;
+
     private Boolean activo;
 
     // NOTA DE REGLA DE NEGOCIO:
@@ -74,6 +79,10 @@ public class UpdateProductoRequest {
     public void setManejaLotes(Boolean manejaLotes) { this.manejaLotes = manejaLotes; }
     public String getImagenUrl() { return imagenUrl; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+    public BigDecimal getStockActual() { return stockActual; }
+    public void setStockActual(BigDecimal stockActual) { this.stockActual = stockActual; }
+    public LocalDate getFechaVencimiento() { return fechaVencimiento; }
+    public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
 }

@@ -55,4 +55,12 @@ class ProductsViewModel(
             )
         }
     }
+
+    fun deleteProduct(productId: String) {
+        viewModelScope.launch {
+            productRepository.deleteProduct(productId).onSuccess {
+                refreshProducts()
+            }
+        }
+    }
 }

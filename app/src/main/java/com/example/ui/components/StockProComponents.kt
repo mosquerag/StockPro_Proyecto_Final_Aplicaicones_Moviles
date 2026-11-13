@@ -132,6 +132,8 @@ fun ProductRowItem(
     isLowStock: Boolean = false,
     modifier: Modifier = Modifier,
     leadingIcon: ImageVector = Icons.Default.Inventory2,
+    onEditClick: (() -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     Card(
@@ -242,6 +244,38 @@ fun ProductRowItem(
                         ),
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
+                }
+            }
+
+            if (onEditClick != null || onDeleteClick != null) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (onEditClick != null) {
+                        IconButton(
+                            onClick = onEditClick,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Editar",
+                                tint = StockProGreenPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                    if (onDeleteClick != null) {
+                        IconButton(
+                            onClick = onDeleteClick,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar",
+                                tint = StockProRedError,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

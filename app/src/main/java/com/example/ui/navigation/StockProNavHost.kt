@@ -88,12 +88,13 @@ fun StockProApp(
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(NavRoute.Dashboard.route) {
-                                        saveState = true
+                                if (currentRoute != item.route) {
+                                    navController.navigate(item.route) {
+                                        popUpTo(NavRoute.Dashboard.route) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
                             },
                             icon = {
@@ -168,6 +169,7 @@ fun StockProApp(
                 ProductsScreen(
                     onNavigateToNewProduct = { navController.navigate(NavRoute.NewProduct.route) },
                     onNavigateToProductDetail = { id -> navController.navigate(NavRoute.ProductDetail.createRoute(id)) },
+                    onNavigateToEditProduct = { id -> navController.navigate(NavRoute.EditProduct.createRoute(id)) },
                     currencyCode = currentCurrency
                 )
             }
@@ -252,7 +254,7 @@ fun StockProApp(
                     saleId = id,
                     onNavigateBack = {
                         navController.navigate(NavRoute.Movements.route) {
-                            popUpTo(NavRoute.Movements.route) { inclusive = true }
+                            popUpTo(NavRoute.Dashboard.route) { inclusive = false }
                             launchSingleTop = true
                         }
                     },

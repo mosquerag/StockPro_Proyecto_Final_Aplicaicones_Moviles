@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -20,6 +21,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -28,11 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.SubcomposeAsyncImage
 import com.example.R
 import com.example.data.StockProAppContainer
 import com.example.ui.components.StockProButton
 import com.example.ui.components.StockProTextField
 import com.example.ui.theme.*
+import java.io.File
 import com.example.ui.util.ErrorTranslator
 import com.example.ui.util.Formatters
 import com.example.ui.viewmodel.RegisterSaleViewModel
@@ -284,6 +289,64 @@ fun RegisterSaleScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
+                            val imgUrl = product.imagenUrl
+                            val thumbModifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(10.dp))
+
+                            if (!imgUrl.isNullOrBlank()) {
+                                val imageModel = if (imgUrl.startsWith("/") && !imgUrl.startsWith("http")) {
+                                    File(imgUrl)
+                                } else {
+                                    imgUrl
+                                }
+                                SubcomposeAsyncImage(
+                                    model = imageModel,
+                                    contentDescription = product.nombre,
+                                    modifier = thumbModifier,
+                                    contentScale = ContentScale.Crop,
+                                    loading = {
+                                        Box(
+                                            modifier = thumbModifier.background(StockProGreenContainer),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(20.dp),
+                                                color = StockProGreenPrimary,
+                                                strokeWidth = 2.dp
+                                            )
+                                        }
+                                    },
+                                    error = {
+                                        Box(
+                                            modifier = thumbModifier.background(StockProGreenContainer),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Inventory2,
+                                                contentDescription = null,
+                                                tint = StockProGreenPrimary,
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+                                    }
+                                )
+                            } else {
+                                Box(
+                                    modifier = thumbModifier.background(StockProGreenContainer),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Inventory2,
+                                        contentDescription = null,
+                                        tint = StockProGreenPrimary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = product.nombre,

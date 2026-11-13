@@ -26,6 +26,7 @@ import com.example.ui.components.FilterChipItem
 import com.example.ui.components.ProductRowItem
 import com.example.ui.components.StockProTextField
 import com.example.ui.theme.StockProGreenPrimary
+import com.example.ui.theme.StockProRedError
 import com.example.ui.viewmodel.ProductsViewModel
 import com.example.ui.viewmodel.StockProViewModelFactory
 import com.example.ui.viewmodel.UiState
@@ -37,6 +38,7 @@ import java.math.BigDecimal
 fun ProductsScreen(
     onNavigateToNewProduct: () -> Unit,
     onNavigateToProductDetail: (String) -> Unit,
+    onNavigateToEditProduct: (String) -> Unit = {},
     currencyCode: String = "COP",
     viewModel: ProductsViewModel = viewModel(
         factory = StockProViewModelFactory(StockProAppContainer.getInstance(LocalContext.current))
@@ -48,6 +50,20 @@ fun ProductsScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategoryId by remember { mutableStateOf<String?>(null) }
+    var productToDelete by remember { mutableStateOf<ProductDisplayItem?>(null) }
+
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshProducts()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     // Usar datos remotos si están disponibles, sino usar caché de Room
     val productList = (productsState as? UiState.Success)?.data?.map { dto ->
@@ -143,6 +159,32 @@ fun ProductsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            if (productToDelete != null) {
+                AlertDialog(
+                    onDismissRequest = { productToDelete = null },
+                    title = { Text("¿Eliminar producto?") },
+                    text = { Text("¿Estás seguro de que deseas eliminar o desactivar \"${productToDelete?.name}\"?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val item = productToDelete
+                                productToDelete = null
+                                if (item != null) {
+                                    viewModel.deleteProduct(item.id)
+                                }
+                            }
+                        ) {
+                            Text("Eliminar", color = StockProRedError, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { productToDelete = null }) {
+                            Text("Cancelar")
+                        }
+                    }
+                )
+            }
+
             if (productsState is UiState.Loading && productList.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = StockProGreenPrimary)
@@ -167,6 +209,8 @@ fun ProductsScreen(
                             stock = "${item.stock} ${item.unit}",
                             imageUrl = item.imageUrl,
                             isLowStock = item.isLowStock,
+                            onEditClick = { onNavigateToEditProduct(item.id) },
+                            onDeleteClick = { productToDelete = item },
                             onClick = { onNavigateToProductDetail(item.id) }
                         )
                     }

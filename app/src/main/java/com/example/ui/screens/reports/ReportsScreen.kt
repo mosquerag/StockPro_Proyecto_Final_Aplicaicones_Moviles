@@ -72,14 +72,34 @@ fun ReportsScreen(
 
     val reportData = (reportState as? UiState.Success)?.data
 
-    // Datos estáticos/calculados para el Gráfico Donut de Ventas por Categoría (mock/calculado)
+    // Cálculo dinámico en tiempo real para el Gráfico Donut de Ventas por Categoría
     val categorySalesData = remember(reportData) {
-        listOf(
-            CategorySalesItem("Alimentos", 40.0, StockProGreenPrimary),
-            CategorySalesItem("Ropa", 25.0, StockProBlue),
-            CategorySalesItem("Higiene", 20.0, StockProYellowWarning),
-            CategorySalesItem("Otros", 15.0, StockProPurple)
-        )
+        if (reportData == null || reportData.masVendidos.isEmpty()) {
+            emptyList()
+        } else {
+            val chartColors = listOf(
+                StockProGreenPrimary,
+                StockProBlue,
+                StockProYellowWarning,
+                StockProPurple,
+                StockProRedError
+            )
+            val categoryMap = mutableMapOf<String, Double>()
+            reportData.masVendidos.forEach { item ->
+                val catName = item.categoriaNombre?.takeIf { it.isNotBlank() } ?: "General"
+                val current = categoryMap.getOrDefault(catName, 0.0)
+                categoryMap[catName] = current + item.totalRecaudado
+            }
+            val grandTotal = categoryMap.values.sum().coerceAtLeast(1.0)
+            categoryMap.entries.mapIndexed { index, entry ->
+                val categoryPct = (entry.value / grandTotal) * 100.0
+                CategorySalesItem(
+                    categoryName = entry.key,
+                    percentage = categoryPct,
+                    color = chartColors[index % chartColors.size]
+                )
+            }
+        }
     }
 
     val exportReportAction = {
@@ -287,65 +307,79 @@ private fun CategorySalesPieChart(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                // Gráfica Circular / Donut
-                Canvas(modifier = Modifier.size(130.dp)) {
-                    val strokeWidth = 28.dp.toPx()
-                    val diameter = size.minDimension - strokeWidth
-                    val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
-                    val arcSize = Size(diameter, diameter)
-
-                    var startAngle = -90f
-                    val totalPercentage = categoryData.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
-
-                    categoryData.forEach { item ->
-                        val sweepAngle = (item.percentage.toFloat() / totalPercentage) * 360f
-                        drawArc(
-                            color = item.color,
-                            startAngle = startAngle,
-                            sweepAngle = sweepAngle,
-                            useCenter = false,
-                            topLeft = topLeft,
-                            size = arcSize,
-                            style = Stroke(width = strokeWidth)
-                        )
-                        startAngle += sweepAngle
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                // Leyenda explicativa con nombres y porcentajes
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+            if (categoryData.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    categoryData.forEach { item ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.width(140.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .clip(CircleShape)
-                                        .background(item.color)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sin ventas registradas en este periodo",
+                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    // Gráfica Circular / Donut
+                    Canvas(modifier = Modifier.size(130.dp)) {
+                        val strokeWidth = 28.dp.toPx()
+                        val diameter = size.minDimension - strokeWidth
+                        val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
+                        val arcSize = Size(diameter, diameter)
+
+                        var startAngle = -90f
+                        val totalPercentage = categoryData.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
+
+                        categoryData.forEach { item ->
+                            val sweepAngle = (item.percentage.toFloat() / totalPercentage) * 360f
+                            drawArc(
+                                color = item.color,
+                                startAngle = startAngle,
+                                sweepAngle = sweepAngle,
+                                useCenter = false,
+                                topLeft = topLeft,
+                                size = arcSize,
+                                style = Stroke(width = strokeWidth)
+                            )
+                            startAngle += sweepAngle
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Leyenda explicativa con nombres y porcentajes
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        categoryData.forEach { item ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.width(140.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .clip(CircleShape)
+                                            .background(item.color)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = item.categoryName,
+                                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    )
+                                }
                                 Text(
-                                    text = item.categoryName,
-                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    text = "${item.percentage.toInt()}%",
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                                 )
                             }
-                            Text(
-                                text = "${item.percentage.toInt()}%",
-                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-                            )
                         }
                     }
                 }

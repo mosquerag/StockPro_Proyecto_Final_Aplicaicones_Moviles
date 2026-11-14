@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.SubcomposeAsyncImage
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.R
@@ -117,14 +119,50 @@ fun ProductDetailScreen(
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(StockProGreenContainer),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.Inventory, contentDescription = null, tint = StockProGreenPrimary, modifier = Modifier.size(32.dp))
+                        val imgUrl = product.imagenUrl
+                        val thumbModifier = Modifier
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(14.dp))
+
+                        if (!imgUrl.isNullOrBlank()) {
+                            val imageModel = if (imgUrl.startsWith("/") && !imgUrl.startsWith("http")) {
+                                java.io.File(imgUrl)
+                            } else {
+                                imgUrl
+                            }
+                            SubcomposeAsyncImage(
+                                model = imageModel,
+                                contentDescription = product.nombre,
+                                modifier = thumbModifier,
+                                contentScale = ContentScale.Crop,
+                                loading = {
+                                    Box(
+                                        modifier = thumbModifier.background(StockProGreenContainer),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            color = StockProGreenPrimary,
+                                            strokeWidth = 2.dp
+                                        )
+                                    }
+                                },
+                                error = {
+                                    Box(
+                                        modifier = thumbModifier.background(StockProGreenContainer),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.Inventory, contentDescription = null, tint = StockProGreenPrimary, modifier = Modifier.size(32.dp))
+                                    }
+                                }
+                            )
+                        } else {
+                            Box(
+                                modifier = thumbModifier.background(StockProGreenContainer),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Inventory, contentDescription = null, tint = StockProGreenPrimary, modifier = Modifier.size(32.dp))
+                            }
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))

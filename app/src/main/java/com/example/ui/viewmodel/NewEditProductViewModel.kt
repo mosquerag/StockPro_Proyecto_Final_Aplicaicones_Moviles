@@ -89,7 +89,7 @@ class NewEditProductViewModel(
                     codigoBarras = codigoBarras?.takeIf { it.isNotBlank() },
                     costo = costo,
                     precioVenta = precioVenta,
-                    categoriaFiscal = "GENERAL",
+                    categoriaFiscal = "EXCLUIDO",
                     stockMinimo = stockMinimo,
                     manejaLotes = manejaLotes,
                     imagenUrl = imagenUrl?.takeIf { it.isNotBlank() },

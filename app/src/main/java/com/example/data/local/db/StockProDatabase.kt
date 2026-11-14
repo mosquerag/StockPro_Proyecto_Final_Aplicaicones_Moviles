@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [ProductEntity::class, DashboardCacheEntity::class],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 abstract class StockProDatabase : RoomDatabase() {

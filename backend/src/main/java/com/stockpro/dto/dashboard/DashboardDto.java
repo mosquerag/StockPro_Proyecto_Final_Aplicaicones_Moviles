@@ -13,6 +13,11 @@ public class DashboardDto {
     private String moneda;
     private BigDecimal ventasHoy;
     private BigDecimal gananciasEstimadasHoy;
+    private BigDecimal gananciasHoy;
+    private BigDecimal gananciasSemanal;
+    private BigDecimal gananciasQuincenal;
+    private BigDecimal gananciasMensual;
+    private BigDecimal gananciasAnual;
     private int cantidadVentasHoy;
     private long cantidadProductos;
     private AlertasResumenDto alertas;
@@ -33,6 +38,21 @@ public class DashboardDto {
 
     public BigDecimal getGananciasEstimadasHoy() { return gananciasEstimadasHoy; }
     public void setGananciasEstimadasHoy(BigDecimal gananciasEstimadasHoy) { this.gananciasEstimadasHoy = gananciasEstimadasHoy; }
+
+    public BigDecimal getGananciasHoy() { return gananciasHoy; }
+    public void setGananciasHoy(BigDecimal gananciasHoy) { this.gananciasHoy = gananciasHoy; }
+
+    public BigDecimal getGananciasSemanal() { return gananciasSemanal; }
+    public void setGananciasSemanal(BigDecimal gananciasSemanal) { this.gananciasSemanal = gananciasSemanal; }
+
+    public BigDecimal getGananciasQuincenal() { return gananciasQuincenal; }
+    public void setGananciasQuincenal(BigDecimal gananciasQuincenal) { this.gananciasQuincenal = gananciasQuincenal; }
+
+    public BigDecimal getGananciasMensual() { return gananciasMensual; }
+    public void setGananciasMensual(BigDecimal gananciasMensual) { this.gananciasMensual = gananciasMensual; }
+
+    public BigDecimal getGananciasAnual() { return gananciasAnual; }
+    public void setGananciasAnual(BigDecimal gananciasAnual) { this.gananciasAnual = gananciasAnual; }
 
     public int getCantidadVentasHoy() { return cantidadVentasHoy; }
     public void setCantidadVentasHoy(int cantidadVentasHoy) { this.cantidadVentasHoy = cantidadVentasHoy; }

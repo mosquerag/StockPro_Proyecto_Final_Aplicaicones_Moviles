@@ -173,7 +173,7 @@ private fun NewEditProductScreenContent(
             initialStock = p.stockActual.toString()
             minStock = p.stockMinimo.toString()
             barcode = p.codigoBarras.orEmpty()
-            managesLots = p.manejaLotes
+            managesLots = p.manejaLotes || !p.fechaVencimiento.isNullOrBlank()
             if (!p.fechaVencimiento.isNullOrBlank()) {
                 expirationDate = p.fechaVencimiento
             }
@@ -410,14 +410,66 @@ private fun NewEditProductScreenContent(
                 )
             }
 
+            var showDatePickerDialog by remember { mutableStateOf(false) }
+            val datePickerState = rememberDatePickerState()
+
+            if (showDatePickerDialog) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePickerDialog = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val selectedMs = datePickerState.selectedDateMillis
+                                if (selectedMs != null) {
+                                    val instant = java.time.Instant.ofEpochMilli(selectedMs)
+                                    val localDate = instant.atZone(java.time.ZoneId.of("UTC")).toLocalDate()
+                                    expirationDate = String.format(
+                                        "%04d-%02d-%02d",
+                                        localDate.year,
+                                        localDate.monthValue,
+                                        localDate.dayOfMonth
+                                    )
+                                }
+                                showDatePickerDialog = false
+                            }
+                        ) {
+                            Text("Aceptar", color = StockProGreenPrimary, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePickerDialog = false }) {
+                            Text("Cancelar")
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
             if (managesLots) {
                 Spacer(modifier = Modifier.height(8.dp))
-                StockProTextField(
+                OutlinedTextField(
                     value = expirationDate,
                     onValueChange = { expirationDate = it },
-                    label = stringResource(R.string.lbl_expiration_date),
-                    placeholder = "DD/MM/YYYY o YYYY-MM-DD",
-                    leadingIcon = Icons.Default.CalendarToday
+                    label = { Text(stringResource(R.string.lbl_expiration_date)) },
+                    placeholder = { Text("YYYY-MM-DD") },
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePickerDialog = true }) {
+                            Icon(
+                                Icons.Default.CalendarToday,
+                                contentDescription = "Seleccionar fecha",
+                                tint = StockProGreenPrimary
+                            )
+                        }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = StockProGreenPrimary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDatePickerDialog = true }
                 )
             }
 

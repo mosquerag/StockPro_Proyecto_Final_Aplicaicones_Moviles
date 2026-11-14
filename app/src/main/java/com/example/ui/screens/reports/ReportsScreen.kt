@@ -70,6 +70,19 @@ fun ReportsScreen(
         viewModel.loadReport(periodCode, reportCurrency)
     }
 
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.loadReport(periodCode, reportCurrency)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val reportData = (reportState as? UiState.Success)?.data
 
     // Cálculo dinámico en tiempo real para el Gráfico Donut de Ventas por Categoría

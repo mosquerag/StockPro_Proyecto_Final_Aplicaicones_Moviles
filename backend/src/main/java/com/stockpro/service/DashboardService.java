@@ -66,36 +66,39 @@ public class DashboardService {
         dto.setNegocioNombre(negocio.getNombre());
         dto.setMoneda(moneda);
 
-        // Rango del día de hoy
-        OffsetDateTime inicioHoy = LocalDate.now().atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX).atOffset(ZoneOffset.UTC);
+        OffsetDateTime ahora = OffsetDateTime.now(ZoneOffset.UTC);
+        LocalDate today = LocalDate.now();
 
-        List<Venta> ventasHoy = ventaRepository.findVentasCompletadasConDetalles(negocioId, inicioHoy, finHoy);
+        // Rango de fechas por período calendario
+        OffsetDateTime inicioHoy = today.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime inicioSemanal = today.with(java.time.DayOfWeek.MONDAY).atStartOfDay().atOffset(ZoneOffset.UTC);
+        int dayOfMonth = today.getDayOfMonth();
+        LocalDate inicioQDate = dayOfMonth <= 15 ? today.withDayOfMonth(1) : today.withDayOfMonth(16);
+        OffsetDateTime inicioQuincenal = inicioQDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime inicioMensual = today.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime inicioAnual = today.withDayOfYear(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+
+        List<Venta> ventasHoy = ventaRepository.findVentasCompletadasConDetalles(negocioId, inicioHoy, ahora);
 
         BigDecimal totalVentas = BigDecimal.ZERO;
-        BigDecimal gananciasEstimadas = BigDecimal.ZERO;
-
         for (Venta v : ventasHoy) {
             BigDecimal tasaConversion = currencyService.getEffectiveRate(v.getMonedaVenta(), moneda, null);
-
-            BigDecimal ventaConvertida = v.getTotalVenta().multiply(tasaConversion);
-            totalVentas = totalVentas.add(ventaConvertida);
-
-            BigDecimal costoVenta = BigDecimal.ZERO;
-            if (v.getDetalles() != null) {
-                for (DetalleVenta det : v.getDetalles()) {
-                    BigDecimal cUnit = det.getCostoUnitario() != null ? det.getCostoUnitario() : BigDecimal.ZERO;
-                    costoVenta = costoVenta.add(cUnit.multiply(det.getCantidad()));
-                }
-            }
-            BigDecimal costoConvertido = costoVenta.multiply(tasaConversion);
-            BigDecimal baseVenta = (v.getSubtotalBase().subtract(v.getTotalDescuentos())).multiply(tasaConversion);
-            BigDecimal ganancia = baseVenta.subtract(costoConvertido);
-            gananciasEstimadas = gananciasEstimadas.add(ganancia);
+            totalVentas = totalVentas.add(v.getTotalVenta().multiply(tasaConversion));
         }
 
+        BigDecimal gHoy = calcularGananciaVentas(negocioId, inicioHoy, ahora, moneda);
+        BigDecimal gSemanal = calcularGananciaVentas(negocioId, inicioSemanal, ahora, moneda);
+        BigDecimal gQuincenal = calcularGananciaVentas(negocioId, inicioQuincenal, ahora, moneda);
+        BigDecimal gMensual = calcularGananciaVentas(negocioId, inicioMensual, ahora, moneda);
+        BigDecimal gAnual = calcularGananciaVentas(negocioId, inicioAnual, ahora, moneda);
+
         dto.setVentasHoy(currencyService.roundCurrency(totalVentas, moneda));
-        dto.setGananciasEstimadasHoy(currencyService.roundCurrency(gananciasEstimadas, moneda));
+        dto.setGananciasEstimadasHoy(gHoy);
+        dto.setGananciasHoy(gHoy);
+        dto.setGananciasSemanal(gSemanal);
+        dto.setGananciasQuincenal(gQuincenal);
+        dto.setGananciasMensual(gMensual);
+        dto.setGananciasAnual(gAnual);
         dto.setCantidadVentasHoy(ventasHoy.size());
 
         // Cantidad de productos activos
@@ -165,5 +168,27 @@ public class DashboardService {
                 l.getFechaVencimiento(),
                 dias,
                 estado);
+    }
+
+    private BigDecimal calcularGananciaVentas(UUID negocioId, OffsetDateTime inicio, OffsetDateTime fin, String moneda) {
+        List<Venta> ventas = ventaRepository.findVentasCompletadasConDetalles(negocioId, inicio, fin);
+        BigDecimal gananciasTotal = BigDecimal.ZERO;
+
+        for (Venta v : ventas) {
+            BigDecimal tasaConversion = currencyService.getEffectiveRate(v.getMonedaVenta(), moneda, null);
+            BigDecimal costoVenta = BigDecimal.ZERO;
+            if (v.getDetalles() != null) {
+                for (DetalleVenta det : v.getDetalles()) {
+                    BigDecimal cUnit = det.getCostoUnitario() != null ? det.getCostoUnitario() : BigDecimal.ZERO;
+                    costoVenta = costoVenta.add(cUnit.multiply(det.getCantidad()));
+                }
+            }
+            BigDecimal costoConvertido = costoVenta.multiply(tasaConversion);
+            BigDecimal baseVenta = (v.getSubtotalBase().subtract(v.getTotalDescuentos())).multiply(tasaConversion);
+            BigDecimal ganancia = baseVenta.subtract(costoConvertido);
+            gananciasTotal = gananciasTotal.add(ganancia);
+        }
+
+        return currencyService.roundCurrency(gananciasTotal, moneda);
     }
 }

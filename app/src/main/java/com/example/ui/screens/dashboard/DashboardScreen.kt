@@ -56,24 +56,30 @@ fun DashboardScreen(
         viewModel.loadDashboard(currencyCode)
     }
 
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.loadDashboard(currencyCode)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val remoteData = (dashboardState as? UiState.Success)?.data
     val displayName = remoteData?.negocioNombre?.takeIf { it.isNotBlank() }
         ?: cachedDashboard?.negocioNombre?.takeIf { it.isNotBlank() }
         ?: businessName
 
-    val baseEarnings = remoteData?.gananciasEstimadasHoy
-        ?: cachedDashboard?.gananciasEstimadasHoy
-        ?: 0.0
-
-    // Factor multiplicador dinámico por periodicidad elegida
-    val displayedEarnings = remember(selectedPeriodicity, baseEarnings) {
-        when (selectedPeriodicity) {
-            "Semanal" -> baseEarnings * 7.0
-            "Quincenal" -> baseEarnings * 15.0
-            "Mensual" -> baseEarnings * 30.0
-            "Anual" -> baseEarnings * 365.0
-            else -> baseEarnings
-        }
+    val displayedEarnings = when (selectedPeriodicity) {
+        "Semanal" -> remoteData?.gananciasSemanal ?: cachedDashboard?.gananciasSemanal ?: 0.0
+        "Quincenal" -> remoteData?.gananciasQuincenal ?: cachedDashboard?.gananciasQuincenal ?: 0.0
+        "Mensual" -> remoteData?.gananciasMensual ?: cachedDashboard?.gananciasMensual ?: 0.0
+        "Anual" -> remoteData?.gananciasAnual ?: cachedDashboard?.gananciasAnual ?: 0.0
+        else -> remoteData?.gananciasHoy ?: cachedDashboard?.gananciasHoy ?: remoteData?.gananciasEstimadasHoy ?: cachedDashboard?.gananciasEstimadasHoy ?: 0.0
     }
 
     val productCount = remoteData?.cantidadProductos

@@ -59,7 +59,7 @@ public class ProductoService {
                     .collect(Collectors.toList());
         }
 
-        return productos.stream().map(ProductoDto::new).collect(Collectors.toList());
+        return productos.stream().map(this::toProductoDtoWithFechaVencimiento).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +69,18 @@ public class ProductoService {
         Producto producto = productoRepository.findByIdAndNegocioId(id, negocioId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("PRODUCTO_NO_ENCONTRADO", "Producto no encontrado o no pertenece a su negocio"));
 
-        return new ProductoDto(producto);
+        return toProductoDtoWithFechaVencimiento(producto);
+    }
+
+    private ProductoDto toProductoDtoWithFechaVencimiento(Producto p) {
+        ProductoDto dto = new ProductoDto(p);
+        if (Boolean.TRUE.equals(p.getManejaLotes())) {
+            List<Lote> lotes = loteRepository.findByProductoIdAndEstadoOrderByFechaVencimientoAsc(p.getId(), "ACTIVO");
+            if (!lotes.isEmpty() && lotes.get(0).getFechaVencimiento() != null) {
+                dto.setFechaVencimiento(lotes.get(0).getFechaVencimiento());
+            }
+        }
+        return dto;
     }
 
     @Transactional

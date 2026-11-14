@@ -53,8 +53,8 @@ fun LoginScreen(
     val context = LocalContext.current
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
 
-    var email by remember { mutableStateOf("demo@stockpro.com") }
-    var password by remember { mutableStateOf("Password123*") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(loginState) {

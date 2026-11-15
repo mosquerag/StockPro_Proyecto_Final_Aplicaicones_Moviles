@@ -356,13 +356,13 @@ private fun NewEditProductScreenContent(
                 StockProTextField(
                     value = costPrice,
                     onValueChange = { costPrice = it },
-                    label = stringResource(R.string.lbl_cost_price),
+                    label = "Costo por unidad",
                     modifier = Modifier.weight(1f)
                 )
                 StockProTextField(
                     value = salePrice,
                     onValueChange = { salePrice = it },
-                    label = stringResource(R.string.lbl_sale_price),
+                    label = "Precio de venta por unidad",
                     modifier = Modifier.weight(1f)
                 )
             }

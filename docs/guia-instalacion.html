@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía de instalación · StockPro</title>
+<meta name="description" content="Guía visual e interactiva para instalar StockPro: requisitos, PostgreSQL con Docker o nativo, backend Spring Boot, Android con adb reverse, smoke test y solución de problemas.">
+<meta name="author" content="Sairy Ximena Mosquera García">
+<meta name="theme-color" content="#087F5B">
+<link rel="icon" type="image/png" href="../assets-docs/app-icon-256.png">
+<link rel="apple-touch-icon" href="../assets-docs/app-icon-256.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets-docs/styles.css">
+<link rel="stylesheet" href="../assets-docs/guia.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="guide-body">
+
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<!-- ============================= NAVBAR ============================= -->
+<nav class="navbar navbar-expand-lg sticky-top sp-navbar guide-topbar" aria-label="Navegación de la guía">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html" aria-label="StockPro, volver al inicio">
+      <img src="../assets-docs/logo.svg" alt="" width="38" height="38">
+      <span class="brand-text">StockPro<small>Guía de instalación</small></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#guiaMenu" aria-controls="guiaMenu" aria-expanded="false" aria-label="Abrir menú de la guía">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="guiaMenu">
+      <ul class="navbar-nav mx-auto mb-3 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#requisitos">Requisitos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#base-datos">Base de datos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#backend">Backend</a></li>
+        <li class="nav-item"><a class="nav-link" href="#android">Android</a></li>
+        <li class="nav-item"><a class="nav-link" href="#verificacion">Verificación</a></li>
+        <li class="nav-item"><a class="nav-link" href="#problemas">Problemas</a></li>
+      </ul>
+      <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+        <a class="btn btn-outline-brand btn-sm" href="06-guia-instalacion-despliegue.md">
+          <i class="bi bi-markdown" aria-hidden="true"></i> Versión Markdown
+        </a>
+        <a class="btn btn-brand btn-sm" href="../index.html">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al inicio
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="contenido">
+
+  <!-- ============================= HERO ============================= -->
+  <header class="guide-hero">
+    <div class="container">
+      <span class="eyebrow">Guía de instalación y despliegue</span>
+      <h1>StockPro funcionando en tu equipo, paso a paso.</h1>
+      <p class="lead">
+        Requisitos, base de datos, backend Spring Boot y app Android. Todos los comandos tienen botón
+        <strong>Copiar</strong>, y las dos rutas —Docker o PostgreSQL nativo— están explicadas con el SQL exacto.
+      </p>
+
+      <div class="guide-hero-badges">
+        <span class="badge"><i class="bi bi-clock" aria-hidden="true"></i> 25–40 minutos</span>
+        <span class="badge"><i class="bi bi-windows" aria-hidden="true"></i> Windows · PowerShell</span>
+        <span class="badge"><i class="bi bi-android2" aria-hidden="true"></i> Emulador o USB</span>
+        <span class="badge"><i class="bi bi-database-check" aria-hidden="true"></i> Flyway V1–V3</span>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-brand" href="#requisitos">
+          <i class="bi bi-play-fill" aria-hidden="true"></i> Empezar la guía
+        </a>
+        <a class="btn btn-outline-brand" href="../index.html#instalacion">
+          <i class="bi bi-grid-1x2" aria-hidden="true"></i> Ver versión resumida en la landing
+        </a>
+        <a class="btn btn-soft" href="06-guia-instalacion-despliegue.md">
+          <i class="bi bi-filetype-md" aria-hidden="true"></i> Guía Markdown completa
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================= CONTENIDO ============================= -->
+  <div class="guide-main">
+    <div class="container">
+      <div class="guide-layout">
+
+        <!-- Índice lateral -->
+        <aside class="guide-toc" aria-label="Índice de la guía">
+          <h2>En esta guía</h2>
+          <a href="#requisitos">1 · Requisitos previos</a>
+          <a href="#clonar">2 · Clonar el repositorio</a>
+          <a href="#base-datos">3 · Preparar PostgreSQL</a>
+          <a href="#backend">4 · Ejecutar el backend</a>
+          <a href="#android">5 · Abrir y ejecutar Android</a>
+          <a href="#verificacion">6 · Smoke test</a>
+          <a href="#problemas">7 · Solución de problemas</a>
+          <a href="#ram">8 · Optimización de RAM</a>
+          <a href="#checklist">9 · Checklist final</a>
+        </aside>
+
+        <div>
+
+          <!-- 1. Requisitos -->
+          <section class="guide-section reveal" id="requisitos">
+            <h2><span class="n">1</span> Requisitos previos</h2>
+            <p>Instala estas herramientas antes de clonar. Las versiones marcadas son las recomendadas para este repositorio.</p>
+
+            <div class="table-responsive">
+              <table class="table table-sp align-middle">
+                <thead>
+                  <tr><th>Herramienta</th><th>Versión</th><th>Para qué</th><th>Verificación</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Git</strong></td><td><span class="version-badge">2.40+</span></td><td>Clonar el repositorio.</td><td><code>git --version</code></td></tr>
+                  <tr><td><strong>JDK</strong></td><td><span class="version-badge">17 LTS</span></td><td>Compilar y ejecutar Spring Boot.</td><td><code>java -version</code></td></tr>
+                  <tr><td><strong>Maven</strong></td><td><span class="version-badge">3.9+</span></td><td>Ejecutar el backend.</td><td><code>mvn -version</code></td></tr>
+                  <tr><td><strong>PostgreSQL</strong></td><td><span class="version-badge">16</span></td><td>Base de datos (14 y 15 también funcionan).</td><td><code>psql --version</code></td></tr>
+                  <tr><td><strong>Android Studio</strong></td><td><span class="version-badge">AGP 9.1.1</span></td><td>Abrir, compilar y ejecutar la app.</td><td>Abrir el proyecto.</td></tr>
+                  <tr><td><strong>Android SDK</strong></td><td><span class="version-badge">API 36</span></td><td>Compilar; el dispositivo necesita API 24+.</td><td>SDK Manager.</td></tr>
+                  <tr><td><strong>adb</strong></td><td><span class="version-badge">Platform Tools</span></td><td>Instalar APK y ejecutar <code>adb reverse</code>.</td><td><code>adb version</code></td></tr>
+                  <tr><td><strong>Docker Desktop</strong></td><td><span class="version-badge">Opcional</span></td><td>Levantar PostgreSQL con un comando.</td><td><code>docker --version</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="guide-callout mt-3">
+              <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+              Android Studio incluye un JDK. Si <code>java -version</code> muestra una versión distinta de 17,
+              configura <code>JAVA_HOME</code> apuntando al JDK 17 y reinicia la terminal.
+            </div>
+
+            <h3>Instalación rápida en Windows</h3>
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>PowerShell · winget</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>winget install Git.Git
+winget install EclipseAdoptium.Temurin.17.JDK
+winget install Apache.Maven
+winget install PostgreSQL.PostgreSQL.16
+winget install Docker.DockerDesktop</pre>
+            </div>
+            <p class="mt-2 mb-0 text-muted small">En macOS puedes usar Homebrew: <code>brew install git openjdk@17 maven postgresql@16</code>.</p>
+          </section>
+
+          <!-- 2. Clonar -->
+          <section class="guide-section reveal" id="clonar">
+            <h2><span class="n">2</span> Clonar el repositorio</h2>
+            <p>El repositorio es público y la rama de trabajo es <code>main</code>.</p>
+
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>PowerShell · Git</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>git clone https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles.git
+cd StockPro_Proyecto_Final_Aplicaicones_Moviles</pre>
+            </div>
+
+            <h3>Estructura que verás</h3>
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>Raíz del repositorio</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>stockpro-completo/
+├── app/                  # Aplicación Android (Kotlin + Compose)
+├── backend/              # API Spring Boot (Java 17 + Maven)
+├── database/migrations/  # Copia de referencia de V1, V2 y V3
+├── docs/                 # Documentación, ADRs, diagramas y esta guía
+├── assets-docs/          # CSS, JS, SVG e imágenes de la landing
+├── index.html            # Landing page para GitHub Pages
+├── docker-compose.yml    # PostgreSQL 16
+├── gradle/               # Version catalog y propiedades del wrapper
+└── README.md</pre>
+            </div>
+          </section>
+
+          <!-- 3. Base de datos -->
+          <section class="guide-section reveal" id="base-datos">
+            <h2><span class="n">3</span> Preparar PostgreSQL</h2>
+            <p>Elige <strong>una</strong> de las dos opciones. No ejecutes ambas sobre el mismo puerto 5432.</p>
+
+            <ul class="nav nav-pills install-pills" id="guiaDbTabs" role="tablist" aria-label="Opciones de base de datos">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="guia-db-docker-tab" data-bs-toggle="pill" data-bs-target="#guia-db-docker" type="button" role="tab" aria-controls="guia-db-docker" aria-selected="true">
+                  <i class="bi bi-box" aria-hidden="true"></i> Opción A · Docker
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="guia-db-nativo-tab" data-bs-toggle="pill" data-bs-target="#guia-db-nativo" type="button" role="tab" aria-controls="guia-db-nativo" aria-selected="false">
+                  <i class="bi bi-windows" aria-hidden="true"></i> Opción B · PostgreSQL nativo
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="guia-db-docker" role="tabpanel" aria-labelledby="guia-db-docker-tab" tabindex="0">
+                <p class="mb-2">Desde la raíz del repositorio:</p>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · Docker Compose</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre>docker compose up -d
+docker compose ps</pre>
+                </div>
+                <div class="guide-callout mt-3">
+                  El contenedor se llama <code>stockpro-postgres</code>, expone el puerto <code>5432</code> y crea
+                  la base <code>stockpro_db</code>, el usuario <code>stockpro_user</code> y la contraseña
+                  <code>stockpro_password</code>. <strong>Las tablas las crea Flyway</strong> al arrancar Spring Boot.
+                </div>
+
+                <h3>Comandos útiles</h3>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · Docker Compose</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre><span class="cmt"># Ver logs</span>
+docker compose logs -f postgres
+
+<span class="cmt"># Detener sin borrar datos</span>
+docker compose stop
+
+<span class="cmt"># Reiniciar desde cero (borra el volumen)</span>
+docker compose down -v
+docker compose up -d</pre>
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="guia-db-nativo" role="tabpanel" aria-labelledby="guia-db-nativo-tab" tabindex="0">
+                <p class="mb-2">Instala PostgreSQL 16 y abre <strong>pgAdmin 4</strong> o la consola <code>psql</code> como superusuario <code>postgres</code>. Ejecuta este SQL exacto:</p>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>pgAdmin 4 · Query Tool</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre><span class="cmt">-- 1. Usuario y base de datos</span>
+CREATE USER stockpro_user WITH PASSWORD 'stockpro_password';
+CREATE DATABASE stockpro_db OWNER stockpro_user;
+GRANT ALL PRIVILEGES ON DATABASE stockpro_db TO stockpro_user;
+
+<span class="cmt">-- 2. Conéctate a stockpro_db y habilita la extensión</span>
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";</pre>
+                </div>
+
+                <div class="guide-callout mt-3">
+                  <strong>No crees tablas a mano.</strong> Flyway aplica <code>V1</code>, <code>V2</code> y <code>V3</code>
+                  automáticamente cuando arranca el backend. Si <code>pgcrypto</code> falla por permisos, ejecuta
+                  <code>CREATE EXTENSION</code> una vez como superusuario.
+                </div>
+
+                <h3>Comprobar la conexión</h3>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · psql</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre>psql -h localhost -U stockpro_user -d stockpro_db -c "SELECT version();"</pre>
+                </div>
+                <p class="mt-2 mb-0 text-muted small">Si tu PostgreSQL usa otras credenciales, defínelas con las variables <code>DB_*</code> antes de arrancar el backend.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Backend -->
+          <section class="guide-section reveal" id="backend">
+            <h2><span class="n">4</span> Ejecutar el backend</h2>
+            <p>Si usaste los valores por defecto de Docker o del SQL anterior, no necesitas configurar variables de entorno.</p>
+
+            <h3>Arrancar Spring Boot</h3>
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>PowerShell · Java 17 + Maven</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>cd backend
+mvn spring-boot:run</pre>
+            </div>
+
+            <div class="guide-callout mt-3">
+              <i class="bi bi-lightbulb me-1" aria-hidden="true"></i>
+              Si no tienes Maven instalado, abre <code>backend/pom.xml</code> en IntelliJ IDEA o Android Studio
+              con el plugin de Java y ejecuta la clase <code>StockProApplication</code>.
+            </div>
+
+            <h3>Variables de entorno (opcional)</h3>
+            <p class="mb-2">Los valores por defecto están en <code>application.yml</code>. Si tu PostgreSQL usa otras credenciales:</p>
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>PowerShell · variables de entorno</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>$env:DB_HOST="localhost"
+$env:DB_PORT="5432"
+$env:DB_NAME="stockpro_db"
+$env:DB_USER="stockpro_user"
+$env:DB_PASSWORD="tu_password"</pre>
+            </div>
+
+            <h3>Verificar que quedó bien</h3>
+            <div class="table-responsive">
+              <table class="table table-sp align-middle">
+                <thead>
+                  <tr><th>Verificación</th><th>URL o comando</th><th>Resultado esperado</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>API viva</td><td><a href="http://localhost:8080/api/v1/auth/login" target="_blank" rel="noopener">localhost:8080/api/v1/auth/login</a></td><td>405 o 400, no “connection refused”.</td></tr>
+                  <tr><td>Swagger UI</td><td><a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noopener">localhost:8080/swagger-ui.html</a></td><td>Interfaz con los 37 endpoints.</td></tr>
+                  <tr><td>OpenAPI JSON</td><td><a href="http://localhost:8080/v3/api-docs" target="_blank" rel="noopener">localhost:8080/v3/api-docs</a></td><td>Documento JSON.</td></tr>
+                  <tr><td>Tablas</td><td><code>psql -U stockpro_user -d stockpro_db -c "\dt"</code></td><td>17 tablas (16 de negocio + <code>flyway_schema_history</code>).</td></tr>
+                  <tr><td>Migraciones</td><td><code>SELECT version, description, success FROM flyway_schema_history;</code></td><td>V1, V2 y V3 con <code>success = true</code>.</td></tr>
+                  <tr><td>Datos demo</td><td><code>SELECT nombre, pais, moneda_base FROM negocios;</code></td><td>Mi Tienda, Corner Market, Bottega Roma.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Credenciales demo</h3>
+            <div class="credential-grid">
+              <div class="credential-card">
+                <strong>Mi Tienda</strong>
+                <span class="text-muted">Colombia · COP</span>
+                <code>carlos@mitienda.com</code>
+                <button class="copy-btn" type="button" data-copy-text="carlos@mitienda.com" aria-label="Copiar correo de Mi Tienda"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+              </div>
+              <div class="credential-card">
+                <strong>Corner Market</strong>
+                <span class="text-muted">EE. UU. · USD</span>
+                <code>robert@cornermarket.com</code>
+                <button class="copy-btn" type="button" data-copy-text="robert@cornermarket.com" aria-label="Copiar correo de Corner Market"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+              </div>
+              <div class="credential-card">
+                <strong>Bottega Roma</strong>
+                <span class="text-muted">Italia · EUR</span>
+                <code>matteo@bottegaroma.it</code>
+                <button class="copy-btn" type="button" data-copy-text="matteo@bottegaroma.it" aria-label="Copiar correo de Bottega Roma"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+              </div>
+            </div>
+            <p class="install-note mt-2">Contraseña para las tres cuentas: <code>Password123*</code></p>
+          </section>
+
+          <!-- 5. Android -->
+          <section class="guide-section reveal" id="android">
+            <h2><span class="n">5</span> Abrir y ejecutar la app Android</h2>
+            <p>La app usa <code>http://localhost:8080/</code>. Para que ese <code>localhost</code> apunte a tu computador desde el emulador o el teléfono, ejecuta el reverse <strong>antes de abrir la app</strong>.</p>
+
+            <h3>Abrir el proyecto</h3>
+            <ol class="guide-list">
+              <li>Abre <strong>Android Studio</strong>.</li>
+              <li>Selecciona <strong>Open</strong> y elige la <strong>raíz</strong> del repositorio (donde está <code>settings.gradle.kts</code>), no la carpeta <code>app</code>.</li>
+              <li>Espera la sincronización de Gradle. El proyecto usa <strong>AGP 9.1.1</strong>, Kotlin 2.2.10 y Gradle 9.3.1.</li>
+              <li>Acepta la instalación de los SDK que falten (API 36 para compilar).</li>
+              <li>Verifica que el módulo <code>app</code> aparezca en la barra de proyectos.</li>
+            </ol>
+
+            <h3>Conectar el dispositivo</h3>
+            <ul class="nav nav-pills install-pills" id="guiaAndroidTabs" role="tablist" aria-label="Opciones de dispositivo Android">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="guia-android-emu-tab" data-bs-toggle="pill" data-bs-target="#guia-android-emu" type="button" role="tab" aria-controls="guia-android-emu" aria-selected="true">
+                  <i class="bi bi-phone" aria-hidden="true"></i> Emulador
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="guia-android-usb-tab" data-bs-toggle="pill" data-bs-target="#guia-android-usb" type="button" role="tab" aria-controls="guia-android-usb" aria-selected="false">
+                  <i class="bi bi-usb-symbol" aria-hidden="true"></i> Teléfono físico por USB
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="guia-android-emu" role="tabpanel" aria-labelledby="guia-android-emu-tab" tabindex="0">
+                <p class="mb-2">Inicia un emulador API 30 o superior (API 24 es el mínimo). Luego ejecuta:</p>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · Windows · ruta completa de adb.exe</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre>&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse --list</pre>
+                </div>
+                <p class="install-note mt-2">Debe aparecer <code>tcp:8080 tcp:8080</code>. Si <code>adb</code> está en el PATH, puedes usar <code>adb reverse tcp:8080 tcp:8080</code>.</p>
+              </div>
+
+              <div class="tab-pane fade" id="guia-android-usb" role="tabpanel" aria-labelledby="guia-android-usb-tab" tabindex="0">
+                <ol class="guide-list">
+                  <li>Activa las <strong>Opciones de desarrollador</strong> y la <strong>Depuración USB</strong> en el teléfono.</li>
+                  <li>Conecta el cable USB y autoriza el equipo cuando aparezca el aviso en el teléfono.</li>
+                  <li>Ejecuta los comandos y confirma que el dispositivo aparece como <code>device</code>.</li>
+                </ol>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · Windows · ruta completa de adb.exe</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre>&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" devices
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse --list</pre>
+                </div>
+                <div class="guide-callout mt-3">
+                  Si el teléfono no aparece, revisa el cable, acepta la autorización de depuración y prueba con
+                  <code>adb kill-server</code> seguido de <code>adb devices</code>. También puede ser el firewall de Windows.
+                </div>
+              </div>
+            </div>
+
+            <h3>Ejecutar la app</h3>
+            <ol class="guide-list">
+              <li>Selecciona el módulo <code>app</code> y el dispositivo en la barra superior.</li>
+              <li>Pulsa <strong>Run ▶</strong>.</li>
+              <li>Espera la instalación y abre <strong>StockPro</strong>.</li>
+              <li>Inicia sesión con una de las cuentas demo.</li>
+            </ol>
+
+            <h3>Compilar el APK por consola (opcional)</h3>
+            <div class="code-block">
+              <div class="code-block__bar">
+                <span>PowerShell · Gradle</span>
+                <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+              </div>
+<pre>gradle :app:assembleDebug
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" install -r app/build/outputs/apk/debug/app-debug.apk</pre>
+            </div>
+            <p class="mt-2 mb-0 text-muted small">Con Gradle instalado y <code>JAVA_HOME</code> en Java 17. El APK queda en <code>app/build/outputs/apk/debug/app-debug.apk</code>.</p>
+
+            <div class="guide-callout mt-3">
+              <strong>Alternativas si <code>adb reverse</code> no está disponible:</strong> en el emulador la IP del host es
+              <code>10.0.2.2</code>; en un teléfono de la misma red puedes usar la IP local del PC. Ambas variantes
+              requieren ajustar <code>DEFAULT_BASE_URL</code> en el código, por eso el flujo recomendado es <code>adb reverse</code>.
+            </div>
+          </section>
+
+          <!-- 6. Smoke test -->
+          <section class="guide-section reveal" id="verificacion">
+            <h2><span class="n">6</span> Recorrido de verificación</h2>
+            <p>Haz este recorrido en orden. Cubre las reglas críticas en menos de diez minutos y el progreso se guarda en tu navegador.</p>
+
+            <div class="accordion sp-accordion" id="guiaAccordion">
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#guiaSmoke" aria-expanded="true" aria-controls="guiaSmoke">
+                    <i class="bi bi-check2-square me-2" aria-hidden="true"></i> Smoke test · 10 pasos
+                  </button>
+                </h3>
+                <div id="guiaSmoke" class="accordion-collapse collapse show" data-bs-parent="#guiaAccordion">
+                  <div class="accordion-body">
+                    <div class="smoke-head">
+                      <span class="counter" data-smoke-progress>0 / 10</span>
+                      <div class="progress" role="progressbar" aria-label="Progreso del smoke test" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar" data-smoke-bar style="width:0%"></div>
+                      </div>
+                      <button class="btn btn-soft btn-sm" type="button" data-smoke-reset><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reiniciar</button>
+                    </div>
+
+                    <ul class="smoke-list">
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g1" data-smoke-step="1"><label for="smoke-g1"><b>1.</b> Login con <code>carlos@mitienda.com</code> y contraseña <code>Password123*</code>. Debe abrir el tablero con ventas, ganancias y alertas.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g2" data-smoke-step="2"><label for="smoke-g2"><b>2.</b> Abre <strong>Productos</strong> y busca “Leche”: la lista se filtra y aparece el producto con lote por vencer.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g3" data-smoke-step="3"><label for="smoke-g3"><b>3.</b> Abre el detalle y la pestaña <strong>Lotes</strong>: lote vencido y lote por vencer con cantidades.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g4" data-smoke-step="4"><label for="smoke-g4"><b>4.</b> Ve a <strong>Alertas</strong> y filtra <strong>Por vencer</strong>: lotes con días restantes.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g5" data-smoke-step="5"><label for="smoke-g5"><b>5.</b> Registra una venta de 2 productos: comprobante, stock descontado y movimiento <code>VENTA</code>.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g6" data-smoke-step="6"><label for="smoke-g6"><b>6.</b> Intenta vender más unidades que el stock: error de stock insuficiente y el stock no cambia.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g7" data-smoke-step="7"><label for="smoke-g7"><b>7.</b> Registra una pérdida de 1 unidad: el stock baja y aparece en <strong>Movimientos</strong>.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g8" data-smoke-step="8"><label for="smoke-g8"><b>8.</b> Abre <strong>Reportes → 30 días</strong> y cambia a USD: cifras convertidas sin alterar la venta original.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g9" data-smoke-step="9"><label for="smoke-g9"><b>9.</b> En <strong>Mi negocio</strong>, cambia el idioma a inglés: textos en inglés sin cerrar sesión.</label></li>
+                      <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-g10" data-smoke-step="10"><label for="smoke-g10"><b>10.</b> Cierra sesión y vuelve a entrar: sesión persistente y tokens cifrados.</label></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 7. Problemas -->
+          <section class="guide-section reveal" id="problemas">
+            <h2><span class="n">7</span> Solución de problemas frecuentes</h2>
+            <p>Los síntomas más comunes al montar el entorno local y cómo resolverlos.</p>
+
+            <div class="accordion sp-accordion" id="guiaProblemas">
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#guiaConexion" aria-expanded="true" aria-controls="guiaConexion">
+                    <i class="bi bi-plug me-2" aria-hidden="true"></i> La app no conecta con el backend
+                  </button>
+                </h3>
+                <div id="guiaConexion" class="accordion-collapse collapse show" data-bs-parent="#guiaProblemas">
+                  <div class="accordion-body">
+                    <ul class="problem-list">
+                      <li><strong>Connection refused</strong><span>El backend está apagado o falta el reverse. Arranca Spring Boot y ejecuta <code>adb reverse tcp:8080 tcp:8080</code>.</span></li>
+                      <li><strong>El reverse no aparece</strong><span>Ejecuta <code>adb reverse --list</code>. En Windows usa la ruta completa de <code>adb.exe</code> si no está en el PATH.</span></li>
+                      <li><strong>Firewall o IP incorrecta</strong><span>Permite el puerto 8080, revisa que el backend escuche en <code>localhost:8080</code> y que el dispositivo esté autorizado.</span></li>
+                      <li><strong>Cleartext HTTP not permitted</strong><span>Verifica <code>network_security_config.xml</code>. En producción usa HTTPS.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guiaPuerto" aria-expanded="false" aria-controls="guiaPuerto">
+                    <i class="bi bi-hdd-network me-2" aria-hidden="true"></i> Puerto 8080 ocupado o base de datos
+                  </button>
+                </h3>
+                <div id="guiaPuerto" class="accordion-collapse collapse" data-bs-parent="#guiaProblemas">
+                  <div class="accordion-body">
+                    <ul class="problem-list">
+                      <li><strong>Port 8080 was already in use</strong><span>Ejecuta <code>netstat -ano | findstr :8080</code>, termina el proceso o cambia <code>server.port</code> en <code>application.yml</code>.</span></li>
+                      <li><strong>password authentication failed</strong><span>Las credenciales no coinciden. Define <code>DB_USER</code> y <code>DB_PASSWORD</code> o recrea el usuario.</span></li>
+                      <li><strong>database "stockpro_db" does not exist</strong><span>Créala en pgAdmin o con <code>CREATE DATABASE</code> y vuelve a arrancar el backend.</span></li>
+                      <li><strong>relation "productos" does not exist</strong><span>La app arrancó antes de que Flyway terminara. Espera el mensaje “Successfully applied” y reinicia.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guiaFlyway" aria-expanded="false" aria-controls="guiaFlyway">
+                    <i class="bi bi-database-exclamation me-2" aria-hidden="true"></i> Flyway y migraciones
+                  </button>
+                </h3>
+                <div id="guiaFlyway" class="accordion-collapse collapse" data-bs-parent="#guiaProblemas">
+                  <div class="accordion-body">
+                    <ul class="problem-list">
+                      <li><strong>Validate failed: checksum mismatch</strong><span>Se editó una migración ya aplicada. No edites V1–V3: restaura la base o ejecuta <code>flyway repair</code> si sabes lo que haces.</span></li>
+                      <li><strong>Flyway no crea tablas</strong><span>Verifica que <code>spring.flyway.enabled=true</code> y que existan los archivos en <code>db/migration</code>.</span></li>
+                      <li><strong>Base de una versión anterior</strong><span>Si no necesitas los datos, reinicia con <code>docker compose down -v</code> y <code>docker compose up -d</code>.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guiaGradle" aria-expanded="false" aria-controls="guiaGradle">
+                    <i class="bi bi-android2 me-2" aria-hidden="true"></i> Android Studio y Gradle
+                  </button>
+                </h3>
+                <div id="guiaGradle" class="accordion-collapse collapse" data-bs-parent="#guiaProblemas">
+                  <div class="accordion-body">
+                    <ul class="problem-list">
+                      <li><strong>Gradle no sincroniza</strong><span>Configura JDK 17 en Android Studio e instala el SDK 36. Abre la raíz del repositorio, no la carpeta <code>app</code>.</span></li>
+                      <li><strong>OutOfMemoryError en Gradle</strong><span>Ajusta <code>org.gradle.jvmargs</code> y cierra procesos. Revisa la sección de RAM.</span></li>
+                      <li><strong>Emulador muy lento</strong><span>Activa VT-x/AMD-V e instala el acelerador del emulador. Usa una imagen API 30 con 2 GB.</span></li>
+                      <li><strong>El idioma no cambia</strong><span>Verifica <code>values-en/strings.xml</code> y reinicia la actividad.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 8. RAM -->
+          <section class="guide-section reveal" id="ram">
+            <h2><span class="n">8</span> Optimización de RAM y recursos</h2>
+            <p>El proyecto ya trae ajustes en <code>gradle.properties</code>. Ajusta según la memoria de tu equipo:</p>
+
+            <div class="ram-grid">
+              <div class="ram-card"><strong>8 GB</strong><code>org.gradle.jvmargs=-Xmx2g</code>. Cierra Docker si usas PostgreSQL nativo y usa un emulador API 30 con 2 GB.</div>
+              <div class="ram-card"><strong>16 GB</strong>Mantén <code>-Xmx4g</code>. Docker con 2 GB y emulador con 2–3 GB.</div>
+              <div class="ram-card"><strong>32 GB o más</strong><code>-Xmx6g</code>. Puedes dejar Docker y el emulador abiertos.</div>
+            </div>
+
+            <h3>Otras acciones</h3>
+            <ul class="guide-list">
+              <li>Detén el daemon al terminar: <code>gradle --stop</code>.</li>
+              <li>Compila solo lo necesario: <code>gradle :app:assembleDebug</code>.</li>
+              <li>Usa modo offline si ya tienes dependencias: <code>gradle :app:assembleDebug --offline</code>.</li>
+              <li>Cierra el emulador cuando no lo uses: consume más RAM que el backend.</li>
+              <li>Docker Desktop → Settings → Resources: 2 GB son suficientes para PostgreSQL.</li>
+              <li>El backend con <code>mvn spring-boot:run</code> usa ~300–500 MB; no necesitas asignar más.</li>
+            </ul>
+          </section>
+
+          <!-- 9. Checklist -->
+          <section class="guide-section reveal" id="checklist">
+            <h2><span class="n">9</span> Checklist final</h2>
+            <p>Antes de entregar o sustentar, confirma estos puntos:</p>
+
+            <ul class="guide-check-grid">
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> PostgreSQL arriba y base <code>stockpro_db</code> creada.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Flyway aplicó V1, V2 y V3 sin errores.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Backend responde en <code>http://localhost:8080</code>.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Swagger muestra los 37 endpoints.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Login demo funciona y devuelve tokens.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> App compila e instala en emulador o teléfono.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Smoke test completo (sección 6).</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Landing y guía abren sin errores.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> PDF generado en <code>docs/StockPro_Entrega_ABP_Actualizado.pdf</code>.</li>
+              <li><i class="bi bi-check2-circle" aria-hidden="true"></i> <code>git status</code> sin cambios en código funcional.</li>
+            </ul>
+
+            <div class="guide-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <a class="back-link" href="../index.html"><i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a la landing</a>
+              <span>¿Necesitas el detalle completo? <a href="06-guia-instalacion-despliegue.md">Abre la guía Markdown</a>.</span>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="margin-top:0;border-top:0;padding-top:0">
+      <div>© <span data-year>2026</span> <strong>Sairy Ximena Mosquera García</strong> · Universidad Católica del Norte</div>
+      <div>
+        <a class="text-white-50 text-decoration-none" href="../index.html">Inicio</a> ·
+        <a class="text-white-50 text-decoration-none" href="presentacion-abp.html">Presentación</a> ·
+        <a class="text-white-50 text-decoration-none" href="StockPro_Entrega_ABP_Actualizado.pdf">PDF</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets-docs/script.js"></script>
+<script src="../assets-docs/guia.js"></script>
+</body>
+</html>

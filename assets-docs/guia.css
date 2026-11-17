@@ -1,0 +1,153 @@
+/* ==========================================================================
+   StockPro · ajustes propios de docs/guia-instalacion.html
+   ========================================================================== */
+
+.guide-body {
+  background:
+    radial-gradient(900px 520px at 92% 0%, rgba(8, 127, 91, .08), transparent 60%),
+    var(--sp-bg);
+}
+
+.guide-topbar {
+  background: rgba(255, 255, 255, .94);
+}
+
+.guide-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin-bottom: 1rem;
+}
+
+.guide-hero-badges .badge {
+  padding: .35rem .7rem;
+  border: 1px solid rgba(var(--sp-green-rgb), .2);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--sp-green-dark);
+  font-size: .7rem;
+  font-weight: 800;
+}
+
+.guide-hero-badges .badge i {
+  margin-right: .25rem;
+}
+
+.guide-main {
+  padding: clamp(30px, 5vw, 58px) 0 clamp(48px, 7vw, 84px);
+}
+
+.guide-toc-label {
+  display: none;
+}
+
+.install-pills .nav-link i {
+  margin-right: .3rem;
+}
+
+.guide-section .code-block + .code-block {
+  margin-top: .6rem;
+}
+
+.guide-section .table-responsive {
+  border: 1px solid var(--sp-line);
+  border-radius: 12px;
+}
+
+.guide-section .table-responsive .table {
+  margin-bottom: 0;
+}
+
+.guide-section .accordion {
+  margin-top: .3rem;
+}
+
+.guide-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-check-grid li {
+  display: flex;
+  align-items: flex-start;
+  gap: .45rem;
+  padding: .5rem .65rem;
+  border: 1px solid var(--sp-line);
+  border-radius: 9px;
+  background: var(--sp-bg);
+  font-size: .79rem;
+}
+
+.guide-check-grid i {
+  margin-top: .12rem;
+  color: var(--sp-green);
+}
+
+.guide-section .alert {
+  border-radius: 12px;
+  font-size: .82rem;
+}
+
+.guide-section .alert-warning {
+  border-color: #F3D8A8;
+  background: #FFF9ED;
+  color: #7A4B07;
+}
+
+.guide-section .alert-danger {
+  border-color: #F2C7C2;
+  background: #FFF5F4;
+  color: #8A2A20;
+}
+
+@media (max-width: 767.98px) {
+  .guide-check-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guide-toc {
+    margin-bottom: .2rem;
+  }
+}
+
+@media print {
+  .sp-navbar,
+  .guide-toc,
+  .copy-btn,
+  .guide-footer .btn,
+  .back-link {
+    display: none !important;
+  }
+
+  .guide-body {
+    background: #fff;
+  }
+
+  .guide-layout {
+    display: block;
+  }
+
+  .guide-section {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  .code-block {
+    background: #fff;
+    border-color: #999;
+  }
+
+  .code-block__bar {
+    background: #f4f4f4;
+    color: #333;
+  }
+
+  .code-block pre {
+    color: #111;
+    white-space: pre-wrap;
+  }
+}

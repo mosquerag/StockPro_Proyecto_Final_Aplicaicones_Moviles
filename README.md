@@ -1,232 +1,163 @@
-# 📦 STOCKPRO — Guía Completa de Instalación y Ejecución Paso a Paso
+# StockPro
 
-Bienvenido a **StockPro**, la plataforma móvil e integral para el control de inventario, ventas transaccionales (estrategia FEFO), cálculo de impuestos multinacionales (Colombia COP, Estados Unidos USD, Zona Euro EUR), control estricto de vencimientos y reportería de productividad para cualquier tipo de negocio.
+**Control real de inventario, ventas y vencimientos para pequeños comercios.**
 
-Este repositorio contiene la solución completa compuesta por:
-- **`backend/`**: API REST en Spring Boot 3.3.4 (Java 17), Spring Security con autenticación JWT (Access & Refresh tokens) y Spring Data JPA.
-- **`app/`**: Aplicación móvil nativa Android desarrollada en Kotlin, Jetpack Compose y Material Design 3 con soporte dinámico de idiomas (Español e Inglés) y monedas (COP, USD, EUR).
-- **`database/`**: Migraciones versionadas con Flyway (`V1`, `V2`, `V3`) con esquema relacional para PostgreSQL 16 y datos demo de prueba con fechas dinámicas.
-- **`docker-compose.yml`**: Orquestación para levantar la base de datos PostgreSQL 16 en un solo comando.
+Sistema móvil Android + API REST para tiendas, minimercados y bottegas que necesitan saber qué tienen, qué se vence y cuánto ganan, sin depender de cuadernos ni hojas de cálculo.
 
----
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202024.09-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![Material 3](https://img.shields.io/badge/Material%203-UI-757575?logo=materialdesign&logoColor=white)](https://m3.material.io/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java 17](https://img.shields.io/badge/Java-17%20LTS-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Flyway](https://img.shields.io/badge/Flyway-V1--V3-CC0200?logo=flyway&logoColor=white)](https://flywaydb.org/)
+[![Room](https://img.shields.io/badge/Room-2.7.0-3DDC84?logo=android&logoColor=white)](https://developer.android.com/training/data-storage/room)
+[![Retrofit](https://img.shields.io/badge/Retrofit-2.12.0-48B983?logo=square&logoColor=white)](https://square.github.io/retrofit/)
+[![JWT](https://img.shields.io/badge/JWT-HS256-000000?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Coil](https://img.shields.io/badge/Coil-2.7.0-FF6B6B?logo=android&logoColor=white)](https://coil-kt.github.io/coil/)
 
-## 🛠️ 1. Requisitos Previos y Herramientas a Instalar
-
-Para ejecutar y probar la solución completa en tu computadora, descarga e instala las siguientes herramientas (versiones recomendadas y probadas):
-
-| Herramienta | Versión Recomendada | Enlace Oficial de Descarga | Propósito |
-| :--- | :--- | :--- | :--- |
-| **Java Development Kit (JDK)** | **JDK 17 LTS** (Eclipse Temurin o Oracle) | [adoptium.net](https://adoptium.net) | Requerido para compilar y ejecutar el backend Spring Boot y Gradle en Android. |
-| **Docker Desktop** | **4.25+** (con Docker Compose v2) | [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) | Levanta la base de datos PostgreSQL 16 sin necesidad de instalarla en tu sistema operativo. |
-| **Android Studio** | **Ladybug (2024.2+)** o **Koala (2024.1+)** | [developer.android.com/studio](https://developer.android.com/studio) | Entorno oficial para abrir, compilar y ejecutar la app Android en el emulador. |
-| **IDE para Backend** | **IntelliJ IDEA Community** (o el mismo Android Studio) | [jetbrains.com/idea/download](https://www.jetbrains.com/idea/download/) | Para abrir el proyecto `backend` Maven y ejecutarlo con un clic. |
-| **Git** | **2.40+** | [git-scm.com](https://git-scm.com/) | Control de versiones y clonación del repositorio. |
-| **Cliente REST (Opcional)** | **Postman** o **Insomnia** | [postman.com/downloads](https://www.postman.com/downloads/) | Para probar las llamadas a la API (también cuentas con Swagger UI interactivo). |
-
-> 💡 **Nota sobre variables de entorno del sistema:**
-> - Asegúrate de que `JAVA_HOME` apunte a la ruta de instalación de tu JDK 17 (ejemplo en Windows: `C:\Program Files\Eclipse Adoptium\jdk-17...`, en macOS/Linux: `/Library/Java/JavaVirtualMachines/temurin-17...`).
-> - Añade `%JAVA_HOME%\bin` (o `$JAVA_HOME/bin`) al `PATH` de tu sistema.
+**Universidad Católica del Norte** · Facultad de Ingeniería y Ciencias Ambientales
+Curso: **Diseño de Aplicaciones Móviles** · Taller ABP — Entrega 1 (20%)
+Autora: **Sairy Ximena Mosquera García** (modalidad individual)
+Inicio: 28/09/2026 · **Entrega: 16/11/2026**
 
 ---
 
-## 🐘 2. Levantar la Base de Datos con Docker Compose
+## Resumen
 
-1. **Inicia Docker Desktop** en tu computadora y espera hasta que el icono indique que el motor de Docker está corriendo (*Engine running*).
-2. Abre una terminal (PowerShell, Command Prompt o Terminal de macOS/Linux) y navega a la carpeta raíz del proyecto StockPro descomprimido:
-   ```bash
-   cd ruta/hacia/StockPro
-   ```
-3. Ejecuta el comando para crear e iniciar el contenedor de PostgreSQL 16:
-   ```bash
-   docker compose up -d
-   ```
-4. **Comprobar que el contenedor está activo:**
-   ```bash
-   docker ps
-   ```
-   Verás un contenedor llamado `stockpro-postgres` escuchando en el puerto `0.0.0.0:5432->5432/tcp` con estado *(healthy)*.
+StockPro es una solución cliente-servidor compuesta por una aplicación Android nativa en Kotlin y Jetpack Compose, y una API REST en Spring Boot 3.3.4 sobre PostgreSQL 16. Resuelve tres fallas frecuentes en la operación de pequeños comercios: pérdida de mercancía por vencimiento, descuadre entre el stock físico y el registrado, y falta de visibilidad sobre la rentabilidad real por producto.
 
-5. **Comprobar que las migraciones y los datos demo se cargaron:**
-   Ingresa a la consola interactiva de PostgreSQL dentro del contenedor:
-   ```bash
-   docker exec -it stockpro-postgres psql -U stockpro_user -d stockpro_db
-   ```
-   Una vez dentro del prompt `stockpro_db=>`, ejecuta las siguientes consultas de verificación:
-   ```sql
-   -- Ver los 3 negocios de prueba (Colombia, EE. UU., Italia)
-   SELECT nombre, pais, moneda_base, tipo_negocio FROM negocios;
+La app permite registrar productos y lotes, recibir mercancía prevista, vender varios productos en una sola transacción con descuento de stock FEFO (primero en vencer, primero en salir), aplicar impuestos por país y categoría fiscal (Colombia, Estados Unidos y Zona Euro, vigencia 2026), convertir reportes entre COP, USD y EUR, y consultar alertas de stock bajo y vencimientos. El backend aplica las reglas de negocio de forma atómica; la app mantiene caché local con Room y sincroniza con Retrofit.
 
-   -- Ver los productos y su stock inicial
-   SELECT nombre, costo, precio_venta, stock_actual, maneja_lotes FROM productos LIMIT 6;
-
-   -- Ver las alertas de lotes próximos a vencer o vencidos
-   SELECT numero_lote, fecha_vencimiento, estado, cantidad_disponible FROM lotes;
-
-   -- Salir de psql
-   \q
-   ```
-   *(Si prefieres una interfaz gráfica como DBeaver o pgAdmin, conéctate a `localhost:5432`, Base de datos: `stockpro_db`, Usuario: `stockpro_user`, Contraseña: `stockpro_password`)*.
+**Palabras clave:** inventario, FEFO, vencimientos, ventas transaccionales, multinacional, IVA, Sales Tax, Jetpack Compose, Spring Boot, PostgreSQL, JWT, Room, ABP.
 
 ---
 
-## 🚀 3. Ejecutar y Probar el Backend (Spring Boot)
+## Introducción
 
-### Opción A: Ejecutar desde IntelliJ IDEA / Android Studio (Recomendado)
-1. Abre tu IDE (IntelliJ IDEA o Android Studio).
-2. Selecciona **Open** (Abrir) y elige la carpeta `backend/` (donde está el archivo `pom.xml`).
-3. El IDE detectará que es un proyecto Maven y descargará las dependencias automáticamente.
-4. Navega en el árbol de archivos a:
-   `src/main/java/com/stockpro/StockProApplication.java`
-5. Haz clic derecho sobre el archivo y selecciona **Run 'StockProApplication'** (o presiona el botón verde de Play ▶️).
-6. En la pestaña de consola inferior verás los logs de inicio de Spring Boot y el mensaje final:
-   ```text
-   Tomcat started on port 8080 (http) with context path '/'
-   Started StockProApplication in X.XXX seconds
-   ```
+Los pequeños comercios administran inventario con métodos manuales. Ese esquema funciona mientras el catálogo es pequeño, pero se rompe cuando hay productos perecederos, varias unidades de medida, compras por lote y precios con impuestos distintos. El resultado es mercancía vencida que se descubre tarde, ventas que no cuadran con el stock y decisiones de compra tomadas sin datos.
 
-### Opción B: Ejecutar desde la Terminal con Maven
-Si tienes Maven instalado en tu sistema:
+StockPro se desarrolló como una aplicación móvil real, no como un prototipo: las 17 pantallas, los 37 endpoints, las 16 tablas de negocio y las migraciones Flyway existen y se ejecutan. El proyecto documenta esa implementación y las decisiones de ingeniería que la sostienen.
+
+## Planteamiento del problema
+
+Un comerciante necesita responder cada día preguntas simples: qué se está por vencer, cuánto queda de cada producto, cuánto vendió y cuánto ganó. Cuando la respuesta depende de revisar estantes y sumar a mano, aparecen cuatro consecuencias:
+
+1. **Pérdida invisible por vencimiento.** Los lotes vencidos se detectan cuando ya no se pueden vender.
+2. **Stock descuadrado.** Las ventas y las entradas no dejan trazabilidad; el inventario del sistema se separa del real.
+3. **Precios e impuestos mal calculados.** Un producto puede estar exento de IVA, tener tarifa diferencial o pagar Sales Tax estatal; aplicar un porcentaje único distorsiona el margen.
+4. **Decisiones sin evidencia.** Sin reportes de rotación, margen y pérdidas, se compra por intuición.
+
+## Pregunta problema
+
+**¿Cómo puede un pequeño comercio controlar de forma confiable su inventario, sus vencimientos y sus ventas multinacionales desde una aplicación móvil, reduciendo pérdidas y obteniendo información útil para decidir, sin incurrir en la complejidad ni el costo de un ERP empresarial?**
+
+## Objetivos
+
+### Objetivo general (SMART)
+
+Diseñar, implementar y documentar antes del **16 de noviembre de 2026** una aplicación Android nativa con backend REST que permita a pequeños comercios de Colombia, Estados Unidos y la Zona Euro registrar productos y lotes, ejecutar ventas transaccionales con descuento FEFO y cálculo fiscal 2026, y consultar alertas y reportes en tres monedas, medido mediante la ejecución completa del flujo de venta sobre una base PostgreSQL con datos semilla y la validación de al menos 12 historias de usuario con criterios de aceptación.
+
+### Objetivos específicos
+
+1. Modelar un esquema relacional normalizado de 16 tablas que soporte negocios, usuarios, roles, productos, lotes, proveedores, ventas, movimientos, impuestos y tasas de cambio.
+2. Implementar autenticación y autorización con JWT (access de 15 minutos y refresh de 7 días), BCrypt y aislamiento de datos por negocio.
+3. Construir la app Android con arquitectura MVVM, Jetpack Compose, Material 3, navegación, Room como caché y Retrofit como cliente HTTP.
+4. Implementar la venta multiproducto como transacción atómica con FEFO, control de stock negativo, descuentos autorizados y registro de movimientos.
+5. Integrar tarifas de impuesto 2026 por país, estado y categoría fiscal, y conversión de moneda con tasas administrables.
+6. Generar alertas de stock bajo, próximos a vencer y vencidos, junto con reportes de ganancias, pérdidas, rotación, productividad e impuestos.
+7. Documentar requisitos, casos de uso, historias de usuario, ADRs, base de datos, diagramas UML y guía de instalación reproducible.
+
+## Arquitectura y stack tecnológico
+
+```text
+Android (Kotlin + Compose + MVVM)
+   │  Retrofit / OkHttp / Moshi · JWT Bearer
+   ▼
+API REST Spring Boot 3.3.4 (Java 17)
+   │  Spring Security · JPA · Bean Validation
+   ▼
+PostgreSQL 16  ←  Flyway V1 / V2 / V3
+```
+
+| Capa | Tecnología | Uso real en el proyecto |
+|---|---|---|
+| Móvil | Kotlin 2.2.10, Jetpack Compose, Material 3 | UI declarativa, tema verde StockPro, edge-to-edge |
+| Navegación | Navigation Compose 2.8.9 | 20 rutas y barra inferior de 5 secciones |
+| Estado | ViewModel + StateFlow, 13 ViewModels | `UiState`, eventos y factores de fábrica |
+| Red | Retrofit 2.12.0, OkHttp 4.10.0, Moshi | 37 operaciones REST, interceptores y refresh de token |
+| Persistencia local | Room 2.7.0 | Caché de productos y resumen del dashboard |
+| Seguridad local | EncryptedSharedPreferences | Access y refresh token cifrados |
+| Imágenes | Coil 2.7.0 | Carga de imagen de producto con `AsyncImage` y `SubcomposeAsyncImage` |
+| Backend | Spring Boot 3.3.4, Java 17 | 12 controladores REST, 10 servicios de negocio |
+| Persistencia | Spring Data JPA + PostgreSQL 16 | Entidades, repositorios y consultas agregadas |
+| Migraciones | Flyway | `V1` esquema, `V2` impuestos y tasas, `V3` datos demo |
+| Seguridad API | Spring Security, JJWT 0.12.6, BCrypt | Stateless, roles y aislamiento por negocio |
+| Documentación API | SpringDoc OpenAPI 2.6.0 | Swagger UI en `/swagger-ui.html` |
+
+Documentación de arquitectura: [`docs/01-documento-maestro-abp.md`](docs/01-documento-maestro-abp.md) · [Diagramas](docs/05-diagramas-uml-y-scrum.md) · [ADRs](docs/03-adrs/README.md).
+
+## Estructura del repositorio
+
+```text
+stockpro-completo/
+├── app/                  # Aplicación Android (Kotlin, Compose, Room, Retrofit)
+├── backend/              # API REST Spring Boot (Java 17, JPA, Security, Flyway)
+├── database/migrations/  # Copia de referencia de las migraciones V1–V3
+├── docs/                 # Documento ABP, requisitos, ADRs, BD, UML, guía, presentación
+├── assets-docs/          # CSS, JS, SVG e imágenes de la landing page
+├── index.html            # Landing page para GitHub Pages
+├── docker-compose.yml    # PostgreSQL 16 en un comando
+└── README.md
+```
+
+## Instalación rápida
+
 ```bash
+# 1. Base de datos
+docker compose up -d
+
+# 2. Backend (Java 17 + Maven)
 cd backend
-mvn spring-boot:run
+mvn spring-boot:run          # http://localhost:8080 · Swagger: /swagger-ui.html
+
+# 3. Android
+# Abrir la raíz del repositorio en Android Studio y ejecutar 'app'
+adb reverse tcp:8080 tcp:8080   # emulador o celular: localhost:8080 → tu PC
+
+# 4. Credenciales demo (contraseña: Password123*)
+# carlos@mitienda.com · robert@cornermarket.com · matteo@bottegaroma.it
 ```
 
----
+La guía completa —requisitos, PostgreSQL nativo o Docker, variables de entorno, `adb reverse`, solución de problemas y optimización de RAM— está en **[`docs/06-guia-instalacion-despliegue.md`](docs/06-guia-instalacion-despliegue.md)**. También existe una **[versión visual e interactiva](docs/guia-instalacion.html)** con comandos copiables, pestañas Docker/PostgreSQL nativo y un smoke test con progreso.
 
-### 🔑 Credenciales de Demostración para Pruebas
+## Enlaces del proyecto
 
-Todos los usuarios de prueba comparten la misma contraseña: **`Password123*`**
+| Recurso | Enlace |
+|---|---|
+| Landing page (GitHub Pages) | [mosquerag.github.io/StockPro_Proyecto_Final_Aplicaicones_Moviles](https://mosquerag.github.io/StockPro_Proyecto_Final_Aplicaicones_Moviles/) |
+| Presentación ABP (HTML → PDF) | [`docs/presentacion-abp.html`](docs/presentacion-abp.html) |
+| Documento maestro ABP | [`docs/01-documento-maestro-abp.md`](docs/01-documento-maestro-abp.md) |
+| Requisitos e historias de usuario | [`docs/02-requisitos-y-historias-usuario.md`](docs/02-requisitos-y-historias-usuario.md) |
+| Base de datos y ERD | [`docs/04-base-de-datos.md`](docs/04-base-de-datos.md) |
+| Diagramas UML y Scrum | [`docs/05-diagramas-uml-y-scrum.md`](docs/05-diagramas-uml-y-scrum.md) |
+| Diseño / Mockup completo (Figma Design) | [Abrir en Figma](https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1) |
+| Prototipo interactivo simulado (Figma Prototype) | [Abrir prototipo](https://www.figma.com/proto/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=3-8643&p=f&t=ouWKmehgqJ7Hdvce-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=173%3A326) |
 
-| Negocio | País & Moneda | Correo Demo | Rol | Contraseña |
-| :--- | :--- | :--- | :--- | :--- |
-| **Mi Tienda** | 🇨🇴 Colombia (COP) | `carlos@mitienda.com` | Propietario | `Password123*` |
-| **Mi Tienda** | 🇨🇴 Colombia (COP) | `luisa@mitienda.com` | Empleado | `Password123*` |
-| **Corner Market** | 🇺🇸 EE. UU. - CA (USD) | `robert@cornermarket.com` | Propietario | `Password123*` |
-| **Corner Market** | 🇺🇸 EE. UU. - CA (USD) | `emma@cornermarket.com` | Empleado | `Password123*` |
-| **Bottega Roma** | 🇮🇹 Italia (EUR) | `matteo@bottegaroma.it` | Propietario | `Password123*` |
+## Documentación
 
----
+| Documento | Contenido |
+|---|---|
+| [01 · Documento maestro ABP](docs/01-documento-maestro-abp.md) | Identificación, metodología, necesidad del cliente, alcance, endpoints, seguridad, costos y conclusiones |
+| [02 · Requisitos e historias](docs/02-requisitos-y-historias-usuario.md) | RF, RNF, casos de uso, 12 HU con criterios de aceptación, buenas prácticas y pruebas |
+| [03 · ADRs](docs/03-adrs/README.md) | 7 decisiones de arquitectura con contexto, alternativas y consecuencias |
+| [04 · Base de datos](docs/04-base-de-datos.md) | ERD Mermaid, diccionario de datos, integridad y ACID |
+| [05 · UML y Scrum](docs/05-diagramas-uml-y-scrum.md) | Arquitectura, componentes, casos de uso, clases, secuencias y Kanban |
+| [06 · Instalación](docs/06-guia-instalacion-despliegue.md) | Guía paso a paso para docente o compañero |
+| [06 · Instalación visual](docs/guia-instalacion.html) | Versión interactiva con botones de copiar, pestañas y smoke test |
+| [Presentación ABP](docs/presentacion-abp.html) | Diapositivas navegables listas para exportar a PDF |
+| [Entrega en PDF](docs/StockPro_Entrega_ABP_Actualizado.pdf) | Versión imprimible A4 de la sustentación (17 páginas) |
 
-### 🌐 Probar con Swagger UI Interactivo
-Abre tu navegador web e ingresa a:
-👉 **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)** (o [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html))
+## Autoría y licencia
 
-1. Ve a la sección **`auth-controller`** > `POST /api/v1/auth/login`.
-2. Presiona **Try it out** y envía el cuerpo JSON:
-   ```json
-   {
-     "correo": "carlos@mitienda.com",
-     "password": "Password123*"
-   }
-   ```
-3. Copia el valor de `accessToken` que devuelve la respuesta.
-4. Sube al botón superior verde **Authorize** (con el candado 🔓), escribe:
-   `Bearer <tu_access_token_aqui>` y presiona **Authorize**.
-5. ¡Listo! Ahora puedes probar cualquier endpoint:
-   - `GET /api/v1/dashboard/summary` (Métricas del día, ventas y alertas activas)
-   - `GET /api/v1/products` (Catálogo con precios y stock)
-   - `GET /api/v1/lots/alerts/expiring` (Productos que vencen en los próximos 7 días)
-   - `POST /api/v1/sales` (Registro transaccional de venta con descuento FEFO automático)
-   - `GET /api/v1/inbound-deliveries/today` (Entradas de mercancía previstas para hoy)
-
----
-
-## 📱 4. Abrir y Ejecutar la App en Android Studio
-
-### Paso 1: Abrir el Proyecto Android
-1. Abre **Android Studio**.
-2. En la pantalla de bienvenida, selecciona **Open**.
-3. Selecciona la carpeta raíz del proyecto StockPro (donde se encuentran `settings.gradle.kts` y la carpeta `app/`).
-4. Android Studio sincronizará automáticamente los archivos de Gradle (*Gradle Sync*). Espera a que termine la indexación.
-
-### Paso 2: Crear y Lanzar un Emulador Android
-1. En la barra superior derecha de Android Studio, haz clic en el icono de **Device Manager** (o ve a *Tools* > *Device Manager*).
-2. Haz clic en **Create Device** (+).
-3. Selecciona un dispositivo de teléfono, por ejemplo **Pixel 7** o **Pixel 8**, y haz clic en *Next*.
-4. Elige una imagen del sistema con Google APIs (recomendado: **API 34 o API 35**, VanillaIceCream / UpsideDownCake). Si no está descargada, haz clic en el icono de descarga junto a la versión.
-5. Haz clic en *Next* y luego en *Finish*.
-6. Inicia el emulador presionando el botón de **Play** ▶️ junto al emulador creado.
-
-### Paso 3: Conexión con el Backend Local (`http://10.0.2.2:8080`)
-- **En el Emulador de Android:** El emulador corre dentro de una red virtual interna aislada. Para acceder a tu computadora anfitriona (donde corre Spring Boot en el puerto 8080), Android utiliza la dirección IP especial **`http://10.0.2.2:8080`**.
-- La aplicación ya cuenta con la configuración de seguridad (`app/src/main/res/xml/network_security_config.xml`) que permite tráfico HTTP hacia `10.0.2.2`, `localhost` y `127.0.0.1`.
-- **En un Teléfono Real:**
-  1. Conecta tu teléfono y tu computadora a la **misma red Wi-Fi**.
-  2. Averigua la IP local de tu computadora (ejecuta `ipconfig` en Windows o `ifconfig` / `ip a` en Mac/Linux, ej. `192.168.1.50`).
-  3. Cambia la URL base a `http://192.168.1.50:8080` y añade esa IP al archivo `network_security_config.xml`.
-
-### Paso 4: Ejecutar la App
-1. Asegúrate de que el emulador esté seleccionado como destino en el menú desplegable superior.
-2. Presiona el botón verde de **Run 'app'** (Shift + F10).
-3. La aplicación se compilará e instalará en el emulador, abriendo la pantalla de inicio de StockPro.
-
----
-
-## 🌐 5. Cómo Probar el Cambio de Idioma y Moneda en la App
-
-### A) Cambio Dinámico de Idioma (Español ⇄ Inglés)
-La aplicación cuenta con internacionalización completa sin necesidad de reiniciar la app:
-1. Dentro de la app, navega a la pestaña inferior **Más** (icono de tres puntos/perfil).
-2. Toca en la opción **Idioma / Language**.
-3. Selecciona **Español** o **English**.
-4. **Resultado instantáneo:** Todas las pantallas, tarjetas, chips de filtro, botones, formularios, alertas y mensajes de error se traducirán automáticamente en tiempo real utilizando `strings.xml` o `values-en/strings.xml`.
-
-### B) Visualización en Diferentes Monedas (COP / USD / EUR)
-1. Ve a la pestaña **Reportes** o a **Inicio (Dashboard)**.
-2. En la parte superior de los reportes encontrarás los botones selectores de moneda: **`COP`**, **`USD`**, **`EUR`**.
-3. Al seleccionar una moneda distinta, las cifras de ventas, ganancias estimadas, costos y pérdidas se convierten utilizando la última tasa de cambio registrada en la tabla `tasas_cambio`, formateando adecuadamente:
-   - **COP:** Sin decimales (ej. `$ 1.250.000 COP`).
-   - **USD:** Con 2 decimales y símbolo dólar (ej. `$ 312.50 USD`).
-   - **EUR:** Con 2 decimales y símbolo euro (ej. `287,50 € EUR`).
-
----
-
-## ⚠️ 6. Solución a los Problemas Más Comunes
-
-### 1. "El puerto 5432 ya está ocupado" (Error al iniciar PostgreSQL)
-- **Causa:** Tienes una instancia local previa de PostgreSQL corriendo en tu computadora fuera de Docker.
-- **Solución:**
-  - Opción A: Detén el servicio local de PostgreSQL (en Windows: abre *Servicios* y detén *postgresql-x64-XX*; en Linux: `sudo systemctl stop postgresql`).
-  - Opción B: Cambia el puerto externo en `docker-compose.yml` de `"5432:5432"` a `"5433:5432"`, y en `application.yml` cambia `DB_PORT: 5433`.
-
-### 2. "El puerto 8080 ya está ocupado" (Error al iniciar Spring Boot)
-- **Causa:** Otra aplicación (Tomcat, Jenkins, Oracle XE u otro proceso) usa el puerto 8080.
-- **Solución:** En `backend/src/main/resources/application.yml`, cambia:
-  ```yaml
-  server:
-    port: 8081
-  ```
-  Y accede a Swagger en `http://localhost:8081/swagger-ui.html`.
-
-### 3. "La app Android muestra error de conexión o pantalla en blanco"
-- **Comprueba:**
-  1. ¿Está el backend Spring Boot corriendo en la consola de tu computadora?
-  2. Si usas el emulador, verifica que la URL configurada sea `http://10.0.2.2:8080` y NO `http://localhost:8080`.
-  3. Verifica que `network_security_config.xml` tenga `cleartextTrafficPermitted="true"` para `10.0.2.2` (ya preconfigurado en este repositorio).
-  4. En Windows, comprueba que el Firewall no esté bloqueando conexiones entrantes en el puerto 8080.
-
-### 4. "Error de versión de Java en Gradle al compilar Android"
-- **Solución:** En Android Studio, ve a **Settings** (o **Preferences** en Mac) > **Build, Execution, Deployment** > **Build Tools** > **Gradle** > **Gradle JDK**, y selecciona **JDK 17** (Embedded o Temurin-17).
-
----
-
-## 📐 7. Arquitectura del Sistema y Esquema de Errores
-
-### Manejo Estandarizado de Errores de API
-Cualquier fallo de validación o excepción de negocio devuelve un código unívoco `codigo` en formato JSON con código de estado HTTP estándar:
-```json
-{
-  "codigo": "STOCK_INSUFICIENTE",
-  "mensaje": "Stock insuficiente para 'Leche entera'. Disponible: 3.00, Solicitado: 5.00",
-  "status": 400,
-  "timestamp": "2026-11-04T12:00:00Z"
-}
-```
-
-La app Android (`ErrorTranslator.kt`) detecta dicho código y muestra el mensaje en el idioma activo del usuario:
-- Español: *"Stock insuficiente para realizar la operación"*
-- Inglés: *"Insufficient stock to perform this operation"*
-
-¡Felicitaciones! Ya tienes la solución integral de **StockPro** completamente funcional para operar inventarios, ventas y reportes de negocios comerciales.
-# StockPro_Proyecto_Final_Aplicaicones_Moviles
- 4ffd91be3a981c731b88b43d7ab6299f596b8b81
+Proyecto académico individual de **Sairy Ximena Mosquera García** para la Universidad Católica del Norte. El código se distribuye con la licencia incluida en [`LICENSE`](LICENSE); la documentación puede citarse con atribución.

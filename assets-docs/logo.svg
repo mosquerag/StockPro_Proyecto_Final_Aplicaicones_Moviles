@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="StockPro">
+  <defs>
+    <linearGradient id="sp-logo-g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0AA174"/>
+      <stop offset="1" stop-color="#044D37"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#sp-logo-g)"/>
+  <path d="M32 12.5 50.5 21.5v21L32 51.5 13.5 42.5v-21z" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M13.5 21.5 32 30.5l18.5-9M32 30.5v21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" opacity=".85"/>
+  <path d="M22.5 38.5l5.7 5.7L40.5 31" fill="none" stroke="#B8F5DF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

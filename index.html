@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StockPro · Control de inventario, ventas y vencimientos</title>
+<meta name="description" content="StockPro: aplicación Android nativa y API REST Spring Boot para controlar inventario, lotes, vencimientos, ventas con FEFO, impuestos de Colombia, EE. UU. y Zona Euro, y reportes en COP, USD y EUR.">
+<meta name="author" content="Sairy Ximena Mosquera García">
+<meta name="theme-color" content="#087F5B">
+<meta property="og:type" content="website">
+<meta property="og:title" content="StockPro · Tu inventario, siempre en control">
+<meta property="og:description" content="Inventario, lotes, FEFO, ventas transaccionales y reportes multimoneda. Proyecto ABP de Diseño de Aplicaciones Móviles — UCN.">
+<meta property="og:image" content="assets-docs/app-mockup.jpg">
+<link rel="icon" type="image/png" href="assets-docs/app-icon-256.png">
+<link rel="apple-touch-icon" href="assets-docs/app-icon-256.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets-docs/styles.css">
+<link rel="stylesheet" href="assets-docs/guia.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<a class="skip-link" href="#inicio">Saltar al contenido</a>
+
+<!-- ============================= NAVBAR ============================= -->
+<nav class="navbar navbar-expand-lg sticky-top sp-navbar" aria-label="Navegación principal">
+  <div class="container">
+    <a class="navbar-brand" href="#inicio" aria-label="StockPro, inicio">
+      <img src="assets-docs/logo.svg" alt="" width="38" height="38">
+      <span class="brand-text">StockPro<small>Control de inventario</small></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú de navegación">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menuPrincipal">
+      <ul class="navbar-nav mx-auto mb-3 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#problema">Problema</a></li>
+        <li class="nav-item"><a class="nav-link" href="#solucion">Cómo funciona</a></li>
+        <li class="nav-item"><a class="nav-link" href="#modulos">Módulos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#arquitectura">Arquitectura</a></li>
+        <li class="nav-item"><a class="nav-link" href="#evidencias">Evidencias</a></li>
+        <li class="nav-item"><a class="nav-link" href="#documentacion">Documentación</a></li>
+      </ul>
+
+      <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+        <a class="btn btn-outline-brand btn-sm" href="https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1" target="_blank" rel="noopener">
+          <i class="bi bi-vector-pen" aria-hidden="true"></i> Figma
+        </a>
+        <a class="btn btn-brand btn-sm" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">
+          <i class="bi bi-github" aria-hidden="true"></i> GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="inicio">
+
+  <!-- ============================= HERO ============================= -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="hero-badge">
+            <strong>ABP 2026</strong>
+            Diseño de Aplicaciones Móviles · UCN
+          </span>
+
+          <h1>
+            <span class="line">Tu inventario,</span>
+            <span class="line">siempre en <span class="accent">control</span>.</span>
+          </h1>
+
+          <p class="hero-lead">
+            StockPro es una app Android nativa con backend Spring Boot que controla
+            <strong>productos, lotes y vencimientos</strong>, registra ventas transaccionales con
+            <strong>salida FEFO</strong>, calcula impuestos de Colombia, EE. UU. y la Zona Euro,
+            y entrega reportes en <strong>COP, USD y EUR</strong>.
+          </p>
+
+          <div class="hero-cta">
+            <a class="btn btn-brand btn-lg" href="#documentacion">
+              <i class="bi bi-journal-text" aria-hidden="true"></i> Explorar la documentación
+            </a>
+            <a class="btn btn-outline-brand btn-lg" href="docs/presentacion-abp.html">
+              <i class="bi bi-easel2" aria-hidden="true"></i> Presentación ABP
+            </a>
+            <a class="btn btn-soft btn-lg" href="docs/guia-instalacion.html">
+              <i class="bi bi-terminal" aria-hidden="true"></i> Guía de instalación
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <span><i class="bi bi-check2-circle" aria-hidden="true"></i> Código funcional, no un prototipo</span>
+            <span><i class="bi bi-database-check" aria-hidden="true"></i> PostgreSQL 16 + Flyway V1–V3</span>
+            <span><i class="bi bi-shield-lock" aria-hidden="true"></i> JWT + BCrypt + roles</span>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <img class="hero-phone" src="assets-docs/hero-phone.svg" alt="Pantalla de inicio de StockPro con ganancias del día, productos, ventas, alertas y últimas ventas" width="480" height="660">
+
+          <div class="hero-chip hero-chip--tl">
+            <span class="dot"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+            <span>Lote por vencer<small>Leche Alquería · 4 días</small></span>
+          </div>
+
+          <div class="hero-chip hero-chip--br">
+            <span class="dot"><i class="bi bi-bag-check" aria-hidden="true"></i></span>
+            <span>Venta registrada<small>Stock actualizado por FEFO</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-wrap">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-num" data-count="17">17</div>
+              <div class="stat-label">Pantallas Android</div>
+              <div class="stat-note">Compose + Material 3</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-num" data-count="37">37</div>
+              <div class="stat-label">Endpoints REST</div>
+              <div class="stat-note">Documentados en Swagger</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-num" data-count="16">16</div>
+              <div class="stat-label">Tablas de negocio</div>
+              <div class="stat-note">PostgreSQL 16 · Flyway</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-num" data-count="12">12</div>
+              <div class="stat-label">Historias de usuario</div>
+              <div class="stat-note">Con criterios Gherkin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= PROBLEMA ============================= -->
+  <section class="section" id="problema">
+    <div class="container">
+      <div class="split-head reveal">
+        <div>
+          <span class="eyebrow">El problema</span>
+          <h2 class="section-title">El cuaderno no avisa cuando la mercancía se va a perder.</h2>
+        </div>
+        <div>
+          <p class="pull-quote">
+            «Sé que tengo leche, pero no sé <strong>cuál se vence primero</strong>.
+            Sé que vendí, pero no sé <strong>cuánto gané</strong>.»
+          </p>
+          <p class="section-lead mt-3">
+            Esa es la realidad de miles de tiendas y minimercados: operación manual,
+            sin trazabilidad y sin datos para decidir.
+          </p>
+        </div>
+      </div>
+
+      <div class="problem-grid">
+        <article class="problem-card reveal">
+          <div class="icon-box"><i class="bi bi-hourglass-split" aria-hidden="true"></i></div>
+          <h3>Pérdida invisible por vencimiento</h3>
+          <p>Los lotes vencidos se descubren cuando ya no se pueden vender. Nadie avisa con días de anticipación y el margen se pierde en el estante.</p>
+          <span class="fix"><i class="bi bi-check2" aria-hidden="true"></i> Alertas de 7 días y salida FEFO</span>
+        </article>
+
+        <article class="problem-card reveal" data-delay="1">
+          <div class="icon-box"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i></div>
+          <h3>Stock descuadrado</h3>
+          <p>Las ventas y las entradas no dejan rastro. El inventario del sistema se separa del inventario real y las compras se hacen por intuición.</p>
+          <span class="fix"><i class="bi bi-check2" aria-hidden="true"></i> Movimientos con stock anterior y posterior</span>
+        </article>
+
+        <article class="problem-card reveal" data-delay="2">
+          <div class="icon-box"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i></div>
+          <h3>Precios, impuestos y margen mal calculados</h3>
+          <p>Un producto puede estar exento de IVA, tener tarifa diferencial o pagar Sales Tax estatal. Un porcentaje único distorsiona el precio y la ganancia.</p>
+          <span class="fix"><i class="bi bi-check2" aria-hidden="true"></i> Tarifas 2026 por país y categoría fiscal</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CÓMO FUNCIONA ============================= -->
+  <section class="section section--white section--tight" id="solucion">
+    <div class="container">
+      <div class="section-head section-head--center reveal">
+        <span class="eyebrow">Cómo funciona</span>
+        <h2 class="section-title">Del catálogo al reporte, en cinco pasos.</h2>
+        <p class="section-lead">Cada paso corresponde a pantallas y reglas implementadas en la aplicación, no a una maqueta.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-n">1</div>
+          <h3>Registra el negocio</h3>
+          <p>País, moneda base y propietario en una cuenta con JWT y roles.</p>
+        </div>
+        <div class="step reveal" data-delay="1">
+          <div class="step-n">2</div>
+          <h3>Organiza el catálogo</h3>
+          <p>Productos, categorías, costo, precio, stock mínimo y categoría fiscal.</p>
+        </div>
+        <div class="step reveal" data-delay="2">
+          <div class="step-n">3</div>
+          <h3>Controla lotes</h3>
+          <p>Vencimientos, alertas de 7 días y bajas con pérdida valorizada.</p>
+        </div>
+        <div class="step reveal" data-delay="3">
+          <div class="step-n">4</div>
+          <h3>Vende con FEFO</h3>
+          <p>Venta multiproducto atómica, impuesto por línea y comprobante.</p>
+        </div>
+        <div class="step reveal" data-delay="4">
+          <div class="step-n">5</div>
+          <h3>Decide con datos</h3>
+          <p>Ganancia, margen, rotación, pérdidas y multimoneda.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= MÓDULOS ============================= -->
+  <section class="section" id="modulos">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Módulos del sistema</span>
+        <h2 class="section-title">Una operación completa, sin ERP empresarial.</h2>
+        <p class="section-lead">Siete capacidades que cubren el día a día de una tienda, minimercado o bottega.</p>
+      </div>
+
+      <div class="modules">
+        <article class="module reveal">
+          <div class="module-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></div>
+          <h3>Catálogo y categorías</h3>
+          <p>Búsqueda en tiempo real, filtros por categoría, imagen, unidad de medida, costo y precio oficial del backend.</p>
+          <div class="module-tags"><span class="tag">Productos</span><span class="tag">Categorías</span><span class="tag">Borrado lógico</span></div>
+        </article>
+
+        <article class="module reveal" data-delay="1">
+          <div class="module-icon"><i class="bi bi-calendar2-week" aria-hidden="true"></i></div>
+          <h3>Lotes y vencimientos</h3>
+          <p>Cada lote conserva cantidad inicial, disponible, fecha de ingreso y vencimiento. La alerta se activa a 7 días.</p>
+          <div class="module-tags"><span class="tag">FEFO</span><span class="tag">Vencidos</span><span class="tag">Bajas</span></div>
+        </article>
+
+        <article class="module module--feature reveal" data-delay="2">
+          <div class="module-icon"><i class="bi bi-receipt-cutoff" aria-hidden="true"></i></div>
+          <h3>Ventas transaccionales</h3>
+          <p>Carrito multiproducto, descuento autorizado hasta 30 %, impuesto por línea, descuento de stock y comprobante.</p>
+          <div class="module-tags"><span class="tag">Atómico</span><span class="tag">Impuestos</span><span class="tag">Comprobante</span></div>
+        </article>
+
+        <article class="module reveal">
+          <div class="module-icon"><i class="bi bi-truck" aria-hidden="true"></i></div>
+          <h3>Entradas previstas</h3>
+          <p>Programa mercancía sin inflar el stock. Al confirmar la recepción se crea el lote, se suma stock y se registra el movimiento.</p>
+          <div class="module-tags"><span class="tag">Proveedores</span><span class="tag">Recepción</span><span class="tag">Parcial</span></div>
+        </article>
+
+        <article class="module reveal" data-delay="1">
+          <div class="module-icon"><i class="bi bi-bell" aria-hidden="true"></i></div>
+          <h3>Alertas accionables</h3>
+          <p>Stock bajo, próximos a vencer y vencidos en una sola pantalla filtrable, con navegación directa al producto o lote.</p>
+          <div class="module-tags"><span class="tag">Stock mínimo</span><span class="tag">7 días</span><span class="tag">Vencidos</span></div>
+        </article>
+
+        <article class="module reveal" data-delay="2">
+          <div class="module-icon"><i class="bi bi-bar-chart-line" aria-hidden="true"></i></div>
+          <h3>Reportes y multimoneda</h3>
+          <p>Ventas, costo, ganancia, margen, impuestos, pérdidas y productos más y menos vendidos en COP, USD o EUR.</p>
+          <div class="module-tags"><span class="tag">7D · 30D · 3M</span><span class="tag">COP</span><span class="tag">USD · EUR</span></div>
+        </article>
+
+        <article class="module module--feature reveal" data-delay="3">
+          <div class="module-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></div>
+          <h3>Seguridad y roles</h3>
+          <p>JWT HS256, access de 15 minutos, refresh rotativo de 7 días, BCrypt y aislamiento de datos por negocio.</p>
+          <div class="module-tags"><span class="tag">JWT</span><span class="tag">BCrypt</span><span class="tag">4 roles</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= ARQUITECTURA ============================= -->
+  <section class="section section--white" id="arquitectura">
+    <div class="container">
+      <div class="arch-grid">
+        <div class="arch-copy reveal">
+          <span class="eyebrow">Arquitectura</span>
+          <h2 class="section-title">Cliente-servidor con reglas en el backend.</h2>
+          <p class="section-lead">
+            La app presenta y valida formularios; el backend concentra stock, FEFO, impuestos,
+            permisos y aislamiento por negocio. Room funciona como caché de lectura y
+            EncryptedSharedPreferences protege los tokens.
+          </p>
+
+          <ul class="arch-list">
+            <li>
+              <span class="mini"><i class="bi bi-phone" aria-hidden="true"></i></span>
+              <div><strong>Android nativo · Kotlin + Compose</strong><span>MVVM, 13 ViewModels, 20 rutas y barra inferior de 5 secciones.</span></div>
+            </li>
+            <li>
+              <span class="mini"><i class="bi bi-shield-lock" aria-hidden="true"></i></span>
+              <div><strong>Seguridad stateless</strong><span>JWT HS256, access de 15 min, refresh de 7 días, BCrypt y cuatro roles.</span></div>
+            </li>
+            <li>
+              <span class="mini"><i class="bi bi-database" aria-hidden="true"></i></span>
+              <div><strong>PostgreSQL 16 + Flyway</strong><span>16 tablas de negocio, UUID, NUMERIC, TIMESTAMPTZ y datos demo de tres países.</span></div>
+            </li>
+            <li>
+              <span class="mini"><i class="bi bi-terminal" aria-hidden="true"></i></span>
+              <div><strong>Reproducible en local</strong><span>Docker Compose, Swagger UI y guía de instalación con <code>adb reverse</code>.</span></div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="stack reveal" data-delay="1" aria-label="Capas de la arquitectura">
+          <div class="stack-layer">
+            <span class="num">01</span>
+            <span class="badge"><i class="bi bi-phone" aria-hidden="true"></i></span>
+            <div><strong>UI · Jetpack Compose + Material 3</strong><span>17 pantallas · tema #087F5B · español e inglés</span></div>
+          </div>
+          <div class="stack-arrow" aria-hidden="true"><i class="bi bi-arrow-down"></i></div>
+          <div class="stack-layer">
+            <span class="num">02</span>
+            <span class="badge"><i class="bi bi-diagram-3" aria-hidden="true"></i></span>
+            <div><strong>Estado y repositorios</strong><span>13 ViewModels · StateFlow · caché Room</span></div>
+          </div>
+          <div class="stack-arrow" aria-hidden="true"><i class="bi bi-arrow-down"></i></div>
+          <div class="stack-layer">
+            <span class="num">03</span>
+            <span class="badge"><i class="bi bi-arrow-left-right" aria-hidden="true"></i></span>
+            <div><strong>Red · Retrofit + OkHttp + Moshi</strong><span>37 operaciones · refresh automático de token</span></div>
+          </div>
+          <div class="stack-arrow" aria-hidden="true"><i class="bi bi-arrow-down"></i></div>
+          <div class="stack-layer stack-layer--brand">
+            <span class="num" style="color:#7FD6B7">04</span>
+            <span class="badge"><i class="bi bi-cloud-arrow-up" aria-hidden="true"></i></span>
+            <div><strong>API REST · Spring Boot 3.3.4</strong><span>Java 17 · 12 controladores · 10 servicios · JWT</span></div>
+          </div>
+          <div class="stack-arrow" aria-hidden="true"><i class="bi bi-arrow-down"></i></div>
+          <div class="stack-layer">
+            <span class="num">05</span>
+            <span class="badge"><i class="bi bi-database" aria-hidden="true"></i></span>
+            <div><strong>PostgreSQL 16</strong><span>Flyway V1 esquema · V2 impuestos · V3 datos demo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= EVIDENCIAS ============================= -->
+  <section class="section" id="evidencias">
+    <div class="container">
+      <div class="evidence-grid">
+        <figure class="evidence-frame reveal" style="margin:0">
+          <img src="assets-docs/app-mockup.jpg" alt="Mockup de las pantallas de StockPro: inicio de sesión, tablero, productos, alertas y reportes" width="1214" height="1295" loading="lazy">
+          <figcaption class="evidence-caption">
+            <strong>Mockup de la aplicación</strong>
+            <span>Diseño en Figma · implementación en Compose</span>
+          </figcaption>
+        </figure>
+
+        <div class="reveal" data-delay="1">
+          <span class="eyebrow">Evidencias de implementación</span>
+          <h2 class="section-title">Lo que se ve también existe en el código.</h2>
+          <p class="section-lead">El repositorio contiene la app, la API, las migraciones y los datos demo necesarios para reproducir el flujo completo.</p>
+
+          <ul class="evidence-list">
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i><div><strong>17 pantallas reales</strong> con navegación, estados vacíos, validaciones y cambio de idioma en caliente.</div></li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i><div><strong>37 endpoints REST</strong> documentados en Swagger, con errores de negocio estables y aislamiento por negocio.</div></li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i><div><strong>Venta atómica con FEFO</strong>: stock, lote, detalle y movimiento se confirman juntos o se revierten juntos.</div></li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i><div><strong>Tres negocios demo</strong> en Colombia, Estados Unidos e Italia, con tarifas 2026 y vencimientos relativos a hoy.</div></li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i><div><strong>Documentación verificable</strong>: requisitos, 12 historias, 7 ADRs, ERD, UML, Scrum y guía de instalación.</div></li>
+          </ul>
+
+          <div class="hero-cta mt-4">
+            <a class="btn btn-brand" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">
+              <i class="bi bi-github" aria-hidden="true"></i> Ver repositorio en GitHub
+            </a>
+            <a class="btn btn-outline-brand" href="docs/guia-instalacion.html">
+              <i class="bi bi-tools" aria-hidden="true"></i> Guía de instalación visual
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= EXPLORAR / TABS ============================= -->
+  <section class="section explore" id="documentacion">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow eyebrow--light">Documentación del proyecto</span>
+        <h2 class="section-title">Todo el ABP, en un solo lugar.</h2>
+        <p class="section-lead">Requisitos, decisiones de arquitectura, modelo de datos, diagramas UML y guía reproducible. Abre cada pestaña para explorar.</p>
+      </div>
+
+      <div class="reveal" data-delay="1">
+        <ul class="nav nav-pills" id="docTabs" role="tablist" aria-label="Secciones de documentación">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-documentacion" data-bs-toggle="tab" data-bs-target="#panel-documentacion" type="button" role="tab" aria-controls="panel-documentacion" aria-selected="true">
+              <i class="bi bi-folder2-open" aria-hidden="true"></i> Documentación
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-diagramas" data-bs-toggle="tab" data-bs-target="#panel-diagramas" type="button" role="tab" aria-controls="panel-diagramas" aria-selected="false">
+              <i class="bi bi-bezier2" aria-hidden="true"></i> Diagramas
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-basedatos" data-bs-toggle="tab" data-bs-target="#panel-basedatos" type="button" role="tab" aria-controls="panel-basedatos" aria-selected="false">
+              <i class="bi bi-database" aria-hidden="true"></i> Base de datos
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-adrs" data-bs-toggle="tab" data-bs-target="#panel-adrs" type="button" role="tab" aria-controls="panel-adrs" aria-selected="false">
+              <i class="bi bi-signpost-split" aria-hidden="true"></i> ADRs
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-instalacion" data-bs-toggle="tab" data-bs-target="#panel-instalacion" type="button" role="tab" aria-controls="panel-instalacion" aria-selected="false">
+              <i class="bi bi-terminal" aria-hidden="true"></i> Instalación
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="docTabsContent">
+
+          <!-- Panel: documentación -->
+          <div class="tab-pane fade show active" id="panel-documentacion" role="tabpanel" aria-labelledby="tab-documentacion" tabindex="0">
+            <div class="tab-panel-inner">
+              <div class="panel-head">
+                <div>
+                  <h3>Seis documentos, una misma fuente de verdad</h3>
+                  <p>Cada archivo se abre en GitHub y renderiza sus diagramas Mermaid.</p>
+                </div>
+                <a class="btn btn-outline-brand btn-sm" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/tree/main/docs" target="_blank" rel="noopener">
+                  <i class="bi bi-github" aria-hidden="true"></i> Ver carpeta docs
+                </a>
+              </div>
+
+              <div class="doc-grid">
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/01-documento-maestro-abp.md" target="_blank" rel="noopener">
+                  <span class="doc-n">01 · ABP</span>
+                  <strong>Documento maestro</strong>
+                  <span>Necesidad del cliente, metodología, sprints, alcance, seguridad, costos y conclusiones.</span>
+                  <span class="go">Abrir documento →</span>
+                </a>
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/02-requisitos-y-historias-usuario.md" target="_blank" rel="noopener">
+                  <span class="doc-n">02 · REQUISITOS</span>
+                  <strong>RF, RNF e historias de usuario</strong>
+                  <span>36 requisitos funcionales, 16 no funcionales, 14 reglas, 10 casos de uso y 12 HU con Gherkin.</span>
+                  <span class="go">Abrir documento →</span>
+                </a>
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/README.md" target="_blank" rel="noopener">
+                  <span class="doc-n">03 · ADRS</span>
+                  <strong>Decisiones de arquitectura</strong>
+                  <span>Siete ADRs con contexto, alternativas, consecuencias y evidencia en el código.</span>
+                  <span class="go">Abrir índice →</span>
+                </a>
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/04-base-de-datos.md" target="_blank" rel="noopener">
+                  <span class="doc-n">04 · DATOS</span>
+                  <strong>Base de datos</strong>
+                  <span>ERD, diccionario de las 16 tablas, índices, ACID, Flyway y consultas representativas.</span>
+                  <span class="go">Abrir documento →</span>
+                </a>
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/05-diagramas-uml-y-scrum.md" target="_blank" rel="noopener">
+                  <span class="doc-n">05 · UML</span>
+                  <strong>Diagramas UML y Scrum</strong>
+                  <span>Arquitectura, componentes, casos de uso, clases, cuatro secuencias, Kanban y Gantt.</span>
+                  <span class="go">Abrir documento →</span>
+                </a>
+                <a class="doc-card" href="docs/guia-instalacion.html">
+                  <span class="doc-n">06 · GUÍA VISUAL</span>
+                  <strong>Instalación interactiva</strong>
+                  <span>Requisitos, PostgreSQL, backend, Android, comandos copiables, smoke test y problemas.</span>
+                  <span class="go">Abrir guía visual →</span>
+                </a>
+                <a class="doc-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/06-guia-instalacion-despliegue.md" target="_blank" rel="noopener">
+                  <span class="doc-n">06 · GUÍA MD</span>
+                  <strong>Guía de referencia</strong>
+                  <span>Versión Markdown completa, ideal para consultar desde GitHub o descargar.</span>
+                  <span class="go">Abrir en GitHub →</span>
+                </a>
+                <a class="doc-card" href="docs/presentacion-abp.html">
+                  <span class="doc-n">PRESENTACIÓN</span>
+                  <strong>Sustentación ABP</strong>
+                  <span>Diapositivas navegables, listas para imprimir en A4 o exportar a PDF.</span>
+                  <span class="go">Abrir presentación →</span>
+                </a>
+                <a class="doc-card" href="docs/StockPro_Entrega_ABP_Actualizado.pdf">
+                  <span class="doc-n">PDF</span>
+                  <strong>Entrega en PDF</strong>
+                  <span>Versión imprimible de la presentación para adjuntar a la entrega académica.</span>
+                  <span class="go">Descargar PDF →</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: diagramas -->
+          <div class="tab-pane fade" id="panel-diagramas" role="tabpanel" aria-labelledby="tab-diagramas" tabindex="0">
+            <div class="tab-panel-inner">
+              <div class="panel-head">
+                <div>
+                  <h3>Diagramas generados desde el código</h3>
+                  <p>Arquitectura, casos de uso y la secuencia crítica de venta. Se dibujan al abrir la pestaña.</p>
+                </div>
+                <a class="btn btn-outline-brand btn-sm" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/05-diagramas-uml-y-scrum.md" target="_blank" rel="noopener">
+                  <i class="bi bi-github" aria-hidden="true"></i> Ver todos
+                </a>
+              </div>
+
+              <div class="diagram-grid">
+                <div class="diagram-card">
+                  <div class="diagram-card__head">
+                    <strong>Arquitectura de despliegue</strong>
+                    <span>flowchart</span>
+                  </div>
+                  <div class="diagram-scroll">
+                    <div class="mermaid">
+flowchart TB
+    subgraph Cliente["Android API 24+"]
+        UI["Jetpack Compose<br/>17 pantallas"]
+        VM["13 ViewModels<br/>StateFlow"]
+        REPO["Repositorios<br/>Room + Retrofit"]
+    end
+    subgraph Servidor["Spring Boot 3.3.4 · Java 17"]
+        SEC["Spring Security<br/>JWT + BCrypt"]
+        CTRL["12 controladores<br/>37 endpoints"]
+        SVC["10 servicios<br/>FEFO · impuestos"]
+        JPA["Spring Data JPA"]
+    end
+    DB[("PostgreSQL 16<br/>16 tablas")]
+    UI --> VM --> REPO
+    REPO -->|"HTTP · Bearer JWT"| SEC
+    SEC --> CTRL --> SVC --> JPA --> DB
+                    </div>
+                  </div>
+                </div>
+
+                <div class="diagram-card">
+                  <div class="diagram-card__head">
+                    <strong>Casos de uso por rol</strong>
+                    <span>flowchart</span>
+                  </div>
+                  <div class="diagram-scroll diagram-scroll--wide">
+                    <div class="mermaid">
+flowchart LR
+    PRO(("Propietario"))
+    ADM(("Administrador"))
+    EMP(("Empleado"))
+    CON(("Consulta"))
+    subgraph SP["StockPro"]
+        UC1["Registrar negocio"]
+        UC2["Iniciar / renovar sesión"]
+        UC3["Gestionar productos y lotes"]
+        UC4["Registrar venta FEFO"]
+        UC5["Recibir mercancía"]
+        UC6["Consultar alertas"]
+        UC7["Generar reportes"]
+        UC8["Configurar negocio y tasas"]
+    end
+    PRO --> UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8
+    ADM --> UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8
+    EMP --> UC2 & UC3 & UC4 & UC5 & UC6
+    CON --> UC2 & UC6 & UC7
+                    </div>
+                  </div>
+                </div>
+
+                <div class="diagram-card">
+                  <div class="diagram-card__head">
+                    <strong>Venta multiproducto con FEFO</strong>
+                    <span>sequenceDiagram</span>
+                  </div>
+                  <div class="diagram-scroll diagram-scroll--wide">
+                    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Cajero
+    participant APP as App Android
+    participant API as VentaController
+    participant SVC as VentaService
+    participant DB as PostgreSQL
+    U->>APP: confirma venta
+    APP->>API: POST /api/v1/sales
+    API->>SVC: createSale(request)
+    SVC->>DB: valida producto y stock
+    alt stock insuficiente
+        SVC-->>API: STOCK_INSUFICIENTE
+        API-->>APP: 400 sin cambios
+    else stock disponible
+        SVC->>SVC: resuelve tarifa 2026
+        SVC->>DB: consume lote FEFO
+        SVC->>DB: INSERT venta + detalle + movimientos
+        DB-->>SVC: COMMIT
+        SVC-->>API: VentaDto
+        API-->>APP: 201 comprobante
+    end
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: base de datos -->
+          <div class="tab-pane fade" id="panel-basedatos" role="tabpanel" aria-labelledby="tab-basedatos" tabindex="0">
+            <div class="tab-panel-inner">
+              <div class="panel-head">
+                <div>
+                  <h3>16 tablas, integridad declarativa y ACID</h3>
+                  <p>UUID, NUMERIC para dinero, TIMESTAMPTZ para eventos y aislamiento por negocio.</p>
+                </div>
+                <a class="btn btn-outline-brand btn-sm" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/04-base-de-datos.md" target="_blank" rel="noopener">
+                  <i class="bi bi-journal-code" aria-hidden="true"></i> Diccionario completo
+                </a>
+              </div>
+
+              <div class="diagram-card">
+                <div class="diagram-card__head">
+                  <strong>Modelo entidad-relación (núcleo operativo)</strong>
+                  <span>erDiagram</span>
+                </div>
+                <div class="diagram-scroll diagram-scroll--wide">
+                  <div class="mermaid">
+erDiagram
+    NEGOCIOS ||--o{ MIEMBROS_NEGOCIO : agrupa
+    USUARIOS ||--o{ MIEMBROS_NEGOCIO : participa
+    NEGOCIOS ||--o{ CATEGORIAS : define
+    NEGOCIOS ||--o{ PRODUCTOS : posee
+    CATEGORIAS ||--o{ PRODUCTOS : clasifica
+    PRODUCTOS ||--o{ LOTES : tiene
+    NEGOCIOS ||--o{ VENTAS : emite
+    USUARIOS ||--o{ VENTAS : registra
+    VENTAS ||--o{ DETALLE_VENTAS : compone
+    PRODUCTOS ||--o{ DETALLE_VENTAS : figura
+    LOTES ||--o{ DETALLE_VENTAS : consume
+    PRODUCTOS ||--o{ MOVIMIENTOS : afecta
+    LOTES ||--o{ MOVIMIENTOS : referencia
+    NEGOCIOS ||--o{ ENTRADAS : programa
+    ENTRADAS ||--o{ DETALLE_ENTRADAS : contiene
+    PRODUCTOS ||--o{ DETALLE_ENTRADAS : incluye
+    NEGOCIOS {
+        UUID id PK
+        VARCHAR nombre
+        VARCHAR pais
+        VARCHAR moneda_base
+    }
+    PRODUCTOS {
+        UUID id PK
+        UUID negocio_id FK
+        UUID categoria_id FK
+        VARCHAR nombre
+        NUMERIC costo
+        NUMERIC precio_venta
+        NUMERIC stock_actual
+        NUMERIC stock_minimo
+        BOOLEAN maneja_lotes
+    }
+    LOTES {
+        UUID id PK
+        UUID producto_id FK
+        VARCHAR numero_lote
+        NUMERIC cantidad_disponible
+        DATE fecha_vencimiento
+        VARCHAR estado
+    }
+    VENTAS {
+        UUID id PK
+        UUID negocio_id FK
+        VARCHAR numero_comprobante
+        VARCHAR moneda_venta
+        NUMERIC total_venta
+        VARCHAR estado
+    }
+    DETALLE_VENTAS {
+        UUID id PK
+        UUID venta_id FK
+        UUID producto_id FK
+        UUID lote_id FK
+        NUMERIC cantidad
+        NUMERIC monto_impuesto
+        NUMERIC total_linea
+    }
+    MOVIMIENTOS {
+        UUID id PK
+        UUID producto_id FK
+        VARCHAR tipo_movimiento
+        NUMERIC stock_anterior
+        NUMERIC stock_posterior
+    }
+    ENTRADAS {
+        UUID id PK
+        DATE fecha_prevista
+        VARCHAR estado
+    }
+    DETALLE_ENTRADAS {
+        UUID id PK
+        UUID producto_id FK
+        NUMERIC cantidad_esperada
+        NUMERIC cantidad_recibida
+    }
+                  </div>
+                </div>
+              </div>
+
+              <p class="install-note mt-3">
+                El ERD completo incluye <strong>tarifas de impuesto</strong>, <strong>tasas de cambio</strong>,
+                <strong>proveedores</strong>, <strong>notificaciones</strong> y <strong>auditoría</strong>.
+                La venta congela moneda, tasa, precio, costo y tarifa para que el histórico no cambie.
+              </p>
+            </div>
+          </div>
+
+          <!-- Panel: ADRs -->
+          <div class="tab-pane fade" id="panel-adrs" role="tabpanel" aria-labelledby="tab-adrs" tabindex="0">
+            <div class="tab-panel-inner">
+              <div class="panel-head">
+                <div>
+                  <h3>Siete decisiones que sostienen la arquitectura</h3>
+                  <p>Cada ADR explica el contexto, la alternativa descartada y el costo de la decisión.</p>
+                </div>
+                <a class="btn btn-outline-brand btn-sm" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/tree/main/docs/03-adrs" target="_blank" rel="noopener">
+                  <i class="bi bi-github" aria-hidden="true"></i> Ver carpeta
+                </a>
+              </div>
+
+              <div class="adr-grid">
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0001-android-kotlin-compose-mvvm.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0001</span>
+                  <strong>Android nativo con Kotlin, Compose y MVVM</strong>
+                  <span>17 pantallas, 13 ViewModels y estado unidireccional.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0002-backend-spring-boot-jwt.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0002</span>
+                  <strong>Spring Boot con JWT stateless y BCrypt</strong>
+                  <span>Access de 15 min, refresh de 7 días y aislamiento por negocio.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0003-postgresql-flyway.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0003</span>
+                  <strong>PostgreSQL 16 con migraciones Flyway</strong>
+                  <span>Esquema reproducible, restricciones e índices declarativos.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0004-room-cache-local.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0004</span>
+                  <strong>Room como caché local de lectura</strong>
+                  <span>Catálogo y tablero disponibles cuando la red falla.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0005-multimoneda-impuestos-2026.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0005</span>
+                  <strong>Multimoneda e impuestos 2026</strong>
+                  <span>Tarifas por país y categoría; moneda y tasa congeladas por venta.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0006-imagenes-coil-recursos.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0006</span>
+                  <strong>Imágenes con Coil y recursos optimizados</strong>
+                  <span>AsyncImage, placeholder y APK sin assets de documentación.</span>
+                </a>
+                <a class="adr-card" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/0007-retrofit-okhttp-moshi.md" target="_blank" rel="noopener">
+                  <span class="adr-id">ADR-0007</span>
+                  <strong>Retrofit + OkHttp + Moshi con refresh</strong>
+                  <span>37 operaciones tipadas y renovación transparente del token.</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: instalación -->
+          <div class="tab-pane fade" id="panel-instalacion" role="tabpanel" aria-labelledby="tab-instalacion" tabindex="0">
+            <div class="tab-panel-inner">
+              <div class="panel-head">
+                <div>
+                  <h3>De cero a la app funcionando en 25 minutos</h3>
+                  <p>Elige Docker o PostgreSQL nativo, arranca el backend y conecta el emulador o tu teléfono.</p>
+                </div>
+                <a class="btn btn-brand btn-sm" href="docs/guia-instalacion.html">
+                  <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Guía visual completa
+                </a>
+              </div>
+
+              <div class="req-grid mb-3">
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-git" aria-hidden="true"></i></span>
+                  <div><strong>Git <span class="version-badge">2.40+</span></strong><span>Clonar el repositorio.</span></div>
+                </div>
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-cup-hot" aria-hidden="true"></i></span>
+                  <div><strong>JDK <span class="version-badge">17 LTS</span></strong><span>Compilar Spring Boot.</span></div>
+                </div>
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-box" aria-hidden="true"></i></span>
+                  <div><strong>Maven <span class="version-badge">3.9+</span></strong><span>Ejecutar el backend.</span></div>
+                </div>
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-database" aria-hidden="true"></i></span>
+                  <div><strong>PostgreSQL <span class="version-badge">16</span></strong><span>Base de datos.</span></div>
+                </div>
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-android2" aria-hidden="true"></i></span>
+                  <div><strong>Android Studio <span class="version-badge">AGP 9.1.1</span></strong><span>SDK 36 para compilar.</span></div>
+                </div>
+                <div class="req-card">
+                  <span class="req-icon"><i class="bi bi-hdd-stack" aria-hidden="true"></i></span>
+                  <div><strong>Docker <span class="version-badge">Opcional</span></strong><span>PostgreSQL en un comando.</span></div>
+                </div>
+              </div>
+
+              <div class="install-block">
+                <h4 class="install-step-title"><span class="n">1</span> Prepara la base de datos</h4>
+                <ul class="nav nav-pills install-pills" id="landingDbTabs" role="tablist" aria-label="Opciones de base de datos">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="landing-db-docker-tab" data-bs-toggle="pill" data-bs-target="#landing-db-docker" type="button" role="tab" aria-controls="landing-db-docker" aria-selected="true">
+                      <i class="bi bi-box" aria-hidden="true"></i> Docker Compose
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="landing-db-nativo-tab" data-bs-toggle="pill" data-bs-target="#landing-db-nativo" type="button" role="tab" aria-controls="landing-db-nativo" aria-selected="false">
+                      <i class="bi bi-windows" aria-hidden="true"></i> PostgreSQL nativo
+                    </button>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="landing-db-docker" role="tabpanel" aria-labelledby="landing-db-docker-tab" tabindex="0">
+                    <div class="code-block">
+                      <div class="code-block__bar">
+                        <span>PowerShell · raíz del repositorio</span>
+                        <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                      </div>
+<pre><span class="cmt"># Levanta PostgreSQL 16 con la base y el usuario demo</span>
+docker compose up -d
+docker compose ps</pre>
+                    </div>
+                    <p class="install-note mt-2">Docker crea <code>stockpro_db</code> y <code>stockpro_user</code>. Las tablas las crea Flyway cuando arranca Spring Boot.</p>
+                  </div>
+                  <div class="tab-pane fade" id="landing-db-nativo" role="tabpanel" aria-labelledby="landing-db-nativo-tab" tabindex="0">
+                    <div class="code-block">
+                      <div class="code-block__bar">
+                        <span>pgAdmin 4 · Query Tool sobre postgres</span>
+                        <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                      </div>
+<pre><span class="cmt">-- 1. Crea usuario y base</span>
+CREATE USER stockpro_user WITH PASSWORD 'stockpro_password';
+CREATE DATABASE stockpro_db OWNER stockpro_user;
+GRANT ALL PRIVILEGES ON DATABASE stockpro_db TO stockpro_user;
+
+<span class="cmt">-- 2. Conéctate a stockpro_db y habilita pgcrypto</span>
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";</pre>
+                    </div>
+                    <p class="install-note mt-2"><strong>No crees tablas a mano.</strong> Flyway aplica V1, V2 y V3 al arrancar el backend.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="install-block">
+                <h4 class="install-step-title"><span class="n">2</span> Ejecuta el backend</h4>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span>PowerShell · Java 17 + Maven</span>
+                    <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                  </div>
+<pre>cd backend
+mvn spring-boot:run
+
+<span class="cmt"># Alternativa sin Maven: abre backend/pom.xml en el IDE</span>
+<span class="cmt"># y ejecuta StockProApplication</span></pre>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                  <a class="btn btn-outline-brand btn-sm" href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noopener">
+                    <i class="bi bi-braces" aria-hidden="true"></i> Abrir Swagger UI
+                  </a>
+                  <span class="btn btn-soft btn-sm disabled" aria-disabled="true"><i class="bi bi-hdd-network" aria-hidden="true"></i> http://localhost:8080</span>
+                </div>
+
+                <div class="credential-grid mt-3">
+                  <div class="credential-card">
+                    <strong>Mi Tienda</strong>
+                    <span class="text-muted">Colombia · COP</span>
+                    <code>carlos@mitienda.com</code>
+                    <button class="copy-btn" type="button" data-copy-text="carlos@mitienda.com"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  </div>
+                  <div class="credential-card">
+                    <strong>Corner Market</strong>
+                    <span class="text-muted">EE. UU. · USD</span>
+                    <code>robert@cornermarket.com</code>
+                    <button class="copy-btn" type="button" data-copy-text="robert@cornermarket.com"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  </div>
+                  <div class="credential-card">
+                    <strong>Bottega Roma</strong>
+                    <span class="text-muted">Italia · EUR</span>
+                    <code>matteo@bottegaroma.it</code>
+                    <button class="copy-btn" type="button" data-copy-text="matteo@bottegaroma.it"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+                <p class="install-note mt-2">Contraseña para las tres cuentas demo: <code>Password123*</code></p>
+              </div>
+
+              <div class="install-block">
+                <h4 class="install-step-title"><span class="n">3</span> Conecta Android</h4>
+                <ul class="nav nav-pills install-pills" id="landingAndroidTabs" role="tablist" aria-label="Opciones de dispositivo Android">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="landing-android-emu-tab" data-bs-toggle="pill" data-bs-target="#landing-android-emu" type="button" role="tab" aria-controls="landing-android-emu" aria-selected="true">
+                      <i class="bi bi-phone" aria-hidden="true"></i> Emulador
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="landing-android-usb-tab" data-bs-toggle="pill" data-bs-target="#landing-android-usb" type="button" role="tab" aria-controls="landing-android-usb" aria-selected="false">
+                      <i class="bi bi-usb-symbol" aria-hidden="true"></i> Teléfono por USB
+                    </button>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="landing-android-emu" role="tabpanel" aria-labelledby="landing-android-emu-tab" tabindex="0">
+                    <p class="mb-2">Inicia el emulador y ejecuta el reverse <strong>antes de abrir la app</strong>:</p>
+                    <div class="code-block">
+                      <div class="code-block__bar">
+                        <span>PowerShell · Windows</span>
+                        <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                      </div>
+<pre>&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse --list</pre>
+                    </div>
+                    <p class="install-note mt-2">Si <code>adb</code> está en el PATH, basta con <code>adb reverse tcp:8080 tcp:8080</code>.</p>
+                  </div>
+                  <div class="tab-pane fade" id="landing-android-usb" role="tabpanel" aria-labelledby="landing-android-usb-tab" tabindex="0">
+                    <p class="mb-2">Activa <strong>Depuración USB</strong>, conecta el cable y autoriza el equipo en el teléfono. Luego:</p>
+                    <div class="code-block">
+                      <div class="code-block__bar">
+                        <span>PowerShell · teléfono físico</span>
+                        <button class="copy-btn" type="button"><i class="bi bi-clipboard" aria-hidden="true"></i> Copiar</button>
+                      </div>
+<pre>&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" devices
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080
+&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse --list</pre>
+                    </div>
+                    <p class="install-note mt-2">Debe aparecer <code>tcp:8080 tcp:8080</code>. Si no conecta, revisa el firewall y vuelve a autorizar la depuración USB.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="install-block">
+                <h4 class="install-step-title"><span class="n">4</span> Verifica e instala</h4>
+                <p class="mb-2">Abre la <strong>raíz</strong> del repositorio en Android Studio, selecciona el módulo <code>app</code> y pulsa <strong>Run ▶</strong>. Inicia sesión con una cuenta demo.</p>
+                <a class="guide-link-card" href="docs/guia-instalacion.html">
+                  <span class="ico"><i class="bi bi-journal-check" aria-hidden="true"></i></span>
+                  <span><strong>Guía visual interactiva</strong><span>Requisitos, SQL, comandos copiables, smoke test y solución de problemas.</span></span>
+                </a>
+              </div>
+
+              <div class="accordion sp-accordion mt-3" id="landingInstallAccordion">
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#landingSmoke" aria-expanded="true" aria-controls="landingSmoke">
+                      <i class="bi bi-check2-square me-2" aria-hidden="true"></i> Recorrido de verificación · 10 pasos
+                    </button>
+                  </h3>
+                  <div id="landingSmoke" class="accordion-collapse collapse show" data-bs-parent="#landingInstallAccordion">
+                    <div class="accordion-body">
+                      <div class="smoke-head">
+                        <span class="counter" data-smoke-progress>0 / 10</span>
+                        <div class="progress" role="progressbar" aria-label="Progreso del smoke test" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                          <div class="progress-bar" data-smoke-bar style="width:0%"></div>
+                        </div>
+                        <button class="btn btn-soft btn-sm" type="button" data-smoke-reset><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reiniciar</button>
+                      </div>
+                      <ul class="smoke-list">
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l1" data-smoke-step="1"><label for="smoke-l1"><b>1.</b> Login con <code>carlos@mitienda.com</code> y contraseña <code>Password123*</code>.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l2" data-smoke-step="2"><label for="smoke-l2"><b>2.</b> En <strong>Productos</strong>, busca “Leche” y confirma que aparece el lote por vencer.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l3" data-smoke-step="3"><label for="smoke-l3"><b>3.</b> Abre el detalle y la pestaña <strong>Lotes</strong>: lote vencido y lote por vencer con cantidades.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l4" data-smoke-step="4"><label for="smoke-l4"><b>4.</b> En <strong>Alertas</strong>, filtra <strong>Por vencer</strong> y revisa los días restantes.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l5" data-smoke-step="5"><label for="smoke-l5"><b>5.</b> Registra una venta de 2 productos: comprobante, stock descontado y movimiento <code>VENTA</code>.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l6" data-smoke-step="6"><label for="smoke-l6"><b>6.</b> Intenta vender más unidades que el stock: error de stock insuficiente y stock sin cambios.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l7" data-smoke-step="7"><label for="smoke-l7"><b>7.</b> Registra una pérdida de 1 unidad: el stock baja y aparece en <strong>Movimientos</strong>.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l8" data-smoke-step="8"><label for="smoke-l8"><b>8.</b> En <strong>Reportes → 30 días</strong>, cambia a USD y verifica la conversión sin alterar la venta.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l9" data-smoke-step="9"><label for="smoke-l9"><b>9.</b> En <strong>Mi negocio</strong>, cambia el idioma a inglés sin cerrar sesión.</label></li>
+                        <li class="smoke-step"><input class="form-check-input" type="checkbox" id="smoke-l10" data-smoke-step="10"><label for="smoke-l10"><b>10.</b> Cierra sesión y vuelve a entrar: sesión persistente y tokens cifrados.</label></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#landingProblems" aria-expanded="false" aria-controls="landingProblems">
+                      <i class="bi bi-tools me-2" aria-hidden="true"></i> Solución de problemas frecuentes
+                    </button>
+                  </h3>
+                  <div id="landingProblems" class="accordion-collapse collapse" data-bs-parent="#landingInstallAccordion">
+                    <div class="accordion-body">
+                      <ul class="problem-list">
+                        <li><strong>Connection refused en la app</strong><span>Arranca Spring Boot y ejecuta el <code>adb reverse</code>. Verifica con <code>adb reverse --list</code>.</span></li>
+                        <li><strong>Port 8080 was already in use</strong><span>Ejecuta <code>netstat -ano | findstr :8080</code>, termina el proceso o cambia <code>server.port</code>.</span></li>
+                        <li><strong>password authentication failed</strong><span>Las credenciales no coinciden con <code>application.yml</code>. Define <code>DB_USER</code> y <code>DB_PASSWORD</code> o recrea el usuario.</span></li>
+                        <li><strong>database "stockpro_db" does not exist</strong><span>Créala en pgAdmin o con <code>CREATE DATABASE</code> y vuelve a arrancar el backend.</span></li>
+                        <li><strong>Flyway checksum mismatch</strong><span>No edites V1–V3. Restaura la base o ejecuta <code>flyway repair</code> si sabes lo que haces.</span></li>
+                        <li><strong>La app muestra “No se pudo conectar”</strong><span>Revisa firewall, IP y que el backend escuche en el puerto 8080. En emulador usa <code>10.0.2.2</code> como alternativa.</span></li>
+                        <li><strong>Gradle no sincroniza</strong><span>Configura JDK 17 en Android Studio e instala el SDK 36.</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#landingRam" aria-expanded="false" aria-controls="landingRam">
+                      <i class="bi bi-memory me-2" aria-hidden="true"></i> Optimización de RAM · 8 / 16 / 32 GB
+                    </button>
+                  </h3>
+                  <div id="landingRam" class="accordion-collapse collapse" data-bs-parent="#landingInstallAccordion">
+                    <div class="accordion-body">
+                      <div class="ram-grid">
+                        <div class="ram-card"><strong>8 GB</strong><code>-Xmx2g</code>, cierra Docker si usas PostgreSQL nativo y usa un emulador API 30 con 2 GB.</div>
+                        <div class="ram-card"><strong>16 GB</strong>Mantén <code>-Xmx4g</code>; Docker con 2 GB y emulador con 2–3 GB.</div>
+                        <div class="ram-card"><strong>32 GB+</strong><code>-Xmx6g</code>; puedes dejar Docker y el emulador abiertos.</div>
+                      </div>
+                      <p class="install-note mt-2">Detén el daemon al terminar con <code>gradle --stop</code> y cierra el emulador cuando no lo uses.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="install-note mt-3">
+                ¿Sin Docker? La guía visual explica PostgreSQL nativo con pgAdmin, variables de entorno,
+                la ruta completa de <code>adb.exe</code>, solución de problemas y optimización de RAM.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CTA ============================= -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-panel reveal">
+        <div>
+          <span class="eyebrow eyebrow--light">Proyecto abierto</span>
+          <h2>Explora el código, el diseño y la sustentación.</h2>
+          <p>Repositorio público con la app, la API, las migraciones y toda la documentación del ABP. El diseño y el prototipo están disponibles en Figma.</p>
+          <div class="cta-actions">
+            <a class="btn btn-light-brand btn-lg" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">
+              <i class="bi bi-github" aria-hidden="true"></i> Ver repositorio
+            </a>
+            <a class="btn btn-outline-light-brand btn-lg" href="docs/presentacion-abp.html">
+              <i class="bi bi-easel2" aria-hidden="true"></i> Presentación ABP
+            </a>
+          </div>
+        </div>
+
+        <div class="cta-links">
+          <a class="cta-link" href="https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1" target="_blank" rel="noopener">
+            <i class="bi bi-vector-pen" aria-hidden="true"></i>
+            <div>Diseño en Figma<span>Mockup completo · 17 pantallas</span></div>
+          </a>
+          <a class="cta-link" href="https://www.figma.com/proto/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=3-8643&p=f&t=ouWKmehgqJ7Hdvce-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=173%3A326" target="_blank" rel="noopener">
+            <i class="bi bi-play-circle" aria-hidden="true"></i>
+            <div>Prototipo interactivo<span>Navegación simulada en Figma</span></div>
+          </a>
+          <a class="cta-link" href="docs/StockPro_Entrega_ABP_Actualizado.pdf">
+            <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+            <div>Entrega en PDF<span>Presentación imprimible A4</span></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="#inicio">
+          <img src="assets-docs/logo.svg" alt="" width="38" height="38">
+          <span class="brand-text">StockPro<small>Control de inventario</small></span>
+        </a>
+        <p class="footer-about">Aplicación Android nativa y API REST para pequeños comercios. Proyecto ABP de Diseño de Aplicaciones Móviles, Universidad Católica del Norte, 2026.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Documentación</h4>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/01-documento-maestro-abp.md" target="_blank" rel="noopener">Documento ABP</a>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/02-requisitos-y-historias-usuario.md" target="_blank" rel="noopener">Requisitos e HU</a>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/03-adrs/README.md" target="_blank" rel="noopener">ADRs</a>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/04-base-de-datos.md" target="_blank" rel="noopener">Base de datos</a>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/05-diagramas-uml-y-scrum.md" target="_blank" rel="noopener">Diagramas UML</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Proyecto</h4>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">Repositorio</a>
+        <a href="https://mosquerag.github.io/StockPro_Proyecto_Final_Aplicaicones_Moviles/" target="_blank" rel="noopener">GitHub Pages</a>
+        <a href="docs/guia-instalacion.html">Instalación visual</a>
+        <a href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles/blob/main/docs/06-guia-instalacion-despliegue.md" target="_blank" rel="noopener">Guía Markdown</a>
+        <a href="docs/presentacion-abp.html">Presentación</a>
+        <a href="docs/StockPro_Entrega_ABP_Actualizado.pdf">PDF de entrega</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Diseño</h4>
+        <a href="https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1" target="_blank" rel="noopener">Figma · Design</a>
+        <a href="https://www.figma.com/proto/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=3-8643&p=f&t=ouWKmehgqJ7Hdvce-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=173%3A326" target="_blank" rel="noopener">Figma · Prototipo</a>
+        <a href="https://github.com/mosquerag" target="_blank" rel="noopener">Autora en GitHub</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© <span data-year>2026</span> <strong>Sairy Ximena Mosquera García</strong> · Universidad Católica del Norte</div>
+      <div>Diseño de Aplicaciones Móviles · Entrega ABP 16/11/2026</div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="assets-docs/script.js"></script>
+<script src="assets-docs/guia.js"></script>
+</body>
+</html>

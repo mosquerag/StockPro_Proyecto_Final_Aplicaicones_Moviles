@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StockPro · Sustentación ABP · Sairy Ximena Mosquera García</title>
+<meta name="description" content="Presentación académica del proyecto StockPro: aplicación Android nativa y API REST para inventario, vencimientos y ventas multimoneda.">
+<meta name="author" content="Sairy Ximena Mosquera García">
+<meta name="theme-color" content="#087F5B">
+<link rel="icon" type="image/png" href="../assets-docs/app-icon-256.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #044d37;
+    --green-800: #06654a;
+    --green-700: #087f5b;
+    --green-600: #0a9970;
+    --green-500: #12b184;
+    --green-100: #e6f7f0;
+    --green-050: #f1faf6;
+    --bg: #f7faf8;
+    --ink: #19211e;
+    --muted: #5e6e67;
+    --muted-2: #7d8d86;
+    --line: #dde8e3;
+    --line-soft: #eaf1ed;
+    --amber: #b07b00;
+    --amber-soft: #fff3bf;
+    --blue: #1c7ed6;
+    --blue-soft: #e7f5ff;
+    --red: #c92a2a;
+    --red-soft: #ffe3e3;
+    --font-body: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+    --slide-pad: 15mm 16mm 12mm;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: #e8efeb;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  h1, h2, h3, h4 { margin: 0; line-height: 1.12; letter-spacing: -.02em; }
+  h1, h2 { font-family: var(--font-display); font-weight: 600; letter-spacing: -.03em; }
+  p { margin: 0; }
+  ul, ol { margin: 0; padding: 0; }
+  img, svg { max-width: 100%; display: block; }
+
+  /* ---------- Toolbar (solo pantalla) ---------- */
+  .toolbar {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .92);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px rgba(4, 77, 55, .14);
+    backdrop-filter: blur(8px);
+  }
+  .toolbar span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted-2);
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+  .toolbar button {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: var(--green-700);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: var(--green-800); }
+
+  /* ---------- Deck ---------- */
+  .deck {
+    width: 210mm;
+    margin: 40px auto 60px;
+    display: grid;
+    gap: 26px;
+  }
+
+  .slide {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    padding: var(--slide-pad);
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 18px 46px rgba(4, 77, 55, .16), 0 2px 6px rgba(4, 77, 55, .08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(4, 77, 55, .06);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
+  /* Cabecera de diapositiva */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--green-700);
+  }
+  .kicker::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-500);
+    box-shadow: 0 0 0 3px rgba(18, 177, 132, .16);
+  }
+  .slide-head { margin-bottom: 7mm; }
+  .slide-head h2 {
+    font-size: 25pt;
+    margin-top: 4px;
+    color: var(--ink);
+  }
+  .slide-head p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 10.5pt;
+    max-width: 158mm;
+  }
+  .slide-head--row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10mm;
+  }
+
+  .slide-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 5mm; }
+
+  .slide-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5mm;
+    padding-top: 3mm;
+    border-top: 1px solid var(--line-soft);
+    font-size: 8.5px;
+    font-weight: 600;
+    color: var(--muted-2);
+    letter-spacing: .02em;
+  }
+  .slide-foot strong { color: var(--green-900); font-weight: 800; }
+  .slide-foot .pnum { font-family: var(--font-mono); font-weight: 600; }
+
+  /* Tipografía auxiliar */
+  .serif-i { font-family: var(--font-display); font-style: italic; font-weight: 500; color: var(--green-700); }
+  .lead { font-size: 11.5pt; color: var(--muted); }
+  .small { font-size: 9.5pt; color: var(--muted); }
+  .tiny { font-size: 8.5pt; color: var(--muted-2); }
+  .mono { font-family: var(--font-mono); }
+  .strong { font-weight: 800; color: var(--ink); }
+  code {
+    font-family: var(--font-mono);
+    font-size: .9em;
+    background: var(--green-050);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--green-900);
+  }
+
+  /* Portada */
+  .slide--cover {
+    padding: 18mm 18mm 14mm;
+    background:
+      radial-gradient(700px 420px at 88% 4%, rgba(18, 177, 132, .28), transparent 62%),
+      radial-gradient(560px 380px at 4% 96%, rgba(18, 177, 132, .16), transparent 62%),
+      linear-gradient(160deg, #056148 0%, #044d37 55%, #032f22 100%);
+    color: #eafff6;
+  }
+  .slide--cover::after { border-color: rgba(255, 255, 255, .1); }
+  .cover-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .cover-brand { display: inline-flex; align-items: center; gap: 12px; }
+  .cover-brand img { width: 46px; height: 46px; border-radius: 13px; box-shadow: 0 10px 24px rgba(0, 0, 0, .25); }
+  .cover-brand span { font-size: 20px; font-weight: 800; letter-spacing: -.03em; color: #fff; }
+  .cover-brand small {
+    display: block;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #9fe9cf;
+    margin-top: 2px;
+  }
+  .cover-tag {
+    font-size: 8.5px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #b8f5df;
+    border: 1px solid rgba(184, 245, 223, .32);
+    border-radius: 999px;
+    padding: 7px 13px;
+    white-space: nowrap;
+  }
+  .cover-main { margin-top: auto; margin-bottom: auto; padding: 8mm 0; }
+  .cover-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #b8f5df;
+  }
+  .cover-eyebrow::before { content: ""; width: 26px; height: 2px; background: #12b184; border-radius: 2px; }
+  .cover-main h1 {
+    font-size: 58pt;
+    line-height: .98;
+    letter-spacing: -.045em;
+    margin: 5mm 0 0;
+    color: #fff;
+  }
+  .cover-main h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: #8ceac9;
+  }
+  .cover-sub {
+    margin-top: 6mm;
+    max-width: 148mm;
+    font-size: 13pt;
+    line-height: 1.55;
+    color: #c8e8dc;
+  }
+  .cover-sub strong { color: #fff; }
+  .cover-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7mm; }
+  .cover-chip {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: #d7f7ea;
+    background: rgba(255, 255, 255, .09);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 999px;
+    padding: 5px 10px;
+  }
+  .cover-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8mm; }
+  .cover-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .09);
+    border: 1px solid rgba(255, 255, 255, .16);
+  }
+  .cover-link:hover { background: rgba(255, 255, 255, .16); }
+  .cover-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .cover-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 7mm;
+    border-top: 1px solid rgba(255, 255, 255, .15);
+  }
+  .cover-bottom .who { font-size: 9pt; line-height: 1.6; color: #c8e8dc; }
+  .cover-bottom .who strong { display: block; font-size: 11.5pt; color: #fff; }
+  .cover-bottom .meta { text-align: right; font-size: 8pt; line-height: 1.65; color: #9fe9cf; }
+
+  /* KPI */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+  .kpi {
+    padding: 4mm;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--line-soft);
+  }
+  .kpi b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 24pt;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--green-900);
+    letter-spacing: -.04em;
+  }
+  .kpi span { display: block; margin-top: 4px; font-size: 8.5pt; font-weight: 700; color: var(--ink); }
+  .kpi small { display: block; font-size: 7.5pt; color: var(--muted-2); }
+
+  /* Tarjetas genéricas */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+  .card {
+    padding: 4.5mm;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 6px 18px rgba(4, 77, 55, .04);
+  }
+  .card--soft { background: var(--bg); box-shadow: none; }
+  .card--brand { background: var(--green-900); color: #eafff6; border-color: var(--green-900); }
+  .card--brand h3, .card--brand strong { color: #fff; }
+  .card--brand p, .card--brand li { color: #b8d9cc; }
+  .card h3 { font-size: 11pt; margin-bottom: 2mm; }
+  .card p, .card li { font-size: 9pt; color: var(--muted); }
+  .card .ic {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: var(--green-100);
+    color: var(--green-700);
+    margin-bottom: 3mm;
+  }
+  .card .ic svg { width: 16px; height: 16px; }
+  .card .tagline {
+    display: inline-block;
+    margin-top: 2.5mm;
+    font-size: 8pt;
+    font-weight: 800;
+    color: var(--green-700);
+  }
+  .card--brand .tagline { color: #8ceac9; }
+
+  .bullets { list-style: none; display: grid; gap: 2.2mm; }
+  .bullets li { display: flex; gap: 7px; align-items: flex-start; font-size: 9.5pt; color: var(--muted); }
+  .bullets svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1.5px; color: var(--green-600); }
+  .bullets strong { color: var(--ink); }
+
+  .quote {
+    margin: 0;
+    padding: 4mm 0 4mm 5mm;
+    border-left: 2.5px solid var(--green-500);
+    font-size: 12pt;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .quote strong { font-style: normal; color: var(--ink); }
+
+  /* Tablas */
+  table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  th {
+    text-align: left;
+    font-size: 7.5pt;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--green-900);
+    background: var(--green-050);
+    padding: 2.4mm 2.6mm;
+    border-bottom: 1px solid var(--line);
+  }
+  td {
+    padding: 2.4mm 2.6mm;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--muted);
+    vertical-align: top;
+  }
+  td strong { color: var(--ink); }
+  tr:last-child td { border-bottom: 0; }
+  .table--brand th { background: var(--green-900); color: #d7f7ea; border-bottom-color: var(--green-800); }
+  .table--brand td { border-bottom-color: rgba(4, 77, 55, .12); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .total td { background: var(--green-050); font-weight: 800; color: var(--green-900); }
+
+  /* Diagramas */
+  .diagram {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3mm;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .diagram .mermaid { width: 100%; display: flex; justify-content: center; }
+  .diagram .mermaid svg { max-width: 100%; height: auto; }
+  .diagram--sm .mermaid svg { max-height: 82mm; }
+
+  /* Flujo horizontal CSS */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; align-items: stretch; }
+  .flow-step {
+    position: relative;
+    padding: 3.5mm 3mm;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--line-soft);
+  }
+  .flow-step b {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--green-700);
+    color: #fff;
+    font-size: 7.5pt;
+    margin-bottom: 2mm;
+  }
+  .flow-step strong { display: block; font-size: 8.5pt; line-height: 1.25; }
+  .flow-step span { display: block; margin-top: 1.5mm; font-size: 7.5pt; color: var(--muted); line-height: 1.4; }
+  .flow-step:not(:last-child)::after {
+    content: "›";
+    position: absolute;
+    right: -2.6mm;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--green-500);
+    font-size: 14pt;
+    font-weight: 800;
+    z-index: 1;
+  }
+
+  /* Chips de stack */
+  .chips { display: flex; flex-wrap: wrap; gap: 2mm; }
+  .chip {
+    font-size: 8pt;
+    font-weight: 700;
+    color: var(--green-900);
+    background: var(--green-050);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+  .chip--dark { background: var(--green-900); color: #d7f7ea; border-color: var(--green-900); }
+
+  /* Evidencias */
+  .evidence { display: grid; grid-template-columns: 1.05fr .95fr; gap: 6mm; align-items: center; flex: 1; min-height: 0; }
+  .evidence-frame {
+    padding: 3mm;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 18px 40px rgba(4, 77, 55, .12);
+  }
+  .evidence-frame img { width: 100%; border-radius: 8px; }
+
+  /* Cierre */
+  .slide--end {
+    background:
+      radial-gradient(700px 460px at 82% 0%, rgba(18, 177, 132, .22), transparent 62%),
+      linear-gradient(160deg, #056148 0%, #044d37 60%, #032f22 100%);
+    color: #eafff6;
+  }
+  .slide--end::after { border-color: rgba(255, 255, 255, .1); }
+  .slide--end .kicker { color: #b8f5df; }
+  .slide--end .kicker::before { background: #b8f5df; box-shadow: 0 0 0 3px rgba(184, 245, 223, .14); }
+  .slide--end h2 { color: #fff; }
+  .slide--end .lead { color: #c8e8dc; }
+  .slide--end .card { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .14); box-shadow: none; }
+  .slide--end .card h3 { color: #fff; }
+  .slide--end .card p, .slide--end .card li { color: #b8d9cc; }
+  .slide--end .card .tagline { color: #8ceac9; }
+  .slide--end .slide-foot { border-top-color: rgba(255, 255, 255, .14); color: #9fe9cf; }
+  .slide--end .slide-foot strong { color: #fff; }
+  .end-links { display: grid; gap: 2.5mm; }
+  .end-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 3mm 3.5mm;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .14);
+    color: #fff;
+    text-decoration: none;
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+  .end-link span { display: block; color: #9fe9cf; font-size: 7.5pt; font-weight: 500; }
+  .end-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .thanks {
+    font-family: var(--font-display);
+    font-size: 46pt;
+    line-height: 1;
+    letter-spacing: -.04em;
+    color: #fff;
+    margin-top: auto;
+  }
+  .thanks em { font-style: italic; font-weight: 500; color: #8ceac9; }
+
+  /* ---------- Impresión A4 ---------- */
+  @page { size: A4 portrait; margin: 0; }
+
+  @media print {
+    html, body { background: #fff; width: 210mm; height: auto; }
+    body { font-size: 10pt; }
+    .toolbar { display: none !important; }
+    .deck { display: block; width: auto; margin: 0; gap: 0; }
+    .slide {
+      width: 210mm;
+      /* 295 mm deja margen para el redondeo de paginación de Chrome y evita
+         una página en blanco al final al exportar a PDF (A4 = 297 mm). */
+      height: 295mm;
+      margin: 0;
+      border-radius: 0;
+      box-shadow: none;
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+    .slide::after { display: none; }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .diagram .mermaid svg { max-height: 118mm; }
+    .diagram--sm .mermaid svg { max-height: 78mm; }
+    .card, .kpi, .flow-step, table, .quote, .diagram { break-inside: avoid; }
+  }
+
+  @media screen and (max-width: 900px) {
+    .toolbar { top: auto; bottom: 16px; right: 16px; left: 16px; justify-content: center; }
+    .toolbar span { display: none; }
+    .deck { width: auto; margin: 16px; gap: 16px; }
+    .slide { width: auto; height: auto; min-height: 0; padding: 22px; border-radius: 14px; }
+    .cover-main h1 { font-size: 38pt; }
+    .slide-head--row, .evidence, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .grid-4, .kpis { grid-template-columns: 1fr 1fr; }
+    .flow { grid-template-columns: 1fr; }
+    .flow-step:not(:last-child)::after { display: none; }
+    .slide-foot { margin-top: 22px; }
+    .diagram { min-height: 260px; }
+  }
+
+  @media screen and (max-width: 480px) {
+    .cover-main h1 { font-size: 30pt; }
+    .cover-bottom { flex-direction: column; align-items: flex-start; }
+    .cover-bottom .meta { text-align: left; }
+    .grid-4, .kpis { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span>Presentación ABP · A4</span>
+  <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+</div>
+
+<main class="deck">
+
+  <!-- 01 · PORTADA -->
+  <section class="slide slide--cover">
+    <header class="cover-top">
+      <div class="cover-brand">
+        <img src="../assets-docs/logo.svg" alt="Logo de StockPro" width="46" height="46">
+        <span>StockPro<small>Control de inventario</small></span>
+      </div>
+      <span class="cover-tag">Entrega ABP · 16/11/2026</span>
+    </header>
+
+    <div class="cover-main">
+      <span class="cover-eyebrow">Taller ABP · Diseño de Aplicaciones Móviles</span>
+      <h1>Tu inventario,<br>siempre en <em>control</em>.</h1>
+      <p class="cover-sub">
+        Aplicación Android nativa y API REST para controlar <strong>productos, lotes y vencimientos</strong>,
+        vender con <strong>salida FEFO</strong>, calcular impuestos de tres mercados y decidir con
+        <strong>reportes multimoneda</strong>.
+      </p>
+      <div class="cover-chips">
+        <span class="cover-chip">Kotlin 2.2.10</span>
+        <span class="cover-chip">Jetpack Compose</span>
+        <span class="cover-chip">Spring Boot 3.3.4</span>
+        <span class="cover-chip">PostgreSQL 16</span>
+        <span class="cover-chip">JWT + BCrypt</span>
+        <span class="cover-chip">17 pantallas · 37 endpoints</span>
+      </div>
+      <div class="cover-links">
+        <a class="cover-link" href="https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H8.5a3.5 3.5 0 0 0 0 7H12zM12 3h3.5a3.5 3.5 0 0 1 0 7H12zM12 10H8.5a3.5 3.5 0 0 0 0 7H12zM12 17H8.5a3.5 3.5 0 1 0 3.5 3.5z"/><circle cx="16" cy="13.5" r="3.5"/></svg>
+          Diseño en Figma
+        </a>
+        <a class="cover-link" href="https://www.figma.com/proto/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=3-8643&p=f&t=ouWKmehgqJ7Hdvce-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=173%3A326" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 6 3.5-6 3.5z"/></svg>
+          Prototipo interactivo
+        </a>
+        <a class="cover-link" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.55v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .3.21.66.8.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          Repositorio
+        </a>
+      </div>
+    </div>
+
+    <footer class="cover-bottom">
+      <div class="who">
+        Presentado por
+        <strong>Sairy Ximena Mosquera García</strong>
+        Modalidad individual
+      </div>
+      <div class="meta">
+        Universidad Católica del Norte<br>
+        Facultad de Ingeniería y Ciencias Ambientales<br>
+        Diseño de Aplicaciones Móviles · 2026
+      </div>
+    </footer>
+  </section>
+
+  <!-- 02 · RESUMEN -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">01 · Resumen ejecutivo</span>
+      <h2>Un sistema real, no una propuesta.</h2>
+      <p>StockPro ya se ejecuta: app Android, API REST, base de datos migrada y datos demo de tres países.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="kpis">
+        <div class="kpi"><b>17</b><span>Pantallas</span><small>Compose + Material 3</small></div>
+        <div class="kpi"><b>37</b><span>Endpoints</span><small>Swagger / OpenAPI</small></div>
+        <div class="kpi"><b>16</b><span>Tablas</span><small>PostgreSQL 16</small></div>
+        <div class="kpi"><b>12</b><span>Historias</span><small>Criterios Gherkin</small></div>
+      </div>
+
+      <div class="grid-2" style="flex:1">
+        <div class="card card--brand">
+          <h3>Qué resuelve</h3>
+          <ul class="bullets" style="margin-top:3mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong style="color:#fff">Pérdidas por vencimiento:</strong> alertas a 7 días y salida FEFO.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong style="color:#fff">Stock descuadrado:</strong> cada cambio deja movimiento y usuario.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong style="color:#fff">Impuestos incorrectos:</strong> tarifas 2026 por país y categoría.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong style="color:#fff">Decisiones sin datos:</strong> ganancia, margen, rotación y pérdidas.</span></li>
+          </ul>
+        </div>
+
+        <div class="card card--soft">
+          <h3>Recorrido de la sustentación</h3>
+          <ol class="bullets" style="counter-reset:step; margin-top:3mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span>Problema, pregunta y objetivos SMART.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span>Metodología, alcance y roles.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span>Arquitectura, base de datos y flujo de venta.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span>Requisitos, seguridad, impuestos y evidencias.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span>Pruebas, costos, riesgos y conclusiones.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="quote">
+        «El objetivo no fue demostrar que sé usar un framework, sino <strong>resolver un problema medible</strong> con una aplicación que el docente pueda ejecutar.»
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Sairy Ximena Mosquera García</span><span class="pnum">02 / 17</span></footer>
+  </section>
+
+  <!-- 03 · PROBLEMA -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">02 · Contexto</span>
+      <h2>El cuaderno no avisa cuando la mercancía se pierde.</h2>
+      <p>Pequeños comercios de 50 a 500 referencias operan con memoria, cuaderno y revisión visual del estante.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <h3>Vencimiento tardío</h3>
+          <p>La mercancía perecedera se descubre vencida, cuando ya no se puede vender ni devolver. El margen se pierde en el estante.</p>
+          <span class="tagline">Costo: pérdida directa de inventario</span>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M7 3v18M17 3v18" opacity=".35"/></svg></div>
+          <h3>Inventario descuadrado</h3>
+          <p>Ventas y entradas no dejan trazabilidad. El stock del sistema se separa del real y se compra por intuición.</p>
+          <span class="tagline">Costo: capital inmovilizado y quiebres</span>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-5 3 3 4-6"/></svg></div>
+          <h3>Margen desconocido</h3>
+          <p>Un porcentaje único de impuesto distorsiona precios y ganancia. Sin reportes, no se sabe qué producto deja dinero.</p>
+          <span class="tagline">Costo: decisiones de compra y precio erradas</span>
+        </div>
+      </div>
+
+      <div class="grid-2" style="flex:1; align-items:start">
+        <div>
+          <h3 style="font-size:12pt; margin-bottom:2.5mm">Lo que el comerciante necesita responder cada día</h3>
+          <ul class="bullets">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>¿Qué se vence primero y cuánto queda?</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>¿Cuánto vendí y cuánto gané hoy?</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>¿Qué producto se está perdiendo o no rota?</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>¿Cuánto debo reponer y con qué proveedor?</span></li>
+          </ul>
+        </div>
+
+        <div class="card card--brand" style="align-self:stretch; display:flex; flex-direction:column; justify-content:center">
+          <span class="kicker" style="color:#8ceac9">Necesidad del cliente</span>
+          <p style="font-size:12.5pt; line-height:1.5; color:#d7f7ea; margin-top:3mm">
+            Una herramienta móvil que <strong style="color:#fff">avise antes de perder</strong>,
+            <strong style="color:#fff">cuadre el stock con cada venta</strong> y
+            <strong style="color:#fff">muestre la ganancia real</strong>, sin la complejidad ni el costo de un ERP.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Planteamiento del problema</span><span class="pnum">03 / 17</span></footer>
+  </section>
+
+  <!-- 04 · PREGUNTA Y OBJETIVOS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">03 · Pregunta y objetivos</span>
+      <h2>Una pregunta medible y un objetivo verificable.</h2>
+    </header>
+
+    <div class="slide-body">
+      <div class="card card--brand">
+        <span class="kicker" style="color:#8ceac9">Pregunta problema</span>
+        <p style="font-size:13pt; line-height:1.5; color:#fff; margin-top:2.5mm">
+          ¿Cómo puede un pequeño comercio controlar de forma confiable su inventario, sus vencimientos
+          y sus ventas multinacionales desde una aplicación móvil, reduciendo pérdidas y obteniendo
+          información útil para decidir, sin la complejidad ni el costo de un ERP empresarial?
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex:1; align-items:start">
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:14pt; margin-bottom:2.5mm">Objetivo general</h3>
+          <p class="small" style="line-height:1.6">
+            Diseñar, implementar y documentar antes del <strong class="strong">16 de noviembre de 2026</strong>
+            una aplicación Android nativa con backend REST que permita a pequeños comercios de Colombia,
+            Estados Unidos y la Zona Euro registrar productos y lotes, ejecutar ventas transaccionales con
+            descuento FEFO y cálculo fiscal 2026, y consultar alertas y reportes en tres monedas,
+            medido mediante la ejecución completa del flujo de venta sobre PostgreSQL con datos semilla
+            y la validación de <strong class="strong">12 historias de usuario</strong>.
+          </p>
+          <div class="chips" style="margin-top:3mm">
+            <span class="chip">Específico</span>
+            <span class="chip">Medible</span>
+            <span class="chip">Alcanzable</span>
+            <span class="chip">Relevante</span>
+            <span class="chip">Con plazo</span>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:14pt; margin-bottom:2.5mm">Objetivos específicos</h3>
+          <ul class="bullets">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Modelar <strong>16 tablas</strong> para negocios, productos, lotes, ventas, impuestos y auditoría.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Implementar <strong>JWT</strong> (15 min / 7 días), BCrypt y aislamiento por negocio.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Construir <strong>17 pantallas</strong> con MVVM, Compose, Room y Retrofit.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Lograr una venta multiproducto <strong>atómica</strong> con FEFO y descuentos autorizados.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Integrar <strong>tarifas 2026</strong> y conversión COP / USD / EUR.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Documentar requisitos, ADRs, UML, base de datos y guía reproducible.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Pregunta y objetivos</span><span class="pnum">04 / 17</span></footer>
+  </section>
+
+  <!-- 05 · METODOLOGÍA -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">04 · Metodología</span>
+      <h2>Scrum adaptado a una persona, con evidencia semanal.</h2>
+      <p>Siete sprints de una semana, tablero Kanban con WIP limitado y Definition of Done verificable.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="flow">
+        <div class="flow-step"><b>1</b><strong>Product Backlog</strong><span>12 historias priorizadas Must / Should / Could.</span></div>
+        <div class="flow-step"><b>2</b><strong>Sprint Planning</strong><span>Objetivo semanal y tareas técnicas estimadas.</span></div>
+        <div class="flow-step"><b>3</b><strong>Desarrollo</strong><span>Backend, Android y migraciones en paralelo controlado.</span></div>
+        <div class="flow-step"><b>4</b><strong>Revisión</strong><span>Emulador, Swagger y consulta SQL como evidencia.</span></div>
+        <div class="flow-step"><b>5</b><strong>Retrospectiva</strong><span>Qué funcionó, qué frenó y qué se reduce.</span></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th style="width:14%">Sprint</th><th style="width:24%">Objetivo</th><th>Incremento verificable</th><th style="width:20%">Historias</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>1</strong> · 28 sep</td><td>Descubrimiento y modelo</td><td>16 tablas, V1 y necesidad validada</td><td>—</td></tr>
+          <tr><td><strong>2</strong> · 05 oct</td><td>Seguridad</td><td>Registro, login, refresh, JWT y BCrypt</td><td>HU-01, HU-02</td></tr>
+          <tr><td><strong>3</strong> · 12 oct</td><td>Catálogo</td><td>Productos, categorías, lotes y stock</td><td>HU-04, HU-05, HU-06</td></tr>
+          <tr><td><strong>4</strong> · 19 oct</td><td>Ventas</td><td>Venta multiproducto, FEFO e impuestos</td><td>HU-07</td></tr>
+          <tr><td><strong>5</strong> · 26 oct</td><td>Operación diaria</td><td>Entradas, recepción, movimientos, alertas y tablero</td><td>HU-03, HU-08, HU-09, HU-10</td></tr>
+          <tr><td><strong>6</strong> · 02 nov</td><td>Analítica</td><td>Reportes por periodo y moneda, configuración</td><td>HU-11, HU-12</td></tr>
+          <tr><td><strong>7</strong> · 09 nov</td><td>Cierre</td><td>Pruebas, datos demo, ABP, landing y PDF</td><td>Todas</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-3">
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Regla de WIP</h3><p>Máximo 2 historias en curso y 2 en revisión. Un bloqueo de más de 24 h reduce el alcance del sprint.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Definition of Done</h3><p>Compila, corre en emulador, endpoint probado, datos persistidos, errores traducidos y documento actualizado.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Evidencia</h3><p>Captura del flujo, respuesta HTTP en Swagger y consulta SQL sobre PostgreSQL; no basta «funciona en mi máquina».</p></div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Metodología Scrum y Kanban</span><span class="pnum">05 / 17</span></footer>
+  </section>
+
+  <!-- 06 · ALCANCE Y ROLES -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">05 · Alcance</span>
+      <h2>Un negocio, su inventario y sus ventas.</h2>
+      <p>El alcance se definió por lo que el flujo real de la app podía sostener, no por una lista de deseos.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></div>
+          <h3>Incluye</h3>
+          <ul class="bullets" style="margin-top:2.5mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Registro de negocio, usuarios y cuatro roles.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Productos, categorías, lotes y vencimientos.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Ventas multiproducto, FEFO, impuestos y comprobante.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Entradas previstas, movimientos y mermas.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Alertas, tablero y reportes en tres monedas.</span></li>
+          </ul>
+        </div>
+
+        <div class="card card--soft">
+          <div class="ic" style="background:var(--red-soft); color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 8 8 8M16 8l-8 8"/></svg></div>
+          <h3>Fuera de alcance</h3>
+          <ul class="bullets" style="margin-top:2.5mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg><span>Facturación electrónica y contabilidad formal.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg><span>Pasarela de pagos y cobro con tarjeta.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg><span>Aplicación iOS y panel web administrativo.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg><span>Nómina, CRM y integración con hardware POS.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg><span>Modo offline con escritura diferida.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-family:var(--font-display); font-size:13pt; margin-bottom:2.5mm">Roles y permisos reales</h3>
+        <table>
+          <thead><tr><th>Actor</th><th>Permisos implementados</th><th>Restricción clave</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Propietario</strong></td><td>Todo el sistema, configuración del negocio y descuentos.</td><td>Único que registra el negocio.</td></tr>
+            <tr><td><strong>Administrador</strong></td><td>Operación completa y descuentos.</td><td>No cambia la titularidad.</td></tr>
+            <tr><td><strong>Empleado</strong></td><td>Productos, lotes, movimientos, ventas y entradas.</td><td>Sin descuentos ni configuración.</td></tr>
+            <tr><td><strong>Consulta</strong></td><td>Catálogo, tablero, alertas y reportes.</td><td>Solo lectura.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Alcance y roles</span><span class="pnum">06 / 17</span></footer>
+  </section>
+
+  <!-- 07 · ARQUITECTURA -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">06 · Arquitectura</span>
+      <h2>Cliente-servidor con las reglas en el backend.</h2>
+      <p>La app presenta y valida; la API concentra stock, FEFO, impuestos, permisos y aislamiento por negocio.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="diagram">
+        <div class="mermaid">
+flowchart TB
+    subgraph Cliente["Dispositivo Android · API 24+"]
+        UI["Jetpack Compose + Material 3<br/>17 pantallas"]
+        VM["13 ViewModels<br/>StateFlow"]
+        REPO["Repositorios<br/>Room + Retrofit"]
+        TOK[("EncryptedSharedPreferences<br/>access + refresh")]
+    end
+    subgraph Servidor["Servidor de aplicaciones · Java 17"]
+        SEC["Spring Security<br/>JWT + BCrypt + roles"]
+        CTRL["12 controladores<br/>37 endpoints"]
+        SVC["10 servicios<br/>FEFO · impuestos · stock"]
+        JPA["Spring Data JPA"]
+    end
+    DB[("PostgreSQL 16<br/>16 tablas")]
+    EXT["API de tasas de cambio"]
+
+    UI --> VM --> REPO
+    REPO --> TOK
+    REPO -->|"HTTP/HTTPS · Bearer JWT"| SEC
+    SEC --> CTRL --> SVC --> JPA --> DB
+    SVC -->|"consulta / actualiza"| EXT
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Reglas centralizadas</h3><p>Impuestos, FEFO, descuentos y stock se aplican una sola vez en el backend; la UI no duplica la regla.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Resiliencia</h3><p>Room guarda catálogo y resumen del tablero; si la red falla, el usuario sigue viendo la última información.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Reproducible</h3><p>Docker Compose levanta PostgreSQL 16 y Flyway aplica V1–V3 al arrancar Spring Boot.</p></div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Arquitectura de despliegue</span><span class="pnum">07 / 17</span></footer>
+  </section>
+
+  <!-- 08 · STACK -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">07 · Stack tecnológico</span>
+      <h2>Herramientas estándar, versiones reales.</h2>
+      <p>Sin dependencias experimentales: el proyecto se apoya en el ecosistema Android y Spring.</p>
+    </header>
+
+    <div class="slide-body">
+      <table>
+        <thead><tr><th style="width:20%">Capa</th><th style="width:38%">Tecnología</th><th>Uso real en StockPro</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Móvil</strong></td><td>Kotlin 2.2.10 · Jetpack Compose · Material 3</td><td>UI declarativa, tema verde, edge-to-edge e idioma es/en.</td></tr>
+          <tr><td><strong>Navegación y estado</strong></td><td>Navigation Compose 2.8.9 · ViewModel + StateFlow</td><td>20 rutas, barra inferior de 5 secciones y 13 ViewModels.</td></tr>
+          <tr><td><strong>Red</strong></td><td>Retrofit 2.12.0 · OkHttp 4.10.0 · Moshi 1.15.2</td><td>37 operaciones tipadas, interceptores y refresh automático.</td></tr>
+          <tr><td><strong>Persistencia local</strong></td><td>Room 2.7.0 · EncryptedSharedPreferences · Coil 2.7.0</td><td>Caché de lectura, tokens cifrados e imágenes de producto.</td></tr>
+          <tr><td><strong>Backend</strong></td><td>Spring Boot 3.3.4 · Java 17 · Spring Security</td><td>12 controladores, 10 servicios, JWT HS256 y BCrypt.</td></tr>
+          <tr><td><strong>Datos</strong></td><td>PostgreSQL 16 · Spring Data JPA · Flyway</td><td>16 tablas, UUID, NUMERIC, TIMESTAMPTZ y migraciones V1–V3.</td></tr>
+          <tr><td><strong>Calidad y docs</strong></td><td>SpringDoc OpenAPI 2.6.0 · Mermaid · Markdown</td><td>Swagger UI, diagramas versionados y documentación en el repositorio.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2" style="flex:1; align-items:start">
+        <div class="card card--soft">
+          <h3 style="font-size:10pt">Decisiones que se evaluaron</h3>
+          <ul class="bullets" style="margin-top:2.5mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Compose frente a Views + XML.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>JWT stateless frente a sesión con cookie.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>PostgreSQL + Flyway frente a `ddl-auto` sin control.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>Room como caché frente a offline-first con conflictos.</span></li>
+          </ul>
+        </div>
+
+        <div class="card card--brand">
+          <h3 style="font-size:10pt">Siete ADRs documentados</h3>
+          <p style="margin-top:2mm">Cada decisión registra contexto, alternativas descartadas, consecuencias positivas y negativas, y evidencia en los archivos del repositorio.</p>
+          <div class="chips" style="margin-top:3mm">
+            <span class="chip chip--dark">0001 Compose MVVM</span>
+            <span class="chip chip--dark">0002 JWT</span>
+            <span class="chip chip--dark">0003 Flyway</span>
+            <span class="chip chip--dark">0004 Room</span>
+            <span class="chip chip--dark">0005 Multimoneda</span>
+            <span class="chip chip--dark">0006 Coil</span>
+            <span class="chip chip--dark">0007 Retrofit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Stack y decisiones</span><span class="pnum">08 / 17</span></footer>
+  </section>
+
+  <!-- 09 · BASE DE DATOS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">08 · Base de datos</span>
+      <h2>16 tablas con integridad declarativa.</h2>
+      <p>UUID como llave, NUMERIC para dinero, TIMESTAMPTZ para eventos y aislamiento por negocio en cada tabla de operación.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="diagram">
+        <div class="mermaid">
+erDiagram
+    NEGOCIOS ||--o{ MIEMBROS : agrupa
+    USUARIOS ||--o{ MIEMBROS : participa
+    NEGOCIOS ||--o{ PRODUCTOS : posee
+    CATEGORIAS ||--o{ PRODUCTOS : clasifica
+    TARIFAS ||--o{ PRODUCTOS : grava
+    PRODUCTOS ||--o{ LOTES : tiene
+    NEGOCIOS ||--o{ VENTAS : emite
+    VENTAS ||--o{ DETALLE_VENTAS : compone
+    PRODUCTOS ||--o{ DETALLE_VENTAS : figura
+    LOTES ||--o{ DETALLE_VENTAS : consume
+    PRODUCTOS ||--o{ MOVIMIENTOS : afecta
+    NEGOCIOS ||--o{ ENTRADAS : programa
+    ENTRADAS ||--o{ DETALLE_ENTRADAS : contiene
+    NEGOCIOS {
+        UUID id PK
+        VARCHAR nombre
+        VARCHAR pais
+        VARCHAR moneda_base
+        BOOLEAN permite_stock_negativo
+    }
+    PRODUCTOS {
+        UUID id PK
+        UUID negocio_id FK
+        UUID categoria_id FK
+        VARCHAR nombre
+        NUMERIC costo
+        NUMERIC precio_venta
+        NUMERIC stock_actual
+        NUMERIC stock_minimo
+        BOOLEAN maneja_lotes
+    }
+    LOTES {
+        UUID id PK
+        UUID producto_id FK
+        VARCHAR numero_lote
+        NUMERIC cantidad_disponible
+        DATE fecha_vencimiento
+        VARCHAR estado
+    }
+    VENTAS {
+        UUID id PK
+        UUID negocio_id FK
+        VARCHAR numero_comprobante
+        VARCHAR moneda_venta
+        NUMERIC total_venta
+        VARCHAR estado
+    }
+    DETALLE_VENTAS {
+        UUID id PK
+        UUID venta_id FK
+        UUID producto_id FK
+        UUID lote_id FK
+        NUMERIC cantidad
+        NUMERIC monto_impuesto
+        NUMERIC total_linea
+    }
+    MOVIMIENTOS {
+        UUID id PK
+        UUID producto_id FK
+        VARCHAR tipo_movimiento
+        NUMERIC stock_anterior
+        NUMERIC stock_posterior
+    }
+    ENTRADAS {
+        UUID id PK
+        DATE fecha_prevista
+        VARCHAR estado
+    }
+    DETALLE_ENTRADAS {
+        UUID id PK
+        UUID producto_id FK
+        NUMERIC cantidad_esperada
+        NUMERIC cantidad_recibida
+    }
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="kpi"><b>3</b><span>Migraciones</span><small>V1 · V2 · V3</small></div>
+        <div class="kpi"><b>14</b><span>Índices</span><small>Consultas frecuentes</small></div>
+        <div class="kpi"><b>48</b><span>Productos demo</span><small>3 negocios</small></div>
+        <div class="kpi"><b>4</b><span>Niveles ACID</span><small>Venta transaccional</small></div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Modelo de datos</span><span class="pnum">09 / 17</span></footer>
+  </section>
+
+  <!-- 10 · FLUJO DE VENTA -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">09 · Flujo crítico</span>
+      <h2>Una venta se confirma completa o no se confirma.</h2>
+      <p>La transacción valida stock, resuelve el impuesto, consume lotes FEFO, descuenta producto y lote, y registra movimientos.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="diagram">
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Cajero
+    participant APP as App Android
+    participant API as VentaController
+    participant SVC as VentaService
+    participant LOTE as LoteRepository
+    participant DB as PostgreSQL
+
+    U->>APP: confirma carrito
+    APP->>API: POST /api/v1/sales
+    API->>SVC: createSale(request)
+    SVC->>DB: valida producto activo y stock
+    alt stock insuficiente
+        SVC-->>API: STOCK_INSUFICIENTE
+        API-->>APP: 400 · sin cambios
+    else stock disponible
+        SVC->>SVC: resuelve tarifa fiscal 2026
+        SVC->>LOTE: lotes ACTIVO por vencimiento
+        LOTE->>DB: SELECT lotes FEFO
+        SVC->>DB: INSERT ventas + detalle_ventas
+        SVC->>DB: UPDATE stock y lote
+        SVC->>DB: INSERT movimientos VENTA
+        DB-->>SVC: COMMIT
+        SVC-->>API: VentaDto
+        API-->>APP: 201 + comprobante
+    end
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card card--soft"><h3 style="font-size:9pt">1 · Valida</h3><p>Producto activo, stock suficiente y permiso de descuento según rol.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9pt">2 · Calcula</h3><p>Tarifa por país, estado y categoría fiscal; monto congelado por línea.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9pt">3 · Consume</h3><p>Lote con vencimiento más próximo; registra el lote en el detalle.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9pt">4 · Confirma</h3><p>Venta, stock y movimientos en una sola transacción con rollback.</p></div>
+      </div>
+
+      <p class="quote" style="font-size:10.5pt">
+        Si falla cualquier paso, Spring revierte todo: <strong>no queda stock descontado sin comprobante ni venta sin movimiento</strong>.
+      </p>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Venta multiproducto con FEFO</span><span class="pnum">10 / 17</span></footer>
+  </section>
+
+  <!-- 11 · REQUISITOS E HISTORIAS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">10 · Requisitos</span>
+      <h2>Trazabilidad de la necesidad al código.</h2>
+      <p>Cada requisito apunta a una pantalla, un endpoint o una regla implementada; ninguna historia quedó en el papel.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="kpis">
+        <div class="kpi"><b>36</b><span>Requisitos funcionales</span><small>Must · Should · Could</small></div>
+        <div class="kpi"><b>16</b><span>No funcionales</span><small>Seguridad, RNF, usabilidad</small></div>
+        <div class="kpi"><b>14</b><span>Reglas de negocio</span><small>FEFO, stock, impuestos</small></div>
+        <div class="kpi"><b>10</b><span>Casos de uso</span><small>Con flujos alternos</small></div>
+      </div>
+
+      <div class="grid-2" style="flex:1; align-items:start">
+        <div class="card card--soft">
+          <span class="kicker">Ejemplo de historia</span>
+          <h3 style="margin-top:2mm; font-size:11.5pt">HU-07 · Venta multiproducto con FEFO</h3>
+          <p style="margin-top:2mm"><strong>Como</strong> cajero, <strong>quiero</strong> registrar una venta con varios productos y que el sistema descuente stock y calcule el impuesto <strong>para</strong> cobrar bien y no descuadrar el inventario.</p>
+          <div class="chips" style="margin-top:2.5mm">
+            <span class="chip">Must</span>
+            <span class="chip">13 puntos</span>
+            <span class="chip">Sprint 4</span>
+            <span class="chip">RF-23 a RF-29</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:10.5pt">Criterios de aceptación</h3>
+          <ul class="bullets" style="margin-top:2.5mm">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Dado</strong> un carrito con stock suficiente, <strong>cuando</strong> confirmo, <strong>entonces</strong> se crean venta, líneas y movimientos.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Dado</strong> un producto con lotes, <strong>cuando</strong> vendo, <strong>entonces</strong> se consume el vencimiento más próximo.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Dado</strong> stock insuficiente, <strong>cuando</strong> confirmo, <strong>entonces</strong> la venta falla completa y el stock no cambia.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Dado</strong> un empleado, <strong>cuando</strong> intenta descontar, <strong>entonces</strong> el backend lo rechaza.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Dado</strong> un doble toque, <strong>cuando</strong> la petición está en curso, <strong>entonces</strong> el botón se deshabilita.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="tiny">Documento completo: <span class="mono">docs/02-requisitos-y-historias-usuario.md</span> · 36 RF, 16 RNF, 14 RN, 10 UC y 12 historias con matriz de trazabilidad.</p>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Requisitos e historias de usuario</span><span class="pnum">11 / 17</span></footer>
+  </section>
+
+  <!-- 12 · SEGURIDAD -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">11 · Seguridad</span>
+      <h2>El negocio sale del token, nunca del cuerpo.</h2>
+      <p>API stateless con JWT HS256, BCrypt y autorización por roles; cada consulta filtra por el negocio autenticado.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="flow" style="grid-template-columns:repeat(4,1fr)">
+        <div class="flow-step"><b>1</b><strong>Login</strong><span>Correo y contraseña; BCrypt compara el hash.</span></div>
+        <div class="flow-step"><b>2</b><strong>Tokens</strong><span>Access 15 min + refresh 7 días con claims de usuario, negocio y rol.</span></div>
+        <div class="flow-step"><b>3</b><strong>Petición</strong><span>Interceptor agrega Bearer; el filtro valida y extrae negocioId.</span></div>
+        <div class="flow-step"><b>4</b><strong>Renovación</strong><span>Ante 401, el autenticador usa el refresh y reintenta una vez.</span></div>
+      </div>
+
+      <div class="grid-2" style="flex:1; align-items:start">
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:13pt; margin-bottom:2.5mm">Controles implementados</h3>
+          <ul class="bullets">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>BCrypt</strong> factor 10; no existe columna de contraseña legible.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Tokens cifrados</strong> con EncryptedSharedPreferences AES-256.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Stateless</strong>: sin sesión de servidor; cualquier instancia valida la firma.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Aislamiento</strong>: cambiar un id en el cuerpo no da acceso a otro negocio.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Errores estables</strong>: TOKEN_INVALIDO, ACCESO_DENEGADO, CREDENCIALES_INVALIDAS.</span></li>
+          </ul>
+        </div>
+
+        <div class="card card--brand">
+          <h3 style="font-size:11pt">Matriz de permisos sensible</h3>
+          <table class="table--brand" style="margin-top:3mm">
+            <thead><tr><th>Acción</th><th>Prop.</th><th>Admin.</th><th>Empl.</th><th>Cons.</th></tr></thead>
+            <tbody>
+              <tr><td>Venta con descuento</td><td>Sí</td><td>Sí</td><td>No</td><td>No</td></tr>
+              <tr><td>Configurar negocio y tasas</td><td>Sí</td><td>Sí</td><td>No</td><td>No</td></tr>
+              <tr><td>Productos, lotes y movimientos</td><td>Sí</td><td>Sí</td><td>Sí</td><td>No</td></tr>
+              <tr><td>Tablero, alertas y reportes</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:3mm; font-size:8.5pt; color:#b8d9cc">Descuento máximo: 30 % y solo para PROPIETARIO o ADMINISTRADOR.</p>
+        </div>
+      </div>
+
+      <p class="tiny">Deuda declarada: el refresh no se revoca con estado; se mitiga con access corto y rotación. En producción se exige HTTPS, secreto propio y logging en NONE.</p>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Seguridad y autorización</span><span class="pnum">12 / 17</span></footer>
+  </section>
+
+  <!-- 13 · IMPUESTOS Y MONEDA -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">12 · Fiscalidad y moneda</span>
+      <h2>Tres mercados, tres reglas, un solo histórico.</h2>
+      <p>La tarifa se resuelve por país, estado y categoría fiscal; la venta congela moneda y tasa para no reescribir el pasado.</p>
+    </header>
+
+    <div class="slide-body">
+      <table>
+        <thead><tr><th style="width:16%">Mercado</th><th style="width:22%">Impuesto</th><th>Tarifas modeladas 2026</th><th style="width:22%">Ejemplo aplicado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Colombia</strong> · COP</td><td>IVA / consumo</td><td>General 19 %, diferencial 5 %, exento y excluido 0 %, consumo 8 %.</td><td>Ropa 19 % · alimento básico 0 %.</td></tr>
+          <tr><td><strong>Estados Unidos</strong> · USD</td><td>Sales Tax</td><td>CA 7.25 %, TX 6.25 %, FL 6 %, NY 4 %, WA 6.5 %, OR 0 %.</td><td>California 7.25 % · alimentos exentos.</td></tr>
+          <tr><td><strong>Zona Euro</strong> · EUR</td><td>IVA</td><td>Italia 22/10/5/4 % · Alemania 19/7 % · España 21/10/4 % · Francia 20/5.5 %.</td><td>Bottega Roma: 4 %, 10 % y 22 %.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-3" style="flex:1; align-items:start">
+        <div class="card card--soft">
+          <h3 style="font-size:10pt">Resolución de tarifa</h3>
+          <p>País + estado (solo EE. UU.) + categoría fiscal. Si falta, se usa la tarifa general del país; en último caso, la base 2026.</p>
+          <span class="tagline">Evidencia: `resolveTaxPercentage()`</span>
+        </div>
+        <div class="card card--soft">
+          <h3 style="font-size:10pt">Histórico inmutable</h3>
+          <p>El detalle conserva precio, costo, categoría, tarifa y monto de impuesto. Cambiar una tasa no altera una venta anterior.</p>
+          <span class="tagline">Evidencia: `detalle_ventas.tarifa_impuesto_porcentaje`</span>
+        </div>
+        <div class="card card--soft">
+          <h3 style="font-size:10pt">Conversión de reportes</h3>
+          <p>Reportes en COP, USD o EUR con la tabla de tasas. COP sin decimales; USD y EUR con dos. La venta conserva su moneda original.</p>
+          <span class="tagline">Evidencia: `CurrencyService`</span>
+        </div>
+      </div>
+
+      <div class="quote" style="font-size:10.5pt">
+        Cada tarifa cita <strong>fuente</strong> y <strong>vigencia</strong>; actualizar 2027 es una migración nueva, no un cambio de código.
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Impuestos 2026 y multimoneda</span><span class="pnum">13 / 17</span></footer>
+  </section>
+
+  <!-- 14 · EVIDENCIAS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">13 · Evidencias</span>
+      <h2>Lo que se ve también está en el código.</h2>
+      <p>17 pantallas implementadas, datos demo de tres países y un flujo completo verificable en emulador.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="evidence">
+        <figure class="evidence-frame" style="margin:0">
+          <img src="../assets-docs/app-mockup.jpg" alt="Mockup de StockPro: inicio de sesión, tablero, productos, alertas y reportes" width="1214" height="1295">
+          <figcaption class="tiny" style="padding:2.5mm 1mm 0; display:flex; justify-content:space-between; gap:8px">
+            <span><strong>Mockup en Figma</strong></span>
+            <span>Implementado en Compose</span>
+          </figcaption>
+        </figure>
+
+        <div>
+          <ul class="bullets">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>17 pantallas</strong> con navegación, estados vacíos, validaciones e idioma es/en.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>37 endpoints</strong> en Swagger, con códigos de error de negocio.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Venta atómica</strong>: stock, lote, detalle y movimiento se confirman juntos.</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>3 negocios demo</strong>: Mi Tienda (CO), Corner Market (US) y Bottega Roma (IT).</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span><strong>Documentación</strong>: requisitos, ADRs, ERD, UML, Scrum y guía reproducible.</span></li>
+          </ul>
+
+          <div class="card card--soft" style="margin-top:4mm">
+            <h3 style="font-size:9.5pt">Credenciales de la demostración</h3>
+            <p style="margin-top:1.5mm">Contraseña <code>Password123*</code></p>
+            <p class="mono" style="font-size:8pt; line-height:1.7; margin-top:1.5mm">
+              carlos@mitienda.com<br>
+              robert@cornermarket.com<br>
+              matteo@bottegaroma.it
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Evidencias de implementación</span><span class="pnum">14 / 17</span></footer>
+  </section>
+
+  <!-- 15 · PRUEBAS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">14 · Pruebas y resultados</span>
+      <h2>La regla crítica se prueba rompiéndola.</h2>
+      <p>Casos de venta, stock, descuentos, recepción, seguridad y multimoneda ejecutados sobre PostgreSQL real.</p>
+    </header>
+
+    <div class="slide-body">
+      <table>
+        <thead><tr><th style="width:12%">ID</th><th style="width:34%">Caso</th><th>Resultado esperado</th><th style="width:12%">Estado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CP-01</strong></td><td>Login válido con cuenta demo</td><td>200, access y refresh token</td><td>OK</td></tr>
+          <tr><td><strong>CP-03</strong></td><td>Venta con stock suficiente</td><td>201, stock descontado, movimientos</td><td>OK</td></tr>
+          <tr><td><strong>CP-04</strong></td><td>Venta sin stock</td><td>400 STOCK_INSUFICIENTE, sin cambios</td><td>OK</td></tr>
+          <tr><td><strong>CP-06</strong></td><td>Descuento con empleado</td><td>403 ACCESO_DENEGADO</td><td>OK</td></tr>
+          <tr><td><strong>CP-07</strong></td><td>Venta con dos lotes</td><td>Consume el vencimiento más próximo</td><td>OK</td></tr>
+          <tr><td><strong>CP-09</strong></td><td>Doble recepción de entrada</td><td>400 ENTRADA_YA_RECIBIDA</td><td>OK</td></tr>
+          <tr><td><strong>CP-12</strong></td><td>Acceso cruzado entre negocios</td><td>404/403 sin datos filtrados</td><td>OK</td></tr>
+          <tr><td><strong>CP-13</strong></td><td>Access vencido y refresh válido</td><td>Renueva y repite la petición</td><td>OK</td></tr>
+          <tr><td><strong>CP-15</strong></td><td>Cambio de idioma es → en</td><td>Textos traducidos sin reiniciar</td><td>OK</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-3" style="flex:1; align-items:start">
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Regresión manual</h3><p>Login → producto → lote → venta → alerta → reporte, en menos de diez minutos.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Integridad de datos</h3><p>Migraciones V1–V3 sobre base vacía; llaves, CHECK, UNIQUE e índices verificados en pgAdmin.</p></div>
+        <div class="card card--soft"><h3 style="font-size:9.5pt">Seguridad</h3><p>Peticiones sin token, con token de otro negocio y con descuento no autorizado.</p></div>
+      </div>
+
+      <p class="tiny">Las 12 historias cumplen el criterio de terminado al 16/11/2026: compilan, se ejecutan en emulador, persisten en PostgreSQL y están documentadas.</p>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Pruebas y resultados</span><span class="pnum">15 / 17</span></footer>
+  </section>
+
+  <!-- 16 · COSTOS Y RIESGOS -->
+  <section class="slide">
+    <header class="slide-head">
+      <span class="kicker">15 · Viabilidad</span>
+      <h2>Cuánto costaría y qué puede salir mal.</h2>
+      <p>Estimación académica con supuestos explícitos: 10 semanas, 25 h/semana y tarifa de referencia de COP 45.000/h.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="grid-2" style="align-items:start">
+        <table>
+          <thead><tr><th>Actividad</th><th class="num">Horas</th><th class="num">Costo COP</th></tr></thead>
+          <tbody>
+            <tr><td>Análisis, diseño y modelado</td><td class="num">45</td><td class="num">2.025.000</td></tr>
+            <tr><td>Desarrollo backend</td><td class="num">90</td><td class="num">4.050.000</td></tr>
+            <tr><td>Desarrollo Android</td><td class="num">85</td><td class="num">3.825.000</td></tr>
+            <tr><td>Pruebas y corrección</td><td class="num">25</td><td class="num">1.125.000</td></tr>
+            <tr><td>Documentación y presentación</td><td class="num">30</td><td class="num">1.350.000</td></tr>
+            <tr><td>Subtotal mano de obra</td><td class="num">275</td><td class="num">12.375.000</td></tr>
+            <tr><td>Infraestructura y herramientas</td><td class="num">—</td><td class="num">1.754.500</td></tr>
+            <tr class="total"><td>Total estimado</td><td class="num">275</td><td class="num">14.129.500</td></tr>
+          </tbody>
+        </table>
+
+        <div>
+          <div class="card card--brand">
+            <h3 style="font-size:10.5pt">Modelo para el comerciante</h3>
+            <p style="margin-top:2mm">Sin licencia por usuario. Pago único de instalación y acompañamiento o suscripción baja de <strong style="color:#fff">COP 25.000–40.000/mes</strong>, muy por debajo de un ERP.</p>
+            <p style="margin-top:2mm; font-size:8.5pt; color:#b8d9cc">Costo operativo: COP 0–80.000/mes en instancia pequeña; COP 250.000–450.000/mes con nube y respaldo automático.</p>
+          </div>
+
+          <table style="margin-top:4mm">
+            <thead><tr><th style="width:34%">Riesgo</th><th>Mitigación implementada</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Stock negativo</strong></td><td>Validación transaccional y bandera explícita por negocio.</td></tr>
+              <tr><td><strong>Doble venta</strong></td><td>Botón deshabilitado durante la petición y operación atómica.</td></tr>
+              <tr><td><strong>Tarifa desactualizada</strong></td><td>Catálogo con fuente, vigencia y migración anual.</td></tr>
+              <tr><td><strong>Pérdida de datos</strong></td><td>WAL de PostgreSQL, respaldo lógico y Flyway versionado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="tiny">Cifras de referencia académica, no una cotización comercial. El detalle y los supuestos están en `docs/01-documento-maestro-abp.md`.</p>
+    </div>
+
+    <footer class="slide-foot"><span><strong>StockPro</strong> · Costos, viabilidad y riesgos</span><span class="pnum">16 / 17</span></footer>
+  </section>
+
+  <!-- 17 · CIERRE -->
+  <section class="slide slide--end">
+    <header class="slide-head">
+      <span class="kicker">16 · Conclusiones</span>
+      <h2>Un problema pequeño, resuelto con ingeniería completa.</h2>
+      <p class="lead">El valor del proyecto no está en la cantidad de pantallas, sino en que cada regla crítica quedó implementada, probada y documentada.</p>
+    </header>
+
+    <div class="slide-body">
+      <div class="grid-2" style="align-items:start">
+        <div>
+          <div class="card">
+            <h3 style="font-size:10.5pt">Conclusiones</h3>
+            <ul class="bullets" style="margin-top:2.5mm">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>El backend como autoridad evita que la app duplique reglas y permite auditar cada cambio.</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>FEFO convierte una decisión operativa en una regla automática y medible.</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>La fiscalidad y la moneda deben congelarse por venta para que el histórico sea confiable.</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg><span>La documentación viva —ADRs, UML y guía— reduce el costo de mantener y sustentar el proyecto.</span></li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:3.5mm">
+            <h3 style="font-size:10.5pt">Trabajo futuro</h3>
+            <p>Revocación de refresh tokens, migración V4 que consolide columnas agregadas por JPA, HTTPS con secretos externos, pruebas automatizadas de integración y un modo offline con resolución de conflictos.</p>
+          </div>
+        </div>
+
+        <div class="end-links">
+          <a class="end-link" href="https://github.com/mosquerag/StockPro_Proyecto_Final_Aplicaicones_Moviles" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.55v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .3.21.66.8.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+            <div>Repositorio del proyecto<span>github.com/mosquerag</span></div>
+          </a>
+          <a class="end-link" href="https://mosquerag.github.io/StockPro_Proyecto_Final_Aplicaicones_Moviles/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 4 5.7 4 9s-1.5 6.4-4 9c-2.5-2.6-4-5.7-4-9s1.5-6.4 4-9z"/></svg>
+            <div>Landing page<span>Documentación y diagramas navegables</span></div>
+          </a>
+          <a class="end-link" href="https://www.figma.com/design/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=0-1&t=20vEjBymHh9V60rU-1" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H8.5a3.5 3.5 0 0 0 0 7H12zM12 3h3.5a3.5 3.5 0 0 1 0 7H12zM12 10H8.5a3.5 3.5 0 0 0 0 7H12zM12 17H8.5a3.5 3.5 0 1 0 3.5 3.5z"/><circle cx="16" cy="13.5" r="3.5"/></svg>
+            <div>Diseño en Figma<span>Mockup de las 17 pantallas</span></div>
+          </a>
+          <a class="end-link" href="https://www.figma.com/proto/zTOhnpdRwIx23j1zTaMWDT/Sin-t%C3%ADtulo?node-id=3-8643&p=f&t=ouWKmehgqJ7Hdvce-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=173%3A326" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 6 3.5-6 3.5z"/></svg>
+            <div>Prototipo interactivo<span>Navegación simulada</span></div>
+          </a>
+        </div>
+      </div>
+
+      <p class="thanks">Gracias.<br><em>Tu inventario, siempre en control.</em></p>
+    </div>
+
+    <footer class="slide-foot">
+      <span><strong>Sairy Ximena Mosquera García</strong> · Diseño de Aplicaciones Móviles · UCN 2026</span>
+      <span class="pnum">17 / 17</span>
+    </footer>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  (function () {
+    "use strict";
+
+    if (typeof window.mermaid !== "undefined") {
+      window.mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: "loose",
+        theme: "base",
+        fontFamily: "'Plus Jakarta Sans', 'Segoe UI', sans-serif",
+        themeVariables: {
+          primaryColor: "#087F5B",
+          primaryTextColor: "#FFFFFF",
+          primaryBorderColor: "#044D37",
+          secondaryColor: "#E6F7F0",
+          secondaryTextColor: "#19211E",
+          secondaryBorderColor: "#C8ECDF",
+          tertiaryColor: "#F7FAF8",
+          tertiaryTextColor: "#19211E",
+          tertiaryBorderColor: "#DDE8E3",
+          lineColor: "#6B8A7F",
+          textColor: "#19211E",
+          mainBkg: "#FFFFFF",
+          nodeBorder: "#087F5B",
+          clusterBkg: "#F1FAF6",
+          clusterBorder: "#C8ECDF",
+          edgeLabelBackground: "#F7FAF8",
+          actorBkg: "#E6F7F0",
+          actorBorder: "#087F5B",
+          actorTextColor: "#044D37",
+          signalColor: "#19211E",
+          signalTextColor: "#19211E",
+          noteBkgColor: "#FFF3BF",
+          noteTextColor: "#4A3A00",
+          noteBorderColor: "#B07B00",
+          activationBkgColor: "#E6F7F0",
+          activationBorderColor: "#087F5B",
+          sequenceNumberColor: "#FFFFFF",
+          fontSize: "13px"
+        },
+        flowchart: { curve: "basis", htmlLabels: true, padding: 10, nodeSpacing: 30, rankSpacing: 36 },
+        sequence: { useMaxWidth: true, mirrorActors: false, actorMargin: 38, boxMargin: 6, diagramMarginX: 8, diagramMarginY: 8 },
+        er: { useMaxWidth: true, minEntityWidth: 100, minEntityHeight: 36, entityPadding: 10, layoutDirection: "TB" }
+      });
+    }
+
+    /* Navegación con teclado entre diapositivas (solo pantalla) */
+    var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+    var current = 0;
+
+    document.addEventListener("keydown", function (event) {
+      if (event.target && /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowRight" || event.key === "PageDown") {
+        event.preventDefault();
+        current = Math.min(current + 1, slides.length - 1);
+        slides[current].scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (event.key === "ArrowUp" || event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        current = Math.max(current - 1, 0);
+        slides[current].scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (event.key === "Home") {
+        current = 0;
+        slides[0].scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (event.key === "End") {
+        current = slides.length - 1;
+        slides[current].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  })();
+</script>
+</body>
+</html>
